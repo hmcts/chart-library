@@ -25,12 +25,6 @@ jobs:
         inputs:
           helmVersionToInstall: 3.0.2
 
-      - task: AzureCLI@1
-        displayName: "AKS Authenticate"
-        inputs:
-          azureSubscription: azurerm-nonprod
-          scriptLocation: "inlineScript"
-          inlineScript: az aks get-credentials --admin --overwrite-existing --resource-group cnp-aks-rg --name cnp-aks-cluster
       - task: Bash@3
         inputs:
           targetType: 'inline'
@@ -41,7 +35,8 @@ jobs:
             sed -i "s/library/application/g" library/Chart.yaml
             helm template library -f ci-values.yaml > deployment-template.yaml
             cat deployment-template.yaml
-            cmp deployment-template.yaml tests/deployment-template.yaml
+            snap install yq
+            yq compare deployment-template.yaml tests/deployment-template.yaml
             sed -i "s/application/library/g" library/Chart.yaml
             rm -rf library/templates/deployment.yaml
 
