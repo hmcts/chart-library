@@ -43,6 +43,7 @@ jobs:
             set -x
             sed -i "s/library/application/g" library/Chart.yaml
             helm template library -f ci-values.yaml > deployment-template.yaml
+            cat tests/deployment-template.yaml
             cmp deployment-template.yaml tests/deployment-template.yaml
             sed -i "s/application/library/g" library/Chart.yaml
             rm -rf library/deployment.yaml
