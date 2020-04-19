@@ -40,6 +40,7 @@ jobs:
           targetType: 'inline'
           failOnStderr: true
           script: |
+            set -x
             sed -i "s/library/application/g" library/Chart.yaml
             helm template library -f ci-values.yaml > deployment-template.yaml
             cmp deployment-template.yaml tests/deployment-template.yaml
