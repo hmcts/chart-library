@@ -21,9 +21,9 @@ jobs:
       vmImage: 'Ubuntu 16.04'
     steps:
       - task: HelmInstaller@1
-          displayName: 'Install Helm'
-          inputs:
-            helmVersionToInstall: 3.0.2
+        displayName: 'Install Helm'
+        inputs:
+          helmVersionToInstall: 3.0.2
 
       - task: AzureCLI@1
         displayName: "AKS Authenticate"
