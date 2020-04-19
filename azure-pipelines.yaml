@@ -24,19 +24,7 @@ jobs:
         displayName: 'Install Helm'
         inputs:
           helmVersionToInstall: 3.0.2
-
-      - task: Bash@3
-        inputs:
-          targetType: 'inline'
-          script: |
-            set -e
-            cp tests/deployment.yaml library/templates/
-            sed -i "s/library/application/g" library/Chart.yaml
-            helm template library -f ci-values.yaml > deployment-template.yaml
-            sudo snap install yq
-            yq compare deployment-template.yaml tests/deployment-template.yaml
-            sed -i "s/application/library/g" library/Chart.yaml
-            rm -rf library/templates/deployment.yaml
+      - script: ./tests/test-deployment.sh
   - job: Release
     # Make sure we have a tag to run this job
     condition: >
