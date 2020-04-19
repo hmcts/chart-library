@@ -32,12 +32,19 @@ jobs:
           script: |
             set -ex
             cp tests/deployment.yaml library/templates/
+            echo $?
             sed -i "s/library/application/g" library/Chart.yaml
+            echo $?
             helm template library -f ci-values.yaml > deployment-template.yaml
+            echo $?
             sudo snap install yq
+            echo $?
             yq compare deployment-template.yaml tests/deployment-template.yaml
+            echo $?
             sed -i "s/application/library/g" library/Chart.yaml
+            echo $?
             rm -rf library/templates/deployment.yaml
+            echo $?
 
   - job: Release
     # Make sure we have a tag to run this job
