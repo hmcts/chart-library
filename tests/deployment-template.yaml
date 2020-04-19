@@ -12,7 +12,7 @@ metadata:
   annotations:
 spec:
   revisionHistoryLimit: 0
-  replicas: 3
+  replicas: 2
   selector:
     matchLabels:
       app.kubernetes.io/name: release-name-application
