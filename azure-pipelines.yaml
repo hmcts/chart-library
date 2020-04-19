@@ -1,0 +1,64 @@
+name: chart-library pipeline
+trigger:
+  branches:
+    include:
+      - refs/tags/*
+pr:
+  branches:
+    include:
+      - master
+resources:
+  repositories:
+    - repository: cnp-library
+      type: github
+      ref: refs/heads/master
+      name: hmcts/cnp-azuredevops-libraries
+      endpoint: 'hmcts'
+
+jobs:
+  - job: Validate
+    pool:
+      vmImage: 'Ubuntu 16.04'
+    steps:
+      - task: HelmInstaller@1
+          displayName: 'Install Helm'
+          inputs:
+            helmVersionToInstall: 3.0.2
+
+      - task: AzureCLI@1
+        displayName: "AKS Authenticate"
+        inputs:
+          azureSubscription: azurerm-nonprod
+          scriptLocation: "inlineScript"
+          inlineScript: az aks get-credentials --admin --overwrite-existing --resource-group cnp-aks-rg --name cnp-aks-cluster
+      - task: CopyFiles@2
+        inputs:
+          contents: 'tests/deployment.yaml'
+          targetFolder: $(Build.SourcesDirectory)/library/templates
+      - task: Bash@3
+        inputs:
+          targetType: 'inline'
+          failOnStderr: true
+          script: |
+            sed -i "s/library/application/g" library/Chart.yaml
+            helm template library -f ci-values.yaml > deployment-template.yaml
+            cmp deployment-template.yaml tests/deployment-template.yaml
+            sed -i "s/application/library/g" library/Chart.yaml
+            rm -rf library/deployment.yaml
+
+  - job: Release
+    # Make sure we have a tag to run this job
+    condition: >
+      and(
+          succeeded(),
+          startsWith(variables['Build.SourceBranch'], 'refs/tags/')
+        )
+    dependsOn: Validate
+    pool:
+      vmImage: 'Ubuntu 16.04'
+    steps:
+      - template: steps/charts/release.yaml@cnp-library
+        parameters:
+          chartName: library
+          chartReleaseName: chart-java
+          chartNamespace: chart-tests

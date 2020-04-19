@@ -1,0 +1,31 @@
+applicationPort: 3000
+replicas: 1
+useInterpodAntiAffinity: false
+registerAdditionalDns:
+  enabled: false
+memoryRequests: 64Mi
+cpuRequests: 25m
+memoryLimits: 512Mi
+cpuLimits: 500m
+readinessPath: /health
+readinessDelay: 5
+readinessTimeout: 3
+readinessPeriod: 15
+livenessPath: /health/liveness
+livenessDelay: 5
+livenessTimeout: 3
+livenessPeriod: 15
+livenessFailureThreshold: 3
+applicationInsightsInstrumentKey: '00000000-0000-0000-0000-000000000000'
+imagePullPolicy: IfNotPresent
+dnsConfig:
+  ndots: "3"
+pdb:
+  enabled: true
+  maxUnavailable: 50%
+global:
+  enableKeyVaults: false
+prometheus:
+  enabled: false
+  path: /metrics
+ingressClass: traefik

@@ -1,0 +1,115 @@
+---
+# Source: application/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations: null
+  labels:
+    app.kubernetes.io/instance: release-name-application
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: release-name-application
+    helm.sh/chart: application-0.1.0-alpha
+  name: release-name-application
+spec:
+  replicas: 10
+  revisionHistoryLimit: 0
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: release-name-application
+  template:
+    metadata:
+      annotations: null
+      labels:
+        app.kubernetes.io/instance: release-name-application
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/name: release-name-application
+        helm.sh/chart: application-0.1.0-alpha
+    spec:
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: app.kubernetes.io/name
+                operator: In
+                values:
+                - release-name-application
+            topologyKey: kubernetes.io/hostname
+      containers:
+      - env:
+        - name: REFORM_ENVIRONMENT
+          value: preview
+        - name: REFORM_SERVICE_NAME
+          value: rhubarb-frontend
+        - name: REFORM_TEAM
+          value: cnp
+        envFrom:
+        - configMapRef:
+            name: release-name-application
+        image: hmctspublic.azurecr.io/chart-nodejs/testapp
+        imagePullPolicy: Always
+        livenessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /health/liveness
+            port: 3000
+          initialDelaySeconds: 5
+          periodSeconds: 15
+          timeoutSeconds: 3
+        name: release-name-application
+        ports:
+        - containerPort: 3000
+          name: http
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 3000
+          initialDelaySeconds: 5
+          periodSeconds: 15
+          timeoutSeconds: 3
+        resources:
+          limits:
+            cpu: 500m
+            memory: 512Mi
+          requests:
+            cpu: 25m
+            memory: 64Mi
+        securityContext:
+          allowPrivilegeEscalation: false
+        volumeMounts:
+        - mountPath: /mnt/secrets/bulk-scan
+          name: bulk-scan
+          readOnly: true
+        - mountPath: /mnt/secrets/s2s
+          name: s2s
+          readOnly: true
+      dnsConfig:
+        options:
+        - name: ndots
+          value: "3"
+      securityContext:
+        fsGroup: 1000
+        runAsUser: 1000
+      volumes:
+      - flexVolume:
+          driver: azure/kv
+          options:
+            keyvaultname: bulk-scan-aat
+            keyvaultobjectnames: idam-client-secret;s2s-secret
+            keyvaultobjecttypes: secret;secret
+            tenantid: 531ff96d-0ae9-462a-8d2d-bec7c0b42082
+            usepodidentity: "false"
+          secretRef:
+            name: kvcreds
+        name: bulk-scan
+      - flexVolume:
+          driver: azure/kv
+          options:
+            keyvaultname: s2s-aat
+            keyvaultobjectnames: microservicekey-ccd-admin;microservicekey-ccd-data
+            keyvaultobjecttypes: secret;secret
+            tenantid: 531ff96d-0ae9-462a-8d2d-bec7c0b42082
+            usepodidentity: "false"
+          secretRef:
+            name: kvcreds
+        name: s2s

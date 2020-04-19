@@ -1,0 +1,6 @@
+{{- template "hmcts.deployment.v1" (list . "test.deployment") -}}
+{{- define "test.deployment" -}}
+  ## Define overrides for your Deployment resource here, e.g.
+spec:
+  replicas: {{ .Values.testReplicas }}
+{{- end -}}
