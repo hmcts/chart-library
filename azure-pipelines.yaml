@@ -31,22 +31,19 @@ jobs:
           azureSubscription: azurerm-nonprod
           scriptLocation: "inlineScript"
           inlineScript: az aks get-credentials --admin --overwrite-existing --resource-group cnp-aks-rg --name cnp-aks-cluster
-      - task: CopyFiles@2
-        inputs:
-          contents: 'tests/deployment.yaml'
-          targetFolder: $(Build.SourcesDirectory)/library/templates
       - task: Bash@3
         inputs:
           targetType: 'inline'
           failOnStderr: true
           script: |
             set -x
+            cp tests/deployment.yaml library/templates/
             sed -i "s/library/application/g" library/Chart.yaml
             helm template library -f ci-values.yaml > deployment-template.yaml
             cat deployment-template.yaml
             cmp deployment-template.yaml tests/deployment-template.yaml
             sed -i "s/application/library/g" library/Chart.yaml
-            rm -rf library/deployment.yaml
+            rm -rf library/templates/deployment.yaml
 
   - job: Release
     # Make sure we have a tag to run this job
