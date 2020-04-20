@@ -13,7 +13,6 @@ livenessDelay: 5
 livenessTimeout: 3
 livenessPeriod: 15
 livenessFailureThreshold: 3
-applicationInsightsInstrumentKey: '00000000-0000-0000-0000-000000000000'
 dnsConfig:
   ndots: "3"
 pdb:
@@ -52,6 +51,3 @@ keyVaults:
       - microservicekey-ccd-data
 additionalPathBasedRoutes:
   "/test": "{{.Release.Name}}"
-  
-testReplicas: 10
-

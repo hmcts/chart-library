@@ -32,9 +32,11 @@
       memory: {{ .Values.memoryLimits }}
       cpu: {{ .Values.cpuLimits }}
   {{- end }}
+  {{- if .Values.applicationPort }}
   ports:
     - containerPort: {{ .Values.applicationPort }}
       name: http
+  {{- end }}
   {{- if .Values.livenessPath }}
   livenessProbe:
     httpGet:
