@@ -6,7 +6,7 @@ metadata:
   name: release-name-library  
   labels:
     app.kubernetes.io/name: release-name-library
-    helm.sh/chart: library-0.1.1-alpha
+    helm.sh/chart: library-0.1.2-alpha
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/instance: release-name-library  
   annotations:
@@ -20,7 +20,7 @@ spec:
     metadata:      
       labels:
         app.kubernetes.io/name: release-name-library
-        helm.sh/chart: library-0.1.1-alpha
+        helm.sh/chart: library-0.1.2-alpha
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/instance: release-name-library      
       annotations:
