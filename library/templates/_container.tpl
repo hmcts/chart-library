@@ -15,6 +15,15 @@
         name: {{ template "hmcts.releasename.v1" . }}
   {{- end }}
   {{- ( include "hmcts.secretMounts.v1" . ) | indent 2 }}
+  {{if .Values.global.devMode -}}
+  resources:
+    requests:
+      memory: {{ .Values.devmemoryRequests }}
+      cpu: {{ .Values.devcpuRequests }}
+    limits:
+      memory: {{ .Values.devmemoryLimits }}
+      cpu: {{ .Values.devcpuLimits }}
+  {{- else -}}
   resources:
     requests:
       memory: {{ .Values.memoryRequests }}
@@ -22,6 +31,7 @@
     limits:
       memory: {{ .Values.memoryLimits }}
       cpu: {{ .Values.cpuLimits }}
+  {{- end }}
   ports:
     - containerPort: {{ .Values.applicationPort }}
       name: http
