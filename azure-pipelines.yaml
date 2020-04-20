@@ -1,0 +1,43 @@
+name: chart-library pipeline
+trigger:
+  branches:
+    include:
+      - refs/tags/*
+pr:
+  branches:
+    include:
+      - master
+resources:
+  repositories:
+    - repository: cnp-library
+      type: github
+      ref: refs/heads/master
+      name: hmcts/cnp-azuredevops-libraries
+      endpoint: 'hmcts'
+
+jobs:
+  - job: Validate
+    pool:
+      vmImage: 'Ubuntu 16.04'
+    steps:
+      - task: HelmInstaller@1
+        displayName: 'Install Helm'
+        inputs:
+          helmVersionToInstall: 3.0.2
+      - script: ./tests/test-deployment.sh
+  - job: Release
+    # Make sure we have a tag to run this job
+    condition: >
+      and(
+          succeeded(),
+          startsWith(variables['Build.SourceBranch'], 'refs/tags/')
+        )
+    dependsOn: Validate
+    pool:
+      vmImage: 'Ubuntu 16.04'
+    steps:
+      - template: steps/charts/release.yaml@cnp-library
+        parameters:
+          chartName: library
+          chartReleaseName: chart-java
+          chartNamespace: chart-tests
