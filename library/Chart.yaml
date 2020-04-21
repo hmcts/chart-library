@@ -12,10 +12,10 @@ description: A Helm chart for Kubernetes
 # pipeline. Library charts do not define any templates and therefore cannot be deployed.
 type: library
 
-# This is the chart version. This version number should be incremented each time you make changes
-# to the chart and its templates, including the app version.
-version: 0.1.3-alpha
+# This is the chart version. This doesn't need to be incremented on every change. 
+# It is managed by release pipeline based on Github tag
+version: 0.1.0 # Do not change
 
-# This is the version number of the application being deployed. This version number should be
-# incremented each time you make changes to the application.
+# This is the version number of the application being deployed. This doesn't need to be incremented on every change.
+# It is managed by release pipeline based on Github tag
 appVersion: 0.1.0
