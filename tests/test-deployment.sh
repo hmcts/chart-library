@@ -12,6 +12,10 @@ cp tests/deployment.yaml library/templates/
 #change library chart to application
 yq w -i library/Chart.yaml type application
 
+version=$(yq r library/Chart.yaml version)
+
+sed -i "s/{chartVersion}/$version/g" tests/deployment-template.yaml 
+
 helm template library -f ci-values.yaml > deployment-template.yaml
 
 yq compare deployment-template.yaml tests/deployment-template.yaml

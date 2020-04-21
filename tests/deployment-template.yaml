@@ -1,14 +1,13 @@
----
 # Source: library/templates/deployment.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: release-name-library  
+  name: release-name-library
   labels:
     app.kubernetes.io/name: release-name-library
-    helm.sh/chart: library-0.1.3-alpha
+    helm.sh/chart: library-{chartVersion}
     app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/instance: release-name-library  
+    app.kubernetes.io/instance: release-name-library
   annotations:
 spec:
   revisionHistoryLimit: 0
@@ -17,99 +16,99 @@ spec:
     matchLabels:
       app.kubernetes.io/name: release-name-library
   template:
-    metadata:      
+    metadata:
       labels:
         app.kubernetes.io/name: release-name-library
-        helm.sh/chart: library-0.1.3-alpha
+        helm.sh/chart: library-{chartVersion}
         app.kubernetes.io/managed-by: Helm
-        app.kubernetes.io/instance: release-name-library      
+        app.kubernetes.io/instance: release-name-library
       annotations:
-    spec:      
+    spec:
       affinity:
         podAntiAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
-            - labelSelector:
-                matchExpressions:
-                  - key: app.kubernetes.io/name
-                    operator: In
-                    values:
-                    - release-name-library
-              topologyKey: "kubernetes.io/hostname"
+          - labelSelector:
+              matchExpressions:
+              - key: app.kubernetes.io/name
+                operator: In
+                values:
+                - release-name-library
+            topologyKey: "kubernetes.io/hostname"
       securityContext:
         runAsUser: 1000
-        fsGroup: 1000      
+        fsGroup: 1000
       volumes:
-        - name: bulk-scan
-          flexVolume:
-            driver: "azure/kv"
-            secretRef:
-              name: kvcreds
-            options:
-              usepodidentity: "false"
-              tenantid: "531ff96d-0ae9-462a-8d2d-bec7c0b42082"
-              keyvaultname: "bulk-scan-aat"
-              keyvaultobjectnames: "idam-client-secret;s2s-secret"
-              keyvaultobjecttypes: "secret;secret"
-        - name: s2s
-          flexVolume:
-            driver: "azure/kv"
-            secretRef:
-              name: kvcreds
-            options:
-              usepodidentity: "false"
-              tenantid: "531ff96d-0ae9-462a-8d2d-bec7c0b42082"
-              keyvaultname: "s2s-aat"
-              keyvaultobjectnames: "microservicekey-ccd-admin;microservicekey-ccd-data"
-              keyvaultobjecttypes: "secret;secret"      
+      - name: bulk-scan
+        flexVolume:
+          driver: "azure/kv"
+          secretRef:
+            name: kvcreds
+          options:
+            usepodidentity: "false"
+            tenantid: "531ff96d-0ae9-462a-8d2d-bec7c0b42082"
+            keyvaultname: "bulk-scan-aat"
+            keyvaultobjectnames: "idam-client-secret;s2s-secret"
+            keyvaultobjecttypes: "secret;secret"
+      - name: s2s
+        flexVolume:
+          driver: "azure/kv"
+          secretRef:
+            name: kvcreds
+          options:
+            usepodidentity: "false"
+            tenantid: "531ff96d-0ae9-462a-8d2d-bec7c0b42082"
+            keyvaultname: "s2s-aat"
+            keyvaultobjectnames: "microservicekey-ccd-admin;microservicekey-ccd-data"
+            keyvaultobjecttypes: "secret;secret"
       dnsConfig:
         options:
-          - name: ndots
-            value: "3"
+        - name: ndots
+          value: "3"
       containers:
-        - image: hmctspublic.azurecr.io/chart-nodejs/testapp
-          name: release-name-library
-          securityContext:
-            allowPrivilegeEscalation: false
-          env:        
-            - name: REFORM_ENVIRONMENT
-              value: "preview"
-            - name: REFORM_SERVICE_NAME
-              value: "rhubarb-frontend"
-            - name: REFORM_TEAM
-              value: "cnp"
-          envFrom:
-            - configMapRef:
-                name: release-name-library  
-          volumeMounts:
-            - name: "bulk-scan"
-              mountPath: "/mnt/secrets/bulk-scan"
-              readOnly: true
-            - name: "s2s"
-              mountPath: "/mnt/secrets/s2s"
-              readOnly: true
-          resources:
-            requests:
-              memory: 64Mi
-              cpu: 25m
-            limits:
-              memory: 512Mi
-              cpu: 500m
-          ports:
-            - containerPort: 3000
-              name: http
-          livenessProbe:
-            httpGet:
-              path: /health/liveness
-              port: 3000
-            initialDelaySeconds: 5
-            timeoutSeconds: 3
-            periodSeconds: 15
-            failureThreshold: 3
-          readinessProbe:
-            httpGet:
-              path: /health
-              port: 3000
-            initialDelaySeconds: 5
-            timeoutSeconds: 3
-            periodSeconds: 15
-          imagePullPolicy: Always
+      - image: hmctspublic.azurecr.io/chart-nodejs/testapp
+        name: release-name-library
+        securityContext:
+          allowPrivilegeEscalation: false
+        env:
+        - name: REFORM_ENVIRONMENT
+          value: "preview"
+        - name: REFORM_SERVICE_NAME
+          value: "rhubarb-frontend"
+        - name: REFORM_TEAM
+          value: "cnp"
+        envFrom:
+        - configMapRef:
+            name: release-name-library
+        volumeMounts:
+        - name: "bulk-scan"
+          mountPath: "/mnt/secrets/bulk-scan"
+          readOnly: true
+        - name: "s2s"
+          mountPath: "/mnt/secrets/s2s"
+          readOnly: true
+        resources:
+          requests:
+            memory: 64Mi
+            cpu: 25m
+          limits:
+            memory: 512Mi
+            cpu: 500m
+        ports:
+        - containerPort: 3000
+          name: http
+        livenessProbe:
+          httpGet:
+            path: /health/liveness
+            port: 3000
+          initialDelaySeconds: 5
+          timeoutSeconds: 3
+          periodSeconds: 15
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 3000
+          initialDelaySeconds: 5
+          timeoutSeconds: 3
+          periodSeconds: 15
+        imagePullPolicy: Always
