@@ -3,10 +3,13 @@ All the common annotations needed for the annotations sections of the definition
 */}}
 {{- define "hmcts.annotations.v1" }}
 annotations:
-{{- if .Values.prometheus.enabled }}
+  {{- $applicationPort := .Values.applicationPort -}} 
+  {{- with .Values.prometheus }}
+  {{- if .enabled }}
   prometheus.io/scrape: "true"
-  prometheus.io/path: {{ .Values.prometheus.path | quote }}
-  prometheus.io/port: {{ .Values.applicationPort | quote }}
+  prometheus.io/path: {{ .path | quote }}
+  prometheus.io/port: {{ $applicationPort | quote }}
+  {{- end }}
   {{- end }}
   {{- if .Values.buildID }}
   buildID: {{ .Values.buildID }}
