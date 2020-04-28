@@ -4,7 +4,7 @@
   securityContext:
     allowPrivilegeEscalation: false
   env:
-      {{- ( include "hmcts.secrets.v1" .) | indent 8 }}
+      {{- ( include "hmcts.secrets.v1" .) | indent 4 }}
       {{- range $key, $val := .Values.environment }}
     - name: {{ $key }}
       value: {{ tpl ($val | quote) $ }}

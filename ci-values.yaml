@@ -51,3 +51,7 @@ keyVaults:
       - microservicekey-ccd-data
 additionalPathBasedRoutes:
   "/test": "{{.Release.Name}}"
+secrets:
+  STORAGE_ACCOUNT_NAME:
+    secretRef: storage-secret-example-{{ .Release.Name }}
+    key: storageAccountName
