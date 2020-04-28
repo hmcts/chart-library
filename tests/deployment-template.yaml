@@ -70,6 +70,11 @@ spec:
         securityContext:
           allowPrivilegeEscalation: false
         env:
+        - name: STORAGE_ACCOUNT_NAME
+          valueFrom:
+            secretKeyRef:
+              name: storage-secret-example-RELEASE-NAME
+              key: storageAccountName
         - name: REFORM_ENVIRONMENT
           value: "preview"
         - name: REFORM_SERVICE_NAME
