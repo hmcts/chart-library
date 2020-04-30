@@ -14,9 +14,11 @@ spec:
       {{- (include "hmcts.annotations.v1" .) | indent 6 }}
     spec:
       {{- ( include "hmcts.interpodantiaffinity.v1" . ) | indent 6 }}
+      {{- if (not .Values.disableSecurityContext) }}
       securityContext:
         runAsUser: 1000
         fsGroup: 1000
+      {{- end -}}
       {{- ( include "hmcts.secretVolumes.v1" . ) | indent 6 }}
       {{- ( include "hmcts.dnsConfig.v1" . ) | indent 6 }}
       containers:
