@@ -18,19 +18,19 @@
   {{if .Values.global.devMode -}}
   resources:
     requests:
-      memory: {{ .Values.devmemoryRequests }}
-      cpu: {{ .Values.devcpuRequests }}
+      memory: {{ .Values.devmemoryRequests | quote }}
+      cpu: {{ .Values.devcpuRequests | quote }}
     limits:
-      memory: {{ .Values.devmemoryLimits }}
-      cpu: {{ .Values.devcpuLimits }}
+      memory: {{ .Values.devmemoryLimits | quote }}
+      cpu: {{ .Values.devcpuLimits | quote }}
   {{- else -}}
   resources:
     requests:
-      memory: {{ .Values.memoryRequests }}
-      cpu: {{ .Values.cpuRequests }}
+      memory: {{ .Values.memoryRequests | quote }}
+      cpu: {{ .Values.cpuRequests | quote }}
     limits:
-      memory: {{ .Values.memoryLimits }}
-      cpu: {{ .Values.cpuLimits }}
+      memory: {{ .Values.memoryLimits | quote }}
+      cpu: {{ .Values.cpuLimits | quote }}
   {{- end }}
   {{- if .Values.applicationPort }}
   ports:
