@@ -1,0 +1,16 @@
+---
+# Source: library/templates/pdb.yaml
+apiVersion: policy/v1beta1
+kind: PodDisruptionBudget
+metadata:
+  name:  release-name-library  
+  labels:
+    app.kubernetes.io/name: release-name-library
+    helm.sh/chart: library-0.1.0
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/instance: release-name-library
+spec:
+  maxUnavailable: 50%
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: release-name-library
