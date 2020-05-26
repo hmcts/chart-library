@@ -7,5 +7,9 @@ dnsConfig:
   options:
     - name: ndots
       value: {{ .Values.dnsConfig.ndots | quote }}
+    {{- if .Values.dnsConfig.singleRequestTcp }}
+    - name: single-request-reopen
+    - name: use-vc
+    {{- end }} 
 {{- end }}  
 {{- end -}}
