@@ -74,13 +74,13 @@ testsConfig:
   serviceAccountName: tests-service-account
 smoketests:
   image: hmctspublic.azurecr.io/spring-boot/template
-  enabled: true
+  enabled: false
 functionaltests:
   image: hmctspublic.azurecr.io/spring-boot/template
-  enabled: true
+  enabled: false
 smoketestscron:
   image: hmctspublic.azurecr.io/spring-boot/template
-  enabled: true
+  enabled: false
   schedule: "20 0/1 * * *"
 functionaltestscron:
   image: hmctspublic.azurecr.io/spring-boot/template

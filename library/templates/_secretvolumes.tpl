@@ -8,7 +8,7 @@ The bit of templating needed to create the flex-Volume keyvault for mounting
 {{- $aadIdentityName := .Values.aadIdentityName }}
 volumes:
 {{- range $vault, $info := .Values.keyVaults }}
-  - name: {{ $vault }}
+  - name: vault-{{ $vault }}
     flexVolume:
       driver: "azure/kv"
       {{- if not $aadIdentityName }}
@@ -32,7 +32,7 @@ Mount the Key vaults on /mnt/secrets
 {{- if and .Values.keyVaults .Values.global.enableKeyVaults }}
 volumeMounts:
 {{- range $vault, $info := .Values.keyVaults }}
-  - name: {{ $vault | quote }}
+  - name: vault-{{ $vault }}
     mountPath: "/mnt/secrets/{{ $vault }}"
     readOnly: true
 {{- end }}
