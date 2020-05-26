@@ -39,5 +39,5 @@ jobs:
       - template: steps/charts/release.yaml@cnp-library
         parameters:
           chartName: library
-          chartReleaseName: chart-java
+          chartReleaseName: chart-library
           chartNamespace: chart-tests

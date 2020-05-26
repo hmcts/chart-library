@@ -1,3 +1,53 @@
+---
+# Source: library/templates/pdb.yaml
+apiVersion: policy/v1beta1
+kind: PodDisruptionBudget
+metadata:
+  name:  release-name-library
+  labels:
+    app.kubernetes.io/name: release-name-library
+    helm.sh/chart: library-0.1.0
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/instance: release-name-library
+spec:
+  maxUnavailable: 50%
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: release-name-library
+---
+# Source: library/templates/configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: release-name-library
+  labels:
+    app.kubernetes.io/name: release-name-library
+    helm.sh/chart: library-0.1.0
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/instance: release-name-library
+data:
+  VAR_A: "VALUE_A"
+  VAR_B: "VALUE_B"
+---
+# Source: library/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: release-name-library
+  labels:
+    app.kubernetes.io/name: release-name-library
+    helm.sh/chart: library-0.1.0
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/instance: release-name-library
+spec:
+  ports:
+    - name: http
+      protocol: TCP
+      port: 80
+      targetPort: 3000
+  selector:
+    app.kubernetes.io/name: release-name-library
+---
 # Source: library/templates/deployment.yaml
 apiVersion: apps/v1
 kind: Deployment
@@ -5,7 +55,7 @@ metadata:
   name: release-name-library
   labels:
     app.kubernetes.io/name: release-name-library
-    helm.sh/chart: library-{chartVersion}
+    helm.sh/chart: library-0.1.0
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/instance: release-name-library
   annotations:
@@ -19,7 +69,7 @@ spec:
     metadata:
       labels:
         app.kubernetes.io/name: release-name-library
-        helm.sh/chart: library-{chartVersion}
+        helm.sh/chart: library-0.1.0
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/instance: release-name-library
       annotations:
@@ -27,93 +77,115 @@ spec:
       affinity:
         podAntiAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
-          - labelSelector:
-              matchExpressions:
-              - key: app.kubernetes.io/name
-                operator: In
-                values:
-                - release-name-library
-            topologyKey: "kubernetes.io/hostname"
+            - labelSelector:
+                matchExpressions:
+                  - key: app.kubernetes.io/name
+                    operator: In
+                    values:
+                      - release-name-library
+              topologyKey: "kubernetes.io/hostname"
       securityContext:
         runAsUser: 1000
         fsGroup: 1000
       volumes:
-      - name: bulk-scan
-        flexVolume:
-          driver: "azure/kv"
-          secretRef:
-            name: kvcreds
-          options:
-            usepodidentity: "false"
-            tenantid: "531ff96d-0ae9-462a-8d2d-bec7c0b42082"
-            keyvaultname: "bulk-scan-aat"
-            keyvaultobjectnames: "idam-client-secret;s2s-secret"
-            keyvaultobjecttypes: "secret;secret"
-      - name: s2s
-        flexVolume:
-          driver: "azure/kv"
-          secretRef:
-            name: kvcreds
-          options:
-            usepodidentity: "false"
-            tenantid: "531ff96d-0ae9-462a-8d2d-bec7c0b42082"
-            keyvaultname: "s2s-aat"
-            keyvaultobjectnames: "microservicekey-ccd-admin;microservicekey-ccd-data"
-            keyvaultobjecttypes: "secret;secret"
+        - name: bulk-scan
+          flexVolume:
+            driver: "azure/kv"
+            secretRef:
+              name: kvcreds
+            options:
+              usepodidentity: "false"
+              tenantid: "531ff96d-0ae9-462a-8d2d-bec7c0b42082"
+              keyvaultname: "bulk-scan-aat"
+              keyvaultobjectnames: "idam-client-secret;s2s-secret"
+              keyvaultobjecttypes: "secret;secret"
+        - name: s2s
+          flexVolume:
+            driver: "azure/kv"
+            secretRef:
+              name: kvcreds
+            options:
+              usepodidentity: "false"
+              tenantid: "531ff96d-0ae9-462a-8d2d-bec7c0b42082"
+              keyvaultname: "s2s-aat"
+              keyvaultobjectnames: "microservicekey-ccd-admin;microservicekey-ccd-data"
+              keyvaultobjecttypes: "secret;secret"
       dnsConfig:
         options:
-        - name: ndots
-          value: "3"
+          - name: ndots
+            value: "3"
       containers:
-      - image: hmctspublic.azurecr.io/chart-nodejs/testapp
-        name: release-name-library
-        securityContext:
-          allowPrivilegeEscalation: false
-        env:
-        - name: STORAGE_ACCOUNT_NAME
-          valueFrom:
-            secretKeyRef:
-              name: storage-secret-example-RELEASE-NAME
-              key: storageAccountName
-        - name: REFORM_ENVIRONMENT
-          value: "preview"
-        - name: REFORM_SERVICE_NAME
-          value: "rhubarb-frontend"
-        - name: REFORM_TEAM
-          value: "cnp"
-        envFrom:
-        - configMapRef:
-            name: release-name-library
-        volumeMounts:
-        - name: "bulk-scan"
-          mountPath: "/mnt/secrets/bulk-scan"
-          readOnly: true
-        - name: "s2s"
-          mountPath: "/mnt/secrets/s2s"
-          readOnly: true
-        resources:
-          requests:
-            memory: "64Mi"
-            cpu: "25m"
-          limits:
-            memory: "512Mi"
-            cpu: "500m"
-        ports:
-        - containerPort: 3000
-          name: http
-        livenessProbe:
-          httpGet:
-            path: /health/liveness
-            port: 3000
-          initialDelaySeconds: 5
-          timeoutSeconds: 3
-          periodSeconds: 15
-          failureThreshold: 3
-        readinessProbe:
-          httpGet:
-            path: /health
-            port: 3000
-          initialDelaySeconds: 5
-          timeoutSeconds: 3
-          periodSeconds: 15
-        imagePullPolicy: Always
+        - image: hmctspublic.azurecr.io/chart-nodejs/testapp
+          name: release-name-library
+          securityContext:
+            allowPrivilegeEscalation: false
+          env:
+            - name: STORAGE_ACCOUNT_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: storage-secret-example-RELEASE-NAME
+                  key: storageAccountName
+            - name: REFORM_ENVIRONMENT
+              value: "preview"
+            - name: REFORM_SERVICE_NAME
+              value: "rhubarb-frontend"
+            - name: REFORM_TEAM
+              value: "cnp"
+          envFrom:
+            - configMapRef:
+                name: release-name-library
+          volumeMounts:
+            - name: "bulk-scan"
+              mountPath: "/mnt/secrets/bulk-scan"
+              readOnly: true
+            - name: "s2s"
+              mountPath: "/mnt/secrets/s2s"
+              readOnly: true
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "25m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+          ports:
+            - containerPort: 3000
+              name: http
+          livenessProbe:
+            httpGet:
+              path: /health/liveness
+              port: 3000
+            initialDelaySeconds: 5
+            timeoutSeconds: 3
+            periodSeconds: 15
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 3000
+            initialDelaySeconds: 5
+            timeoutSeconds: 3
+            periodSeconds: 15
+          imagePullPolicy: Always
+---
+# Source: library/templates/ingress.yaml
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: release-name-library
+  labels:
+    app.kubernetes.io/name: release-name-library
+    helm.sh/chart: library-0.1.0
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/instance: release-name-library
+  annotations:
+    kubernetes.io/ingress.class: traefik
+spec:
+  rules:
+    - host: RELEASE-NAME.service.core-compute-preview.internal
+      http:
+        paths:
+          - path: /
+            backend:
+              serviceName: release-name-library
+              servicePort: 80

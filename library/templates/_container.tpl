@@ -4,6 +4,10 @@
   securityContext:
     allowPrivilegeEscalation: false
   env:
+    {{- if .Values.global.devMode }}
+    - name: {{ .Values.devApplicationInsightsInstrumentKeyName }}
+      value: {{ .Values.devApplicationInsightsInstrumentKey | quote }}
+    {{- end -}}
       {{- ( include "hmcts.secrets.v1" .) | indent 4 }}
       {{- range $key, $val := .Values.environment }}
     - name: {{ $key }}

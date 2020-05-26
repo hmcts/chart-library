@@ -7,7 +7,7 @@ sudo snap install yq
 helm lint library/
 
 #copy test deployment
-cp tests/deployment.yaml library/templates/
+cp tests/{deployment.yaml,configmap.yaml,ingress.yaml,pdb.yaml,service.yaml} library/templates/
 
 #change library chart to application
 yq w -i library/Chart.yaml type application
