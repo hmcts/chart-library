@@ -26,6 +26,11 @@ global:
   tenantId: "531ff96d-0ae9-462a-8d2d-bec7c0b42082"
   environment: aat
   enableKeyVaults: true
+  devMode: false
+  smoketestscron:
+    enabled: true
+  functionaltestscron:
+    enabled: true
 image: hmctspublic.azurecr.io/chart-nodejs/testapp
 replicas: 2
 useInterpodAntiAffinity: true
@@ -60,3 +65,24 @@ secrets:
 ingressSessionAffinity:
   enabled: false
   sessionCookieName: sticky
+
+testsConfig:
+  memoryRequests: '256Mi'
+  cpuRequests: '100m'
+  memoryLimits: '2048Mi'
+  cpuLimits: '1000m'
+  serviceAccountName: tests-service-account
+smoketests:
+  image: hmctspublic.azurecr.io/spring-boot/template
+  enabled: true
+functionaltests:
+  image: hmctspublic.azurecr.io/spring-boot/template
+  enabled: true
+smoketestscron:
+  image: hmctspublic.azurecr.io/spring-boot/template
+  enabled: true
+  schedule: "20 0/1 * * *"
+functionaltestscron:
+  image: hmctspublic.azurecr.io/spring-boot/template
+  enabled: true
+  schedule: "30 0/6 * * *"
