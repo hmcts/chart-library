@@ -9,7 +9,7 @@ metadata:
   # WARNING: ingressSessionAffinity is a temporary option.
   # This is subject to removal without notice. Do NOT use for any reason!
   */ -}}
-  {{- if (.Values.ingressSessionAffinity.enabled) }}
+  {{- if (and .Values.ingressSessionAffinity .Values.ingressSessionAffinity.enabled) }}
   annotations:
     traefik.ingress.kubernetes.io/affinity: "true"
     traefik.ingress.kubernetes.io/session-cookie-name: {{ .Values.ingressSessionAffinity.sessionCookieName | quote }}
