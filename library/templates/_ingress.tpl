@@ -14,6 +14,7 @@ spec:
   - host: {{ tpl .Values.ingressHost $ }}
     http:
       paths:
+      {{- ( include "hmcts.additionalPathBasedRoutes.v1" .) | indent 4 }}
       - path: /
         backend:
           serviceName: {{ template "hmcts.releasename.v1" . }}
@@ -23,6 +24,7 @@ spec:
   - host: {{ .Values.registerAdditionalDns.prefix }}-{{ tpl .Values.registerAdditionalDns.primaryIngressHost $ }}
     http:
       paths:
+      {{- ( include "hmcts.additionalPathBasedRoutes.v1" .) | indent 4 }}
       - path: /
         backend:
           serviceName: {{ template "hmcts.releasename.v1" . }}
@@ -33,4 +35,16 @@ spec:
 
 {{- define "hmcts.ingress.v1" -}}
 {{- template "hmcts.util.merge.v1" (append . "hmcts.ingress.v1.tpl") -}}
+{{- end -}}
+
+{{/*
+Additional Path based routes
+*/}}
+{{- define "hmcts.additionalPathBasedRoutes.v1" }}
+{{- range $path, $serviceName := .Values.additionalPathBasedRoutes }}
+  - path: {{ $path }}
+    backend:
+      serviceName: {{ tpl $serviceName $ }}
+      servicePort: 80
+{{- end }}
 {{- end -}}
