@@ -24,7 +24,8 @@ spec:
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/instance: release-name-library    
       annotations:
-    spec:    
+    spec:
+      serviceAccountName: release-name-library
       affinity:
         podAntiAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:

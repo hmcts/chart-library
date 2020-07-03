@@ -7,6 +7,9 @@ template:
     {{- (include "hmcts.labels.v1" .) | indent 4 }}
     {{- (include "hmcts.annotations.v1" .) | indent 4 }}
   spec:
+    {{- if .Values.saEnabled }}
+    serviceAccountName: {{ template "hmcts.releasename.v1" . }}
+    {{- end }}
     {{- include "hmcts.interpodantiaffinity.v1" . | indent 4 }}
     securityContext:
       runAsUser: 1000
