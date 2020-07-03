@@ -44,6 +44,7 @@ environment:
 configmap:
   VAR_A: VALUE_A
   VAR_B: VALUE_B
+saEnabled: false
 keyVaults:
   bulk-scan:
     excludeEnvironmentSuffix: false

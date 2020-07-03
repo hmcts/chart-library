@@ -7,7 +7,7 @@ helm lint library/
 #change library chart to application
 yq w -i library/Chart.yaml type application
 
-for file in $(echo "deployment.yaml configmap.yaml ingress.yaml pdb.yaml service.yaml deployment-tests.yaml"); do
+for file in $(echo "sa.yaml deployment.yaml configmap.yaml ingress.yaml pdb.yaml service.yaml deployment-tests.yaml"); do
   cp tests/$file library/templates/
   helm template library -f ci-values.yaml > template-$file
   yq compare template-$file tests/results/template-$file
