@@ -24,7 +24,8 @@ jobs:
         displayName: 'Install Helm'
         inputs:
           helmVersionToInstall: 3.0.2
-      - script: ./tests/test-deployment.sh
+      - script: sudo snap install yq
+      - script: ./tests/test-templates.sh
   - job: Release
     # Make sure we have a tag to run this job
     condition: >

@@ -2,8 +2,6 @@
 
 set -e
 
-sudo snap install yq
-
 helm lint library/
 
 #change library chart to application
