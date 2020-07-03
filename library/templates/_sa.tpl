@@ -1,5 +1,5 @@
 {{- define "hmcts.sa.v1.tpl" -}}
-{{ if .Values.sa.enabled }}
+{{ if .Values.saEnabled }}
 apiVersion: v1
 kind: ServiceAccount
 metadata:
