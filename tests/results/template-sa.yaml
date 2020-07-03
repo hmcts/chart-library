@@ -1,3 +1,5 @@
+---
+# Source: library/templates/sa.yaml
 apiVersion: v1
 kind: ServiceAccount
 metadata:
