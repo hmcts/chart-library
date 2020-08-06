@@ -2,7 +2,7 @@
 The bit of templating needed to create the flex-Volume keyvault for mounting
 */}}
 {{- define "hmcts.secretVolumes.v1" }}
-{{- if and .Values.keyVaults .Values.global.enableKeyVaults }}
+{{- if and .Values.keyVaults .Values.global.enableKeyVaults (not .Values.disableKeyVaults) }}
 {{- $globals := .Values.global }}
 {{- $keyVaults := .Values.keyVaults }}
 {{- $aadIdentityName := .Values.aadIdentityName }}
@@ -29,7 +29,7 @@ volumes:
 Mount the Key vaults on /mnt/secrets
 */}}
 {{- define "hmcts.secretMounts.v1" -}}
-{{- if and .Values.keyVaults .Values.global.enableKeyVaults }}
+{{- if and .Values.keyVaults .Values.global.enableKeyVaults (not .Values.disableKeyVaults) }}
 volumeMounts:
 {{- range $vault, $info := .Values.keyVaults }}
   - name: vault-{{ $vault }}
