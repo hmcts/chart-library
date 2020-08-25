@@ -16,7 +16,7 @@ Usage: 'name: "{{- template "hmcts.releasename.v1" . -}}"'
   {{- $global := default (dict) .Values.global -}}
   {{- $base := printf "%s-%s" .Release.Name .Chart.Name -}}
   {{- if .Values.releaseNameOverride -}}
-  {{- $base := tpl .Values.releaseNameOverride $ -}}  
+  {{- $base = tpl .Values.releaseNameOverride $ -}}  
   {{- end -}}
   {{- $gpre := default "" $global.releaseNamePrefix -}}
   {{- $pre := default "" .Values.releaseNamePrefix -}}
