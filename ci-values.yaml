@@ -47,11 +47,15 @@ configmap:
 saEnabled: true
 keyVaults:
   bulk-scan:
+    resourceGroup: "bulk-scan-aat"
+    subscriptionId: "1c4f0704-a29e-403d-b719-b90c34ef14c9"
     excludeEnvironmentSuffix: false
     secrets:
       - idam-client-secret
       - s2s-secret
   s2s:
+    resourceGroup: "rpe-service-auth-provider-aat"
+    subscriptionId: "1c4f0704-a29e-403d-b719-b90c34ef14c9"
     secrets:
       - microservicekey-ccd-admin
       - microservicekey-ccd-data
@@ -68,10 +72,10 @@ ingressSessionAffinity:
   sessionCookieName: sticky
 
 testsConfig:
-  memoryRequests: '256Mi'
-  cpuRequests: '100m'
-  memoryLimits: '2048Mi'
-  cpuLimits: '1000m'
+  memoryRequests: "256Mi"
+  cpuRequests: "100m"
+  memoryLimits: "2048Mi"
+  cpuLimits: "1000m"
   serviceAccountName: tests-service-account
 smoketests:
   image: hmctspublic.azurecr.io/spring-boot/template

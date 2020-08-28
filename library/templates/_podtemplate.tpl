@@ -14,7 +14,7 @@ template:
     securityContext:
       runAsUser: 1000
       fsGroup: 1000
-    {{- ( include "hmcts.secretVolumes.v1" . ) | indent 4 }}
+    {{- ( include "hmcts.secretCSIVolumes.v1" . ) | indent 4 }}
     {{- ( include "hmcts.dnsConfig.v1" . ) | indent 4 }}
     containers:
 {{ include "hmcts.container.v1.tpl" . | indent 6 -}}
