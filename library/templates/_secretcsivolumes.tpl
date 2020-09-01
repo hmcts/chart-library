@@ -22,8 +22,6 @@ volumes:
               objectType: secret
           {{- end }}
         tenantid: {{ $globals.tenantId | quote }}
-        resourceGroup: {{ $info.resourceGroup | quote }}
-        subscriptionId: {{ $info.subscriptionId | quote }}
 {{- end }}
 {{- end }}
 {{- end }}
