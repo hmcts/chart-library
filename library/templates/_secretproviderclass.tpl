@@ -1,11 +1,10 @@
 {{- define "hmcts.secretproviderclass.v1.tpl" -}}
----
-{{- range $vault, $info := .Values.keyVaults }}
-apiVersion: secrets-store.csi.x-k8s.io/v1alpha1
-kind: SecretProviderClass
 {{- if and .Values.keyVaults .Values.global.enableKeyVaults (not .Values.disableKeyVaults) }}
 {{- $globals := .Values.global }}
 {{- $keyVaults := .Values.keyVaults }}
+{{- range $vault, $info := .Values.keyVaults }}
+apiVersion: secrets-store.csi.x-k8s.io/v1alpha1
+kind: SecretProviderClass
 metadata:
   name: vault-{{ $vault }}
 spec:
@@ -20,7 +19,11 @@ spec:
           objectName: {{ . }}
           objectType: secret
       {{- end }}
-      tenantid: {{ $globals.tenantId | quote }}
+    tenantId: {{ $globals.tenantId | quote }}
 {{- end }}
 {{- end }}
 {{- end }}
+
+{{- define "hmcts.secretproviderclass.v1" -}}
+{{- template "hmcts.util.merge.v1" (append . "hmcts.secretproviderclass.v1.tpl") -}}
+{{- end -}}
