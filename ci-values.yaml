@@ -47,15 +47,11 @@ configmap:
 saEnabled: true
 keyVaults:
   bulk-scan:
-    resourceGroup: "bulk-scan-aat"
-    subscriptionId: "1c4f0704-a29e-403d-b719-b90c34ef14c9"
     excludeEnvironmentSuffix: false
     secrets:
       - idam-client-secret
       - s2s-secret
   s2s:
-    resourceGroup: "rpe-service-auth-provider-aat"
-    subscriptionId: "1c4f0704-a29e-403d-b719-b90c34ef14c9"
     secrets:
       - microservicekey-ccd-admin
       - microservicekey-ccd-data
