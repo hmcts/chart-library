@@ -1,4 +1,5 @@
 {{- define "hmcts.secretproviderclass.v1.tpl" -}}
+---
 {{- range $vault, $info := .Values.keyVaults }}
 apiVersion: secrets-store.csi.x-k8s.io/v1alpha1
 kind: SecretProviderClass

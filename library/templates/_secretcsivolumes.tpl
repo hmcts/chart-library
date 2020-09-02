@@ -1,5 +1,5 @@
 {{/*
-The bit of templating needed to create the flex-Volume keyvault for mounting
+The bit of templating needed to create the CSI driver keyvault for mounting
 */}}
 {{- define "hmcts.secretCSIVolumes.v1" }}
 {{- if and .Values.keyVaults .Values.global.enableKeyVaults (not .Values.disableKeyVaults) }}
