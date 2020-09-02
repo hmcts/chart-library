@@ -45,39 +45,13 @@ spec:
             driver: "secrets-store.csi.k8s.io"
             readOnly: true
             volumeAttributes:
-              providerName: "azure"
-              usePodIdentity: "true"
-              keyvaultName: "bulk-scan-aat"
-              objects: |
-                array:
-                  - |
-                    objectName: idam-client-secret
-                    objectType: secret
-                  - |
-                    objectName: s2s-secret
-                    objectType: secret
-              tenantid: "531ff96d-0ae9-462a-8d2d-bec7c0b42082"
-              resourceGroup: "bulk-scan-aat"
-              subscriptionId: "1c4f0704-a29e-403d-b719-b90c34ef14c9"
+              secretProviderClass: vault-bulk-scan
         - name: vault-s2s
           csi:
             driver: "secrets-store.csi.k8s.io"
             readOnly: true
             volumeAttributes:
-              providerName: "azure"
-              usePodIdentity: "true"
-              keyvaultName: "s2s-aat"
-              objects: |
-                array:
-                  - |
-                    objectName: microservicekey-ccd-admin
-                    objectType: secret
-                  - |
-                    objectName: microservicekey-ccd-data
-                    objectType: secret
-              tenantid: "531ff96d-0ae9-462a-8d2d-bec7c0b42082"
-              resourceGroup: "rpe-service-auth-provider-aat"
-              subscriptionId: "1c4f0704-a29e-403d-b719-b90c34ef14c9"
+              secretProviderClass: vault-s2s
       dnsConfig:
         options:
           - name: ndots

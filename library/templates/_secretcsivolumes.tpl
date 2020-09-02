@@ -12,16 +12,7 @@ volumes:
       driver: "secrets-store.csi.k8s.io"
       readOnly: true
       volumeAttributes:
-        providerName: "azure"
-        usePodIdentity: "true"
-        keyvaultName: "{{ $vault }}{{ if not (default $info.excludeEnvironmentSuffix false) }}-{{ $globals.environment }}{{ end }}"
-        objects: |
-          array: {{- range $info.secrets }}
-            - |
-              objectName: {{ . }}
-              objectType: secret
-          {{- end }}
-        tenantid: {{ $globals.tenantId | quote }}
+        secretProviderClass: vault-{{ $vault }}
 {{- end }}
 {{- end }}
 {{- end }}
