@@ -45,13 +45,13 @@ spec:
             driver: "secrets-store.csi.k8s.io"
             readOnly: true
             volumeAttributes:
-              secretProviderClass: vault-bulk-scan
+              secretProviderClass: release-name-library-bulk-scan
         - name: vault-s2s
           csi:
             driver: "secrets-store.csi.k8s.io"
             readOnly: true
             volumeAttributes:
-              secretProviderClass: vault-s2s
+              secretProviderClass: release-name-library-s2s
       dnsConfig:
         options:
           - name: ndots
