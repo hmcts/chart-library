@@ -2,11 +2,12 @@
 {{- if and .Values.keyVaults .Values.global.enableKeyVaults (not .Values.disableKeyVaults) }}
 {{- $globals := .Values.global }}
 {{- $keyVaults := .Values.keyVaults }}
+{{- $root := . }}
 {{- range $vault, $info := .Values.keyVaults }}
 apiVersion: secrets-store.csi.x-k8s.io/v1alpha1
 kind: SecretProviderClass
 metadata:
-  name: {{ template "hmcts.releasename.v1" . }}
+  name: {{ template "hmcts.releasename.v1" $root }}
 spec:
   provider: azure
   parameters:
