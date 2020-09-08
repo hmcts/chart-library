@@ -6,7 +6,7 @@
 apiVersion: secrets-store.csi.x-k8s.io/v1alpha1
 kind: SecretProviderClass
 metadata:
-  name: vault-{{ $vault }}
+  name: {{ template "hmcts.releasename.v1" . }}
 spec:
   provider: azure
   parameters:
