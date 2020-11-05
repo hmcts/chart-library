@@ -87,3 +87,8 @@ functionaltestscron:
   image: hmctspublic.azurecr.io/spring-boot/template
   enabled: true
   schedule: "30 0/6 * * *"
+
+# HPA
+autoscaling:
+  enabled: true
+  maxReplicas: 5
