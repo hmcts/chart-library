@@ -16,12 +16,4 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: release-name-library
-    metrics:
-      - type: Resource
-        resource:
-          name: cpu
-          targetAverageUtilization: 80
-      - type: Resource
-        resource:
-          name: cpu
-          targetAverageUtilization: 80
+  targetCPUUtilizationPercentage: 80

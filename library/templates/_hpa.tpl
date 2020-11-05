@@ -5,23 +5,11 @@ kind: HorizontalPodAutoscaler
 {{ template "hmcts.metadata.v1" . }}
 spec:
   maxReplicas: {{ .Values.autoscaling.maxReplicas }} 
-  {{ if .Values.autoscaling.minReplicas }}
-  minReplicas: {{ .Values.autoscaling.minReplicas }}
-  {{ else }}
-  minReplicas: 2
-  {{ end }}
+  minReplicas: {{ .Values.replicas }}
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
     name: {{ template "hmcts.releasename.v1" . }}
-    metrics:
-      - type: Resource
-        resource:
-          name: cpu
-          targetAverageUtilization: 80
-      - type: Resource
-        resource:
-          name: cpu
-          targetAverageUtilization: 80
+  targetCPUUtilizationPercentage: 80
 {{- end }}
 {{- end }}
