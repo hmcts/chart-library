@@ -22,19 +22,19 @@
   {{if .Values.global.devMode -}}
   resources:
     requests:
-      memory: {{ .Values.devmemoryRequests | quote }}
-      cpu: {{ .Values.devcpuRequests | quote }}
+      memory: {{ (pluck .Values.language .Values.devmemoryRequests | first | default .Values.devmemoryRequests.default) | quote }}
+      cpu: {{ (pluck .Values.language .Values.devcpuRequests | first | default .Values.devcpuRequests.default) | quote }}
     limits:
       memory: {{ .Values.devmemoryLimits | quote }}
       cpu: {{ .Values.devcpuLimits | quote }}
   {{- else -}}
   resources:
     requests:
-      memory: {{ .Values.memoryRequests | quote }}
-      cpu: {{ .Values.cpuRequests | quote }}
+      memory: {{ (pluck .Values.language .Values.memoryRequests | first | default .Values.memoryRequests.default) | quote }}
+      cpu: {{ (pluck .Values.language .Values.cpuRequests | first | default .Values.cpuRequests.default) | quote }}
     limits:
-      memory: {{ .Values.memoryLimits | quote }}
-      cpu: {{ .Values.cpuLimits | quote }}
+      memory: {{ (pluck .Values.language .Values.memoryLimits | first | default .Values.memoryLimits.default) | quote }}
+      cpu: {{ (pluck .Values.language .Values.cpuLimits | first | default .Values.cpuLimits.default) | quote }}
   {{- end }}
   {{- if .Values.applicationPort }}
   ports:
