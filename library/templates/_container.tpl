@@ -1,66 +1,68 @@
 {{- define "hmcts.container.v1.tpl" -}}
-- image: {{ required "An image must be supplied to the chart" .Values.image }}
-  name: {{ template "hmcts.releasename.v1" . }}
+{{- $globals := .Values.global }}
+{{- $containerValues := (pluck .Values.language .Values | first | default .) -}}
+{{- with $containerValues }}
+- image: {{ required "An image must be supplied to the chart" .image }}
+  name: {{ "test" }}
   securityContext:
     allowPrivilegeEscalation: false
   env:
-    {{- if .Values.global.devMode }}
-    - name: {{ .Values.devApplicationInsightsInstrumentKeyName }}
-      value: {{ .Values.devApplicationInsightsInstrumentKey | quote }}
+    {{- if $globals.devMode }}
+    - name: {{ .devApplicationInsightsInstrumentKeyName }}
+      value: {{ .devApplicationInsightsInstrumentKey | quote }}
     {{- end -}}
-      {{- ( include "hmcts.secrets.v1" .) | indent 4 }}
-      {{- range $key, $val := .Values.environment }}
+      {{- range $key, $val := .environment }}
     - name: {{ $key }}
       value: {{ tpl ($val | quote) $ }}
       {{- end}}
-  {{- if .Values.configmap }}
+  {{- if .configmap }}
   envFrom:
     - configMapRef:
-        name: {{ template "hmcts.releasename.v1" . }}
+        name: {{ "test" }}
   {{- end }}
-  {{- ( include "hmcts.secretMounts.v1" . ) | indent 2 }}
-  {{if .Values.global.devMode -}}
+  {{if $globals.devMode -}}
   resources:
     requests:
-      memory: {{ (pluck .Values.language .Values.devmemoryRequests | first | default .Values.devmemoryRequests.default) | quote }}
-      cpu: {{ (pluck .Values.language .Values.devcpuRequests | first | default .Values.devcpuRequests.default) | quote }}
+      memory: {{ .devmemoryRequests | quote }}
+      cpu: {{  .devcpuRequests | quote }}
     limits:
-      memory: {{ .Values.devmemoryLimits | quote }}
-      cpu: {{ .Values.devcpuLimits | quote }}
+      memory: {{ .devmemoryLimits | quote }}
+      cpu: {{ .devcpuLimits | quote }}
   {{- else -}}
   resources:
     requests:
-      memory: {{ (pluck .Values.language .Values.memoryRequests | first | default .Values.memoryRequests.default) | quote }}
-      cpu: {{ (pluck .Values.language .Values.cpuRequests | first | default .Values.cpuRequests.default) | quote }}
+      memory: {{ .memoryRequests | quote }}
+      cpu: {{ .cpuRequests | quote }}
     limits:
-      memory: {{ (pluck .Values.language .Values.memoryLimits | first | default .Values.memoryLimits.default) | quote }}
-      cpu: {{ (pluck .Values.language .Values.cpuLimits | first | default .Values.cpuLimits.default) | quote }}
+      memory: {{ .memoryLimits | quote }}
+      cpu: {{ .cpuLimits | quote }}
   {{- end }}
-  {{- if .Values.applicationPort }}
+  {{- if .applicationPort }}
   ports:
-    - containerPort: {{ .Values.applicationPort }}
+    - containerPort: {{ .applicationPort }}
       name: http
   {{- end }}
-  {{- if .Values.livenessPath }}
+  {{- if .livenessPath }}
   livenessProbe:
     httpGet:
-      path: {{ .Values.livenessPath }}
-      port: {{ .Values.applicationPort }}
-    initialDelaySeconds: {{ .Values.livenessDelay }}
-    timeoutSeconds: {{ .Values.livenessTimeout }}
-    periodSeconds: {{ .Values.livenessPeriod }}
-    failureThreshold: {{ .Values.livenessFailureThreshold }}
+      path: {{ .livenessPath }}
+      port: {{ .applicationPort }}
+    initialDelaySeconds: {{ .livenessDelay }}
+    timeoutSeconds: {{ .livenessTimeout }}
+    periodSeconds: {{ .livenessPeriod }}
+    failureThreshold: {{ .livenessFailureThreshold }}
   {{- end }}
-  {{- if .Values.readinessPath }}
+  {{- if .readinessPath }}
   readinessProbe:
     httpGet:
-      path: {{ .Values.readinessPath }}
-      port: {{ .Values.applicationPort }}
-    initialDelaySeconds: {{ .Values.readinessDelay }}
-    timeoutSeconds: {{ .Values.readinessTimeout }}
-    periodSeconds: {{ .Values.readinessPeriod }}
+      path: {{ .readinessPath }}
+      port: {{ .applicationPort }}
+    initialDelaySeconds: {{ .readinessDelay }}
+    timeoutSeconds: {{ .readinessTimeout }}
+    periodSeconds: {{ .readinessPeriod }}
   {{- end }}
-  imagePullPolicy: {{.Values.imagePullPolicy}}
+  imagePullPolicy: {{.imagePullPolicy}}
+ {{- end }}
 {{- end -}}
 
 {{- define "hmcts.container.v1" -}}

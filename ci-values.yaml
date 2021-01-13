@@ -109,3 +109,43 @@ functionaltestscron:
 autoscaling:
   enabled: true
   maxReplicas: 5
+java: 
+  applicationPort: 3000
+  registerAdditionalDns: 
+    enabled: false
+  memoryRequests: 512Mi
+  devmemoryRequests: 512Mi
+  cpuRequests: 250m
+  cpuLimits: 1500m
+  memoryLimits: 2048Mi
+  readinessPath: /healthzzzz
+  readinessDelay: 5
+  readinessTimeout: 3
+  readinessPeriod: 15
+  livenessDelay: 5
+  livenessTimeout: 3
+  livenessPeriod: 15
+  livenessFailureThreshold: 3
+  dnsConfig: 
+    ndots: "3"
+  pdb: 
+    enabled: true
+    maxUnavailable: 50%
+  prometheus: 
+    enabled: false
+    path: /metrics
+  ingressClass: traefikz
+  image: hmctspublic.azurecr.io/chart-nodejs/testapp
+  replicas: 2
+  useInterpodAntiAffinity: true
+  ingressHost: "{{.Release.Name}}.service.core-compute-preview.internal"
+  livenessPath: /health/livenesszzz
+  imagePullPolicy: Always
+  environment: 
+    REFORM_TEAM: cnp
+    REFORM_SERVICE_NAME: rhubarb-frontend
+    REFORM_ENVIRONMENT: preview
+  configmap: 
+    VAR_A: VALUE_A
+    VAR_B: VALUE_B
+  saEnabled: true
