@@ -2,43 +2,11 @@ language: java
 applicationPort: 3000
 registerAdditionalDns:
   enabled: false
-memoryRequests: 
-  java: 512Mi
-  nodejs: 64Mi
-  default: 64Mi
-devmemoryRequests:
-  java: 512Mi
-  nodejs: 64Mi
-  default: 64Mi
-cpuRequests:
-  java: 250m
-  nodejs: 25m
-  default: 25m
-cpuLimits: 
-  java: 1500m
-  nodejs: 500m
-  default: 500m
-memoryLimits:
-  java: 2048Mi
-  nodejs: 512Mi
-  default: 512Mi
-readinessPath: /health
-readinessDelay: 5
-readinessTimeout: 3
-readinessPeriod: 15
-livenessDelay: 5
-livenessTimeout: 3
-livenessPeriod: 15
-livenessFailureThreshold: 3
 dnsConfig:
   ndots: "3"
 pdb:
   enabled: true
   maxUnavailable: 50%
-prometheus:
-  enabled: false
-  path: /metrics
-ingressClass: traefik
 global:
   tenantId: "531ff96d-0ae9-462a-8d2d-bec7c0b42082"
   environment: aat
