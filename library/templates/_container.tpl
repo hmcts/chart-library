@@ -1,9 +1,11 @@
 {{- define "hmcts.container.v1.tpl" -}}
 {{- $globals := .Values.global }}
-{{- $containerValues := (pluck .Values.language .Values | first | default .) -}}
+{{- $mainValues := . }}
+{{- $languageValues := (pluck .Values.language .Values | first) -}}
+{{- $containerValues := (merge $languageValues .Values) -}}
 {{- with $containerValues }}
 - image: {{ required "An image must be supplied to the chart" .image }}
-  name: {{ "test" }}
+  name: {{ template "hmcts.releasename.v1" $mainValues }}
   securityContext:
     allowPrivilegeEscalation: false
   env:
@@ -11,6 +13,7 @@
     - name: {{ .devApplicationInsightsInstrumentKeyName }}
       value: {{ .devApplicationInsightsInstrumentKey | quote }}
     {{- end -}}
+      {{- ( include "hmcts.secrets.v1" $mainValues) | indent 4 }}
       {{- range $key, $val := .environment }}
     - name: {{ $key }}
       value: {{ tpl ($val | quote) $ }}
@@ -18,8 +21,9 @@
   {{- if .configmap }}
   envFrom:
     - configMapRef:
-        name: {{ "test" }}
+        name: {{ template "hmcts.releasename.v1" $mainValues }}
   {{- end }}
+  {{- ( include "hmcts.secretMounts.v1" $mainValues ) | indent 2 }}
   {{if $globals.devMode -}}
   resources:
     requests:
