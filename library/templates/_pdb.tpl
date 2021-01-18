@@ -1,5 +1,6 @@
 {{- define "hmcts.pdb.v1.tpl" -}}
-{{ if .Values.pdb.enabled }}
+{{- $languageValues := (deepCopy .Values | merge (pluck .Values.language .Values | first) ) -}}
+{{ if $languageValues.pdb.enabled }}
 ---
 apiVersion: policy/v1beta1
 kind: PodDisruptionBudget
@@ -7,10 +8,10 @@ metadata:
   name:  {{ template "hmcts.releasename.v1" . }}
   {{- ( include "hmcts.labels.v1" . ) | indent 2 }}
 spec:
-  {{ if .Values.pdb.minAvailable }}
-  minAvailable: {{ .Values.pdb.minAvailable }}
+  {{ if $languageValues.pdb.minAvailable }}
+  minAvailable: {{ $languageValues.pdb.minAvailable }}
   {{- else -}}
-  maxUnavailable: {{ .Values.pdb.maxUnavailable }}
+  maxUnavailable: {{ $languageValues.pdb.maxUnavailable }}
   {{- end }}
   selector:
     matchLabels:

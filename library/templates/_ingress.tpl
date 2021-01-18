@@ -1,5 +1,6 @@
 {{- define "hmcts.ingress.v1.tpl" -}}
-{{ if or (.Values.ingressHost ) (.Values.registerAdditionalDns.enabled) }}
+{{- $languageValues := (deepCopy .Values | merge (pluck .Values.language .Values | first) ) }}
+{{ if or ($languageValues.ingressHost ) ($languageValues.registerAdditionalDns.enabled) }}
 ---
 apiVersion: networking.k8s.io/v1beta1
 kind: Ingress
@@ -7,11 +8,11 @@ metadata:
   name: {{ template "hmcts.releasename.v1" . }}
   {{- ( include "hmcts.labels.v1" . ) | indent 2 }}
   annotations:
-    kubernetes.io/ingress.class: {{ .Values.ingressClass }}
+    kubernetes.io/ingress.class: {{ $languageValues.ingressClass }}
 spec:
   rules:
-  {{- if .Values.ingressHost }}
-  - host: {{ tpl .Values.ingressHost $ }}
+  {{- if $languageValues.ingressHost }}
+  - host: {{ tpl $languageValues.ingressHost $ }}
     http:
       paths:
       {{- ( include "hmcts.additionalPathBasedRoutes.v1" .) | indent 4 }}
@@ -20,8 +21,8 @@ spec:
           serviceName: {{ template "hmcts.releasename.v1" . }}
           servicePort: 80
   {{- end }}
-  {{- if .Values.registerAdditionalDns.enabled }}
-  - host: {{ .Values.registerAdditionalDns.prefix }}-{{ tpl .Values.registerAdditionalDns.primaryIngressHost $ }}
+  {{- if $languageValues.registerAdditionalDns.enabled }}
+  - host: {{ $languageValues.registerAdditionalDns.prefix }}-{{ tpl $languageValues.registerAdditionalDns.primaryIngressHost $ }}
     http:
       paths:
       {{- ( include "hmcts.additionalPathBasedRoutes.v1" .) | indent 4 }}
@@ -41,7 +42,8 @@ spec:
 Additional Path based routes
 */}}
 {{- define "hmcts.additionalPathBasedRoutes.v1" }}
-{{- range $path, $serviceName := .Values.additionalPathBasedRoutes }}
+{{- $languageValues := (deepCopy .Values | merge (pluck .Values.language .Values | first) ) }}
+{{- range $path, $serviceName := $languageValues.additionalPathBasedRoutes }}
   - path: {{ $path }}
     backend:
       serviceName: {{ tpl $serviceName $ }}

@@ -1,72 +1,67 @@
 {{- define "hmcts.container.v1.tpl" -}}
-{{- $globals := .Values.global }}
-{{- $mainValues := . }}
-{{- $languageValues := (pluck .Values.language .Values | first) -}}
-{{- $containerValues := (merge $languageValues .Values) -}}
-{{- with $containerValues }}
-- image: {{ required "An image must be supplied to the chart" .image }}
-  name: {{ template "hmcts.releasename.v1" $mainValues }}
+{{- $languageValues := (deepCopy .Values | merge (pluck .Values.language .Values | first) ) -}}
+- image: {{ required "An image must be supplied to the chart" $languageValues.image }}
+  name: {{ template "hmcts.releasename.v1" . }}
   securityContext:
     allowPrivilegeEscalation: false
   env:
-    {{- if $globals.devMode }}
-    - name: {{ .devApplicationInsightsInstrumentKeyName }}
-      value: {{ .devApplicationInsightsInstrumentKey | quote }}
+    {{- if $languageValues.global.devMode }}
+    - name: {{ $languageValues.devApplicationInsightsInstrumentKeyName }}
+      value: {{ $languageValues.devApplicationInsightsInstrumentKey | quote }}
     {{- end -}}
-      {{- ( include "hmcts.secrets.v1" $mainValues) | indent 4 }}
-      {{- range $key, $val := .environment }}
+      {{- ( include "hmcts.secrets.v1" .) | indent 4 }}
+      {{- range $key, $val := $languageValues.environment }}
     - name: {{ $key }}
       value: {{ tpl ($val | quote) $ }}
       {{- end}}
   {{- if .configmap }}
   envFrom:
     - configMapRef:
-        name: {{ template "hmcts.releasename.v1" $mainValues }}
+        name: {{ template "hmcts.releasename.v1" . }}
   {{- end }}
-  {{- ( include "hmcts.secretMounts.v1" $mainValues ) | indent 2 }}
-  {{if $globals.devMode -}}
+  {{- ( include "hmcts.secretMounts.v1" . ) | indent 2 }}
+  {{if $languageValues.global.devMode -}}
   resources:
     requests:
-      memory: {{ .devmemoryRequests | quote }}
-      cpu: {{  .devcpuRequests | quote }}
+      memory: {{ $languageValues.devmemoryRequests | quote }}
+      cpu: {{  $languageValues.devcpuRequests | quote }}
     limits:
-      memory: {{ .devmemoryLimits | quote }}
-      cpu: {{ .devcpuLimits | quote }}
+      memory: {{ $languageValues.devmemoryLimits | quote }}
+      cpu: {{ $languageValues.devcpuLimits | quote }}
   {{- else -}}
   resources:
     requests:
-      memory: {{ .memoryRequests | quote }}
-      cpu: {{ .cpuRequests | quote }}
+      memory: {{ $languageValues.memoryRequests | quote }}
+      cpu: {{ $languageValues.cpuRequests | quote }}
     limits:
-      memory: {{ .memoryLimits | quote }}
-      cpu: {{ .cpuLimits | quote }}
+      memory: {{ $languageValues.memoryLimits | quote }}
+      cpu: {{ $languageValues.cpuLimits | quote }}
   {{- end }}
-  {{- if .applicationPort }}
+  {{- if $languageValues.applicationPort }}
   ports:
-    - containerPort: {{ .applicationPort }}
+    - containerPort: {{ $languageValues.applicationPort }}
       name: http
   {{- end }}
-  {{- if .livenessPath }}
+  {{- if $languageValues.livenessPath }}
   livenessProbe:
     httpGet:
-      path: {{ .livenessPath }}
-      port: {{ .applicationPort }}
-    initialDelaySeconds: {{ .livenessDelay }}
-    timeoutSeconds: {{ .livenessTimeout }}
-    periodSeconds: {{ .livenessPeriod }}
-    failureThreshold: {{ .livenessFailureThreshold }}
+      path: {{ $languageValues.livenessPath }}
+      port: {{ $languageValues.applicationPort }}
+    initialDelaySeconds: {{ $languageValues.livenessDelay }}
+    timeoutSeconds: {{ $languageValues.livenessTimeout }}
+    periodSeconds: {{ $languageValues.livenessPeriod }}
+    failureThreshold: {{ $languageValues.livenessFailureThreshold }}
   {{- end }}
-  {{- if .readinessPath }}
+  {{- if $languageValues.readinessPath }}
   readinessProbe:
     httpGet:
-      path: {{ .readinessPath }}
-      port: {{ .applicationPort }}
-    initialDelaySeconds: {{ .readinessDelay }}
-    timeoutSeconds: {{ .readinessTimeout }}
-    periodSeconds: {{ .readinessPeriod }}
+      path: {{ $languageValues.readinessPath }}
+      port: {{ $languageValues.applicationPort }}
+    initialDelaySeconds: {{ $languageValues.readinessDelay }}
+    timeoutSeconds: {{ $languageValues.readinessTimeout }}
+    periodSeconds: {{ $languageValues.readinessPeriod }}
   {{- end }}
-  imagePullPolicy: {{.imagePullPolicy}}
- {{- end }}
+  imagePullPolicy: {{$languageValues.imagePullPolicy}}
 {{- end -}}
 
 {{- define "hmcts.container.v1" -}}

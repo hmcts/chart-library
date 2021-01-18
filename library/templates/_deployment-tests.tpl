@@ -1,45 +1,47 @@
 {{- define "hmcts.deploymenttests.v1.tpl" -}}
-{{ if .Values.smoketests.enabled }}
+{{- $languageValues := (deepCopy .Values | merge (pluck .Values.language .Values | first) ) -}}
+
+{{ if $languageValues.smoketests.enabled }}
 ---
-{{ $smokedata := dict "Values" .Values "Release" .Release "Chart" .Chart "Template" .Template "Files" .Files }}
+{{ $smokedata := dict "Values" $languageValues "Release" .Release "Chart" .Chart "Template" .Template "Files" .Files }}
 {{ $_ := set $smokedata.Values "task" "smoke" }}
 {{ $_ := set $smokedata.Values "type" "tests" }}
 {{- include "hmcts.tests.header" $smokedata }}
 spec:
-{{ $_ := set $smokedata.Values "tests" .Values.smoketests }}
+{{ $_ := set $smokedata.Values "tests" $languageValues.smoketests }}
 {{- include "hmcts.tests.spec" $smokedata | indent 2 }}
 {{- end }}
 
-{{ if .Values.functionaltests.enabled }}
+{{ if $languageValues.functionaltests.enabled }}
 ---
-{{ $functionaldata := dict "Values" .Values "Release" .Release "Chart" .Chart "Template" .Template "Files" .Files }}
+{{ $functionaldata := dict "Values" $languageValues "Release" .Release "Chart" .Chart "Template" .Template "Files" .Files }}
 {{ $_ := set $functionaldata.Values "task" "functional" }}
 {{ $_ := set $functionaldata.Values "type" "tests" }}
 {{- include "hmcts.tests.header" $functionaldata }}
 spec:
-{{ $_ := set $functionaldata.Values "tests" .Values.functionaltests }}
+{{ $_ := set $functionaldata.Values "tests" $languageValues.functionaltests }}
 {{- include "hmcts.tests.spec" $functionaldata | indent 2 }}
 {{- end }}
 
-{{ if and .Values.smoketestscron.enabled .Values.global.smoketestscron.enabled }}
+{{ if and $languageValues.smoketestscron.enabled $languageValues.global.smoketestscron.enabled }}
 ---
-{{ $smokedatacron := dict "Values" .Values "Release" .Release "Chart" .Chart "Template" .Template "Files" .Files }}
+{{ $smokedatacron := dict "Values" $languageValues "Release" .Release "Chart" .Chart "Template" .Template "Files" .Files }}
 {{ $_ := set $smokedatacron.Values "task" "smoke" }}
-{{ $_ := set $smokedatacron.Values "schedule" .Values.smoketestscron.schedule }}
+{{ $_ := set $smokedatacron.Values "schedule" $languageValues.smoketestscron.schedule }}
 {{ $_ := set $smokedatacron.Values "type" "testscron" }}
 {{- include "hmcts.testscron.header" $smokedatacron }}
-{{ $_ := set $smokedatacron.Values "tests" .Values.smoketestscron }}
+{{ $_ := set $smokedatacron.Values "tests" $languageValues.smoketestscron }}
 {{- include "hmcts.tests.spec" $smokedatacron | indent 10 }}
 {{- end }}
 
-{{ if and .Values.functionaltestscron.enabled .Values.global.functionaltestscron.enabled }}
+{{ if and $languageValues.functionaltestscron.enabled $languageValues.global.functionaltestscron.enabled }}
 ---
-{{ $functionaldatacron := dict "Values" .Values "Release" .Release "Chart" .Chart "Template" .Template "Files" .Files }}
+{{ $functionaldatacron := dict "Values" $languageValues "Release" .Release "Chart" .Chart "Template" .Template "Files" .Files }}
 {{ $_ := set $functionaldatacron.Values "task" "functional" }}
-{{ $_ := set $functionaldatacron.Values "schedule" .Values.functionaltestscron.schedule }}
+{{ $_ := set $functionaldatacron.Values "schedule" $languageValues.functionaltestscron.schedule }}
 {{ $_ := set $functionaldatacron.Values "type" "testscron" }}
 {{- include "hmcts.testscron.header" $functionaldatacron }}
-{{ $_ := set $functionaldatacron.Values "tests" .Values.functionaltestscron }}
+{{ $_ := set $functionaldatacron.Values "tests" $languageValues.functionaltestscron }}
 {{- include "hmcts.tests.spec" $functionaldatacron | indent 10 }}
 {{- end }}
 

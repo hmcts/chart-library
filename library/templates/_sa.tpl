@@ -1,5 +1,6 @@
 {{- define "hmcts.sa.v1.tpl" -}}
-{{ if .Values.saEnabled }}
+{{- $languageValues := (deepCopy .Values | merge (pluck .Values.language .Values | first) ) -}}
+{{ if $languageValues.saEnabled }}
 apiVersion: v1
 kind: ServiceAccount
 metadata:

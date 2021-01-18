@@ -1,5 +1,6 @@
 {{- define "hmcts.service.v1.tpl" -}}
 ---
+{{- $languageValues := (deepCopy .Values | merge (pluck .Values.language .Values | first) ) -}}
 apiVersion: v1
 kind: Service
 metadata:
@@ -9,11 +10,11 @@ metadata:
   # WARNING: ingressSessionAffinity is a temporary option.
   # This is subject to removal without notice. Do NOT use for any reason!
   */ -}}
-  {{- if hasKey .Values "ingressSessionAffinity" }}
-  {{- if and .Values.ingressSessionAffinity .Values.ingressSessionAffinity.enabled }}
+  {{- if hasKey $languageValues "ingressSessionAffinity" }}
+  {{- if and $languageValues.ingressSessionAffinity $languageValues.ingressSessionAffinity.enabled }}
   annotations:
     traefik.ingress.kubernetes.io/affinity: "true"
-    traefik.ingress.kubernetes.io/session-cookie-name: {{ .Values.ingressSessionAffinity.sessionCookieName | quote }}
+    traefik.ingress.kubernetes.io/session-cookie-name: {{ $languageValues.ingressSessionAffinity.sessionCookieName | quote }}
   {{- end }}
   {{- end }}
 spec:
@@ -21,7 +22,7 @@ spec:
     - name: http
       protocol: TCP
       port: 80
-      targetPort: {{ .Values.applicationPort }}
+      targetPort: {{ $languageValues.applicationPort }}
   selector:
     app.kubernetes.io/name: {{ template "hmcts.releasename.v1" . }}
 {{- end }}

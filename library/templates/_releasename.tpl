@@ -13,14 +13,15 @@ The applied order is: "global prefix + prefix + name + suffix + global suffix"
 Usage: 'name: "{{- template "hmcts.releasename.v1" . -}}"'
 */ -}}
 {{- define "hmcts.releasename.v1" }}
-  {{- $global := default (dict) .Values.global -}}
+{{- $languageValues := (deepCopy .Values | merge (pluck .Values.language .Values | first) ) -}}
+  {{- $global := default (dict) $languageValues .global -}}
   {{- $base := printf "%s-%s" .Release.Name .Chart.Name -}}
-  {{- if .Values.releaseNameOverride -}}
-  {{- $base = tpl .Values.releaseNameOverride $ -}}  
+  {{- if $languageValues.releaseNameOverride -}}
+  {{- $base = tpl $languageValues.releaseNameOverride $ -}}  
   {{- end -}}
   {{- $gpre := default "" $global.releaseNamePrefix -}}
-  {{- $pre := default "" .Values.releaseNamePrefix -}}
-  {{- $suf := default "" .Values.releaseNameSuffix -}}
+  {{- $pre := default "" $languageValues.releaseNamePrefix -}}
+  {{- $suf := default "" $languageValues.releaseNameSuffix -}}
   {{- $gsuf := default "" $global.releaseNameSuffix -}}
   {{- $name := print $gpre $pre $base $suf $gsuf -}}
   {{- $name | lower | trunc 63 | trimSuffix "-" -}}

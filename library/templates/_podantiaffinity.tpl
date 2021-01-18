@@ -3,7 +3,8 @@
 Setup inter pod anti affinity
 */}}
 {{- define "hmcts.interpodantiaffinity.v1" }}
-{{- if .Values.useInterpodAntiAffinity }}
+{{- $languageValues := (deepCopy .Values | merge (pluck .Values.language .Values | first) ) -}}
+{{- if $languageValues.useInterpodAntiAffinity }}
 affinity:
   podAntiAffinity:
     requiredDuringSchedulingIgnoredDuringExecution:

@@ -1,9 +1,10 @@
 {{- define "hmcts.secretproviderclass.v1.tpl" -}}
-{{- if and .Values.keyVaults .Values.global.enableKeyVaults (not .Values.disableKeyVaults) }}
-{{- $globals := .Values.global }}
-{{- $keyVaults := .Values.keyVaults }}
+{{- $languageValues := (deepCopy .Values | merge (pluck .Values.language .Values | first) ) -}}
+{{- if and $languageValues.keyVaults $languageValues.global.enableKeyVaults (not $languageValues.disableKeyVaults) }}
+{{- $globals := $languageValues.global }}
+{{- $keyVaults := $languageValues.keyVaults }}
 {{- $root := . }}
-{{- range $vault, $info := .Values.keyVaults }}
+{{- range $vault, $info := $languageValues.keyVaults }}
 ---
 apiVersion: secrets-store.csi.x-k8s.io/v1alpha1
 kind: SecretProviderClass
