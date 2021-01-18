@@ -5,7 +5,7 @@ set -e
 helm lint library/
 
 #change library chart to application
-yq w -i library/Chart.yaml type application
+yq eval -i '.type = "application"' library/Chart.yaml
 
 for file in $(echo "hpa.yaml secretproviderclass.yaml deployment.yaml configmap.yaml ingress.yaml pdb.yaml service.yaml deployment-tests.yaml sa.yaml"); do
   cp tests/$file library/templates/
@@ -15,4 +15,4 @@ for file in $(echo "hpa.yaml secretproviderclass.yaml deployment.yaml configmap.
 done
 
 #revert test chabges
-yq w -i library/Chart.yaml type library
+yq eval -i '.type = "library"' library/Chart.yaml
