@@ -14,7 +14,7 @@
     - name: {{ $key }}
       value: {{ tpl ($val | quote) $ }}
       {{- end}}
-  {{- if .configmap }}
+  {{- if $languageValues.configmap }}
   envFrom:
     - configMapRef:
         name: {{ template "hmcts.releasename.v1" . }}

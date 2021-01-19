@@ -11,10 +11,10 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: {{ template "hmcts.releasename.v1" . }}
-  {{ if $languageValues.autoscaling.targetCPUUtilizationPercentage }}
+  {{- if $languageValues.autoscaling.targetCPUUtilizationPercentage }}
   targetCPUUtilizationPercentage: {{ $languageValues.autoscaling.targetCPUUtilizationPercentage }}
-  {{ else }}
+  {{- else }}
   targetCPUUtilizationPercentage: 80
-  {{ end }}
+  {{- end }}
 {{- end }}
 {{- end }}
