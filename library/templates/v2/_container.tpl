@@ -1,7 +1,7 @@
-{{- define "hmcts.container.v1.tpl" -}}
+{{- define "hmcts.container.v2.tpl" -}}
 {{- $languageValues := (deepCopy .Values | merge (pluck .Values.language .Values | first) ) -}}
 - image: {{ required "An image must be supplied to the chart" $languageValues.image }}
-  name: {{ template "hmcts.releasename.v1" . }}
+  name: {{ template "hmcts.releasename.v2" . }}
   securityContext:
     allowPrivilegeEscalation: false
   env:
@@ -9,7 +9,7 @@
     - name: {{ $languageValues.devApplicationInsightsInstrumentKeyName }}
       value: {{ $languageValues.devApplicationInsightsInstrumentKey | quote }}
     {{- end -}}
-      {{- ( include "hmcts.secrets.v1" .) | indent 4 }}
+      {{- ( include "hmcts.secrets.v2" .) | indent 4 }}
       {{- range $key, $val := $languageValues.environment }}
     - name: {{ $key }}
       value: {{ tpl ($val | quote) $ }}
@@ -17,9 +17,9 @@
   {{- if $languageValues.configmap }}
   envFrom:
     - configMapRef:
-        name: {{ template "hmcts.releasename.v1" . }}
+        name: {{ template "hmcts.releasename.v2" . }}
   {{- end }}
-  {{- ( include "hmcts.secretMounts.v1" . ) | indent 2 }}
+  {{- ( include "hmcts.secretMounts.v2" . ) | indent 2 }}
   {{if $languageValues.global.devMode -}}
   resources:
     requests:
@@ -64,8 +64,8 @@
   imagePullPolicy: {{$languageValues.imagePullPolicy}}
 {{- end -}}
 
-{{- define "hmcts.container.v1" -}}
+{{- define "hmcts.container.v2" -}}
 {{- /* clear new line so indentation works correctly */ -}}
 {{- println "" -}}
-{{- include "hmcts.util.merge.v1" (append . "hmcts.container.v1.tpl") | indent 6 -}}
+{{- include "hmcts.util.merge.v2" (append . "hmcts.container.v2.tpl") | indent 6 -}}
 {{- end -}}

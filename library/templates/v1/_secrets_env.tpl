@@ -10,9 +10,9 @@ Example format:
 "
 */}}
 {{- define "hmcts.secrets.v1" -}}
-{{- $languageValues := (deepCopy .Values | merge (pluck .Values.language .Values | first) ) -}}
-  {{- if $languageValues.secrets -}}
-    {{- range $key, $val := $languageValues.secrets }}
+
+  {{- if .Values.secrets -}}
+    {{- range $key, $val := .Values.secrets }}
       {{- if and $val (not $val.disabled) }}
 - name: {{ if $key | regexMatch "^[^.-]+$" -}}
           {{- $key }}

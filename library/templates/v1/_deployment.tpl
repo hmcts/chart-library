@@ -2,10 +2,9 @@
 apiVersion: apps/v1
 kind: Deployment
 {{ template "hmcts.metadata.v1" . }}
-{{- $languageValues := (deepCopy .Values | merge (pluck .Values.language .Values | first) ) }}
 spec:
   revisionHistoryLimit: 0
-  replicas: {{ $languageValues.replicas }}
+  replicas: {{ .Values.replicas }}
   selector:
     matchLabels:
       app.kubernetes.io/name: {{ template "hmcts.releasename.v1" . }}

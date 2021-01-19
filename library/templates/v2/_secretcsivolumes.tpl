@@ -1,7 +1,7 @@
 {{/*
 The bit of templating needed to create the CSI driver keyvault for mounting
 */}}
-{{- define "hmcts.secretCSIVolumes.v1" }}
+{{- define "hmcts.secretCSIVolumes.v2" }}
 {{- $languageValues := (deepCopy .Values | merge (pluck .Values.language .Values | first) ) -}}
 {{- if and $languageValues.keyVaults $languageValues.global.enableKeyVaults (not $languageValues.disableKeyVaults) }}
 {{- $globals := $languageValues.global }}
@@ -14,7 +14,7 @@ volumes:
       driver: "secrets-store.csi.k8s.io"
       readOnly: true
       volumeAttributes:
-        secretProviderClass: {{ template "hmcts.releasename.v1" $root }}-{{ $vault }}
+        secretProviderClass: {{ template "hmcts.releasename.v2" $root }}-{{ $vault }}
 {{- end }}
 {{- end }}
 {{- end }}
@@ -22,7 +22,7 @@ volumes:
 {{/*
 Mount the Key vaults on /mnt/secrets
 */}}
-{{- define "hmcts.secretMounts.v1" -}}
+{{- define "hmcts.secretMounts.v2" -}}
 {{- $languageValues := (deepCopy .Values | merge (pluck .Values.language .Values | first) ) -}}
 {{- if and $languageValues.keyVaults $languageValues.global.enableKeyVaults (not $languageValues.disableKeyVaults) }}
 volumeMounts:

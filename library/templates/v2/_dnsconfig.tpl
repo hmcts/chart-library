@@ -1,7 +1,7 @@
 {{/*
 All the common annotations needed for the annotations sections of the definitions.
 */}}
-{{- define "hmcts.dnsConfig.v1" }}
+{{- define "hmcts.dnsConfig.v2" }}
 {{- $languageValues := (deepCopy .Values | merge (pluck .Values.language .Values | first) ) -}}
 {{- with $languageValues }}
 {{- if and .dnsConfig .dnsConfig.ndots }}

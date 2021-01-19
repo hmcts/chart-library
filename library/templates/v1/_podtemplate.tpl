@@ -2,13 +2,12 @@
 Create pod template spec.
 */}}
 {{- define "hmcts.podtemplate.v1.tpl" -}}
-{{- $languageValues := (deepCopy .Values | merge (pluck .Values.language .Values | first) ) -}}
 template:
   metadata:
     {{- (include "hmcts.labels.v1" .) | indent 4 }}
     {{- (include "hmcts.annotations.v1" .) | indent 4 }}
   spec:
-    {{- if $languageValues.saEnabled }}
+    {{- if .Values.saEnabled }}
     serviceAccountName: {{ template "hmcts.releasename.v1" . }}
     {{- end }}
     {{- include "hmcts.interpodantiaffinity.v1" . | indent 4 }}

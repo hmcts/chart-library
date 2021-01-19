@@ -2,7 +2,7 @@
 {{/*
 Setup inter pod anti affinity
 */}}
-{{- define "hmcts.interpodantiaffinity.v1" }}
+{{- define "hmcts.interpodantiaffinity.v2" }}
 {{- $languageValues := (deepCopy .Values | merge (pluck .Values.language .Values | first) ) -}}
 {{- if $languageValues.useInterpodAntiAffinity }}
 affinity:
@@ -13,7 +13,7 @@ affinity:
             - key: app.kubernetes.io/name
               operator: In
               values:
-              - {{ template "hmcts.releasename.v1" . }}
+              - {{ template "hmcts.releasename.v2" . }}
         topologyKey: "kubernetes.io/hostname"
 {{- end }}
 {{- end }}
