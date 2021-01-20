@@ -1,0 +1,91 @@
+applicationPort: 3000
+registerAdditionalDns:
+  enabled: false
+memoryRequests: 64Mi
+cpuRequests: 25m
+memoryLimits: 512Mi
+cpuLimits: 500m
+readinessPath: /health
+readinessDelay: 5
+readinessTimeout: 3
+readinessPeriod: 15
+livenessDelay: 5
+livenessTimeout: 3
+livenessPeriod: 15
+livenessFailureThreshold: 3
+dnsConfig:
+  ndots: "3"
+pdb:
+  enabled: true
+  maxUnavailable: 50%
+prometheus:
+  enabled: false
+  path: /metrics
+ingressClass: traefik
+global:
+  tenantId: "531ff96d-0ae9-462a-8d2d-bec7c0b42082"
+  environment: aat
+  enableKeyVaults: true
+  devMode: false
+  smoketestscron:
+    enabled: true
+  functionaltestscron:
+    enabled: true
+image: hmctspublic.azurecr.io/chart-nodejs/testapp
+replicas: 2
+useInterpodAntiAffinity: true
+ingressHost: "{{.Release.Name}}.service.core-compute-preview.internal"
+livenessPath: /health/liveness
+imagePullPolicy: Always
+environment:
+  REFORM_TEAM: cnp
+  REFORM_SERVICE_NAME: rhubarb-frontend
+  REFORM_ENVIRONMENT: preview
+configmap:
+  VAR_A: VALUE_A
+  VAR_B: VALUE_B
+saEnabled: true
+keyVaults:
+  bulk-scan:
+    excludeEnvironmentSuffix: false
+    secrets:
+      - idam-client-secret
+      - s2s-secret
+additionalPathBasedRoutes:
+  "/test": "{{.Release.Name}}"
+secrets:
+  STORAGE_ACCOUNT_NAME:
+    secretRef: storage-secret-example-{{ .Release.Name }}
+    key: storageAccountName
+# WARNING: ingressSessionAffinity is a temporary option.
+# This is subject to removal without notice. Do NOT use for any reason!
+ingressSessionAffinity:
+  enabled: false
+  sessionCookieName: sticky
+
+testsConfig:
+  memoryRequests: "256Mi"
+  cpuRequests: "100m"
+  memoryLimits: "2048Mi"
+  cpuLimits: "1000m"
+  serviceAccountName: tests-service-account
+smoketests:
+  image: hmctspublic.azurecr.io/spring-boot/template
+  enabled: false
+functionaltests:
+  image: hmctspublic.azurecr.io/spring-boot/template
+  enabled: false
+smoketestscron:
+  image: hmctspublic.azurecr.io/spring-boot/template
+  enabled: false
+  schedule: "20 0/1 * * *"
+functionaltestscron:
+  image: hmctspublic.azurecr.io/spring-boot/template
+  enabled: true
+  schedule: "30 0/6 * * *"
+
+# HPA
+autoscaling:
+  enabled: true
+  maxReplicas: 5
+language: java

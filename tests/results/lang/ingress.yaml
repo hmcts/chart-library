@@ -1,0 +1,26 @@
+---
+# Source: library/templates/ingress.yaml
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: release-name-library  
+  labels:
+    app.kubernetes.io/name: release-name-library
+    helm.sh/chart: library-0.1.0
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/instance: release-name-library
+  annotations:
+    kubernetes.io/ingress.class: traefik
+spec:
+  rules:
+  - host: RELEASE-NAME.service.core-compute-preview.internal
+    http:
+      paths:
+      - path: /test
+        backend:
+          serviceName: RELEASE-NAME
+          servicePort: 80
+      - path: /
+        backend:
+          serviceName: release-name-library
+          servicePort: 80

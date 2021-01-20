@@ -12,6 +12,11 @@ for version in $(echo "v1 v2"); do
     cp tests/$version/$file library/templates/
     helm template library -f ci-values.yaml > $file
     diff -w $file tests/results/$file
+    if [ "$version" = "v2" ]
+      then
+      helm template library -f ci-values-lang.yaml > $file
+      diff -w $file tests/results/lang/$file
+    fi
     rm -rf library/templates/$file $file
   done
 done
