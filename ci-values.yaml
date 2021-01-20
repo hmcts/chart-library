@@ -51,10 +51,6 @@ keyVaults:
     secrets:
       - idam-client-secret
       - s2s-secret
-  s2s:
-    secrets:
-      - microservicekey-ccd-admin
-      - microservicekey-ccd-data
 additionalPathBasedRoutes:
   "/test": "{{.Release.Name}}"
 secrets:
