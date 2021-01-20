@@ -15,7 +15,7 @@ for version in $(echo "v1 v2"); do
     if [ "$version" = "v2" ]
       then
       helm template library -f ci-values-lang.yaml > $file
-      diff -w $file tests/results/lang/$file
+      diff -w $file tests/results/$file
     fi
     rm -rf library/templates/$file $file
   done
