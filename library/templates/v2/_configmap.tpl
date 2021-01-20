@@ -1,6 +1,6 @@
 {{- define "hmcts.configmap.v2.tpl" -}}
-{{- if .Values.configmap }}
 {{- $languageValues := (deepCopy .Values | merge (pluck .Values.language .Values | first) ) -}}
+{{- if $languageValues.configmap }}
 ---
 apiVersion: v1
 kind: ConfigMap
