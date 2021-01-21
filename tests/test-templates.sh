@@ -9,7 +9,7 @@ yq eval -i '.type = "application"' library/Chart.yaml
 
 for file in $(echo "hpa.yaml secretproviderclass.yaml deployment.yaml configmap.yaml ingress.yaml pdb.yaml service.yaml deployment-tests.yaml sa.yaml"); do
   cp tests/v1/$file library/templates/
-  helm template library -f ci-values.yaml > template-$file
+  helm template library -f ci-values.yaml > $file
   diff -w $file tests/results/$file
   rm -rf library/templates/$file template-$file
 done
