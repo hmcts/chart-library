@@ -8,18 +8,19 @@ Note: `We still support v1 templates only till we test and rollout v2 templates`
 ### Language
 
 - Default values can be overridden over normal defaults for a specific language.
-- This is supported in all v2 templates in the library.
-    Example:
+
+  Example:  
     ```yaml
     <new-lang>:
       applicationPort : 5000
       memoryLimits: "256Mi"
     ```
-- Application's using can just choose language by setting
+- Applications using the template can just choose default recommended settings for a language by setting `language` property
 
     ```yaml
     language: <new-lang>
     ```
+- This is supported in all v2 templates in the library.
 
 ### Release Name
 
@@ -56,7 +57,7 @@ It includes below templates :
 It includes below templates :
 - [Metadata](#Metadata)
 - [DNS Config](#DNS-Config)
-- [Container Spec](#Container)
+- [Container](#Container)
 
 ### Metadata
 
@@ -64,7 +65,7 @@ It includes below templates :
 | -------------------------- | ------------------------------------------ |
 | `aadIdentityName`          | Added as a label for binding pod identity |
 | `prometheus.enabled`          | Enables adding prometheus annotations |
-| `prometheus..path`          | Path for prometheus |
+| `prometheus.path`          | Path for scraping prometheus metrics |
 
 ### DNS Config
 
@@ -101,6 +102,7 @@ It includes below templates :
 
 It includes below templates :
 - [Key Vault Secrets](#KeyVault-Secret-CSI-Volumes)
+- [Kubernetes Secrets As Environment Variables](#Kubernetes Secrets as Environment Variables)
 
 ### KeyVault Secret CSI Volumes
 | Parameter                  | Description                                |
@@ -151,7 +153,7 @@ keyVaults:
 | `pdb.maxUnavailable` |  To configure the number of pods from the set that can be unavailable after the eviction. It can be either an absolute number or a percentage. pdb.minAvailable takes precedence over this if not nil | `50%` means evictions are allowed as long as no more than 50% of the desired replicas are unhealthy. It will allow disruption if you have only 1 replica.|
 | `pdb.minAvailable` |  To configure the number of pods from that set that must still be available after the eviction, even in the absence of the evicted pod. minAvailable can be either an absolute number or a percentage. This takes precedence over pdb.maxUnavailable if not nil. | `nil`|
 
-### Kubernetes Secrets
+### Kubernetes Secrets as Environment Variables
 
 | Parameter                  | Description                                | Default  |
 | -------------------------- | ------------------------------------------ | ----- |
