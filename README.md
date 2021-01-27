@@ -21,6 +21,7 @@ Note: `We still support v1 templates only till we test and rollout v2 templates`
     language: <new-lang>
     ```
 - This is supported in all v2 templates in the library.
+- Currently, if we set boolean properties to `true` by default, we are not able to override to `false` in language specific values.
 
 ### Release Name
 
@@ -161,7 +162,7 @@ keyVaults:
 
 ]To map existing kubernetes secrets such as passwords to environment variable in the container. e.g :
 
-```
+```yaml
 secrets: 
   CONNECTION_STRING:
       secretRef: some-secret-reference
@@ -187,7 +188,7 @@ To adjust the number of pods in a deployment depending on CPU utilization AKS su
 
 Example Config:
 
-```
+```yaml
 autoscaling:        
   enabled: true     # Default is false
   maxReplicas: 5    # Required setting
