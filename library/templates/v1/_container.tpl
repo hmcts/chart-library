@@ -13,10 +13,16 @@
     - name: {{ $key }}
       value: {{ tpl ($val | quote) $ }}
       {{- end}}
-  {{- if .Values.configmap }}
+  {{- if or (.Values.configmap) (.Values.envFromSecret) }}
   envFrom:
+  {{- if .Values.configmap }}
     - configMapRef:
         name: {{ template "hmcts.releasename.v1" . }}
+  {{- end }}
+  {{- if .Values.envFromSecret }}
+    - secretRef:
+        name: {{ .Values.envFromSecret }}
+  {{- end }}
   {{- end }}
   {{- ( include "hmcts.secretMounts.v1" . ) | indent 2 }}
   {{if .Values.global.devMode -}}

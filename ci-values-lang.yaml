@@ -11,6 +11,7 @@ livenessDelay: 50
 livenessTimeout: 30
 livenessPeriod: 150
 livenessFailureThreshold: 30
+envFromSecret: "env-secret"
 dnsConfig:
   ndots: "2"
 pdb:
