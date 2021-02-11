@@ -14,10 +14,16 @@
     - name: {{ $key }}
       value: {{ tpl ($val | quote) $ }}
       {{- end}}
-  {{- if $languageValues.configmap }}
+  {{- if or ($languageValues.configmap) ($languageValues.envFromSecret) }}
   envFrom:
+  {{- if $languageValues.configmap }}
     - configMapRef:
         name: {{ template "hmcts.releasename.v2" . }}
+  {{- end }}
+  {{- if $languageValues.envFromSecret }}
+    - secretRef:
+        name: {{ $languageValues.envFromSecret }}
+  {{- end }}
   {{- end }}
   {{- ( include "hmcts.secretMounts.v2" . ) | indent 2 }}
   {{if $languageValues.global.devMode -}}

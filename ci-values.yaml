@@ -45,6 +45,7 @@ configmap:
   VAR_A: VALUE_A
   VAR_B: VALUE_B
 saEnabled: true
+envFromSecret: "env-secret"
 keyVaults:
   bulk-scan:
     excludeEnvironmentSuffix: false

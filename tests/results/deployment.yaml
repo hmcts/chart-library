@@ -70,6 +70,8 @@ spec:
           envFrom:
             - configMapRef:
                 name: release-name-library
+            - secretRef:
+                name: env-secret
           volumeMounts:
             - name: vault-bulk-scan
               mountPath: "/mnt/secrets/bulk-scan"

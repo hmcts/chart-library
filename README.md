@@ -83,10 +83,11 @@ It includes below templates :
 | `image`                    | Full image url | `hmctssandbox.azurecr.io/hmcts/spring-boot-template`<br>(but overridden by pipeline) |
 | `environment`              |  A map containing all environment values you wish to set. <br> **Note**: environment variables (the key in KEY: value) must be uppercase and only contain letters,  "_", or numbers and value can be templated |
 | `configmap`                | A config map, can be used for environment specific config.| 
-| `devmemoryRequests`           | Requests for memory, set when `global.devMode` is set to true |
-| `devcpuRequests`              | Requests for cpu, set when `global.devMode` is set to true |
-| `devmemoryLimits`             | Memory limits, set when `global.devMode` is set to true| 
-| `devcpuLimits`                | CPU limits, set when `global.devMode` is set to true | 
+| `envFromSecret`            | Maps all key-value pairs in a Secret as container environment variables| 
+| `devmemoryRequests`        | Requests for memory, set when `global.devMode` is set to true |
+| `devcpuRequests`           | Requests for cpu, set when `global.devMode` is set to true |
+| `devmemoryLimits`          | Memory limits, set when `global.devMode` is set to true| 
+| `devcpuLimits`             | CPU limits, set when `global.devMode` is set to true | 
 | `memoryRequests`           | Requests for memory, set when `global.devMode` is set to false | 
 | `cpuRequests`              | Requests for cpu, set when `global.devMode` is set to false |
 | `memoryLimits`             | Memory limits, set when `global.devMode` is set to false|
