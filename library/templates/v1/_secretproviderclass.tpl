@@ -17,10 +17,17 @@ spec:
     keyvaultName: "{{ $vault }}{{ if not (default $info.excludeEnvironmentSuffix false) }}-{{ $globals.environment }}{{ end }}"
     objects: |
       array: {{- range $info.secrets }}
+     {{- if kindIs "map" . }}
+        - |
+          objectName: {{ .name }}
+          objectType: secret
+          objectAlias: {{ .alias }}
+     {{- else }}
         - |
           objectName: {{ . }}
           objectType: secret
-      {{- end }}
+     {{- end }}
+     {{- end }}
     tenantId: {{ $globals.tenantId | quote }}
 {{- end }}
 {{- end }}
