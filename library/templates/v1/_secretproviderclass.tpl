@@ -21,7 +21,9 @@ spec:
         - |
           objectName: {{ .name }}
           objectType: secret
+     {{- if hasKey . "alias" }}
           objectAlias: {{ .alias }}
+     {{- end }}
      {{- else }}
         - |
           objectName: {{ . }}
