@@ -129,9 +129,25 @@ keyVaults:
         - <SECRET_NAME>
         - <SECRET_NAME2>
 ```
+
+In some cases, you may want to alias the secrets to a different name (An environment varibale for example), you can configure it using
+
+```yaml
+aadIdentityName: <Identity Binding>
+keyVaults:
+    <VAULT_NAME>:
+      excludeEnvironmentSuffix: true
+      secrets:
+        - name: <SECRET_NAME>
+          alias: <SECRET_ALIAS>
+        - name: <SECRET_NAME2>
+          alias: <SECRET_ALIAS2>
+```
+
 **Where**:
 - *<VAULT_NAME>*: Name of the vault to access without the environment tag i.e. `s2s` or `bulkscan`.
-- *<SECRET_NAME>* Secret name as it is in the vault. Note this is case and punctuation sensitive. i.e. in s2s there is the `microservicekey-cmcLegalFrontend` secret.
+- *<SECRET_NAME>*: Secret name as it is in the vault. Note this is case and punctuation sensitive. i.e. in s2s there is the `microservicekey-cmcLegalFrontend` secret.
+- *<SECRET_ALIAS>*: Alias name for the secret.
 - *excludeEnvironmentSuffix*: This is used for the global key vaults where there is not environment suffix ( e.g `-aat` ) required. It defaults to false if it is not there and should only be added if you are using a global key-vault.
 
 **Note**: To enable `keyVaults` to be mounted as flexvolumes :
