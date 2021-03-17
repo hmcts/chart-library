@@ -130,7 +130,7 @@ keyVaults:
         - <SECRET_NAME2>
 ```
 
-In some cases, you may want to alias the secrets to a different name (An environment varibale for example), you can configure it using
+In some cases, you may want to alias the secrets to a different name (An environment variable for example), you can configure it using
 
 ```yaml
 aadIdentityName: <Identity Binding>
