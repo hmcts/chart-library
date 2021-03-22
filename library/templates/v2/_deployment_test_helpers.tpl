@@ -11,7 +11,7 @@ metadata:
 {{- define "hmcts.tests.header.v2" -}}
 apiVersion: v1
 kind: Pod
-{{ template "hmcts.tests.meta" . }}
+{{ template "hmcts.tests.meta.v2" . }}
     {{- if .Values.aadIdentityName }}
     aadpodidbinding: {{ .Values.aadIdentityName }}
     {{- end }}
@@ -23,7 +23,7 @@ kind: Pod
 {{- define "hmcts.testscron.header.v2" -}}
 apiVersion: batch/v1beta1
 kind: CronJob
-{{ template "hmcts.tests.meta" . }}
+{{ template "hmcts.tests.meta.v2" . }}
 spec:
   schedule: "{{ .Values.schedule }}"
   jobTemplate:

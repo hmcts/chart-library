@@ -1,1 +1,0 @@
-{{- template "hmcts.sa.v1.tpl" . -}}
