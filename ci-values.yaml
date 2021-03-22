@@ -85,9 +85,7 @@ functionaltestscron:
   image: hmctspublic.azurecr.io/spring-boot/template
   enabled: true
   schedule: "30 0/6 * * *"
-labels:
-  sample : sample-value
-  another: another-value
+
 # HPA
 autoscaling:
   enabled: true
