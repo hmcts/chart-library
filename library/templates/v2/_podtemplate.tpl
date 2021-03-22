@@ -17,6 +17,7 @@ template:
       fsGroup: 1000
     {{- ( include "hmcts.secretCSIVolumes.v2" . ) | indent 4 }}
     {{- ( include "hmcts.dnsConfig.v2" . ) | indent 4 }}
+    restartPolicy: {{ .Values.restartPolicy | default "Always" | quote }}
     containers:
 {{ include "hmcts.container.v2.tpl" . | indent 6 -}}
 

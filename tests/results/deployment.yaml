@@ -50,12 +50,12 @@ spec:
         options:
           - name: ndots
             value: "3"
+      restartPolicy: "Always"
       containers:
         - image: hmctspublic.azurecr.io/chart-nodejs/testapp
           name: release-name-library
           securityContext:
             allowPrivilegeEscalation: false
-          restartPolicy: "Always"
           env:
             - name: STORAGE_ACCOUNT_NAME
               valueFrom:

@@ -4,7 +4,6 @@
   name: {{ template "hmcts.releasename.v2" . }}
   securityContext:
     allowPrivilegeEscalation: false
-  restartPolicy: {{ .Values.restartPolicy | default "Always" | quote }}
   env:
     {{- if $languageValues.global.devMode }}
     - name: {{ $languageValues.devApplicationInsightsInstrumentKeyName }}
