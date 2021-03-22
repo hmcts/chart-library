@@ -9,8 +9,6 @@ metadata:
     helm.sh/chart: library-0.1.0
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/instance: release-name-library
-    another: another-value
-    sample: sample-value
 spec:
   ports:
     - name: http

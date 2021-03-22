@@ -12,10 +12,5 @@ labels:
   {{- if $languageValues.aadIdentityName }}
   aadpodidbinding: {{ $languageValues.aadIdentityName }}
   {{- end }}
-  {{- if $languageValues.labels }}
-  {{- range $key, $val := $languageValues.labels }}
-  {{ $key }}: {{ $val }}
-  {{- end}}
-  {{- end}}
 {{- end}}
 ----
