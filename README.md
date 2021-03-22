@@ -1,7 +1,7 @@
 # chart-library
 Library Helm Chart
 
-Note: `We still support v1 templates only till we test and rollout v2 templates`
+Note: `V1 templates are no longer available`
 
 ## Template Configuration
 

@@ -1,1 +1,0 @@
-{{- template "hmcts.ingress.v1.tpl" . -}}
