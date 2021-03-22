@@ -55,6 +55,7 @@ spec:
           name: release-name-library
           securityContext:
             allowPrivilegeEscalation: false
+          restartPolicy: "Always"
           env:
             - name: STORAGE_ACCOUNT_NAME
               valueFrom:
