@@ -5,7 +5,7 @@
   securityContext:
     allowPrivilegeEscalation: false
   env:
-    {{- if $languageValues.global.devMode }}
+    {{- if and $languageValues.global.devMode $languageValues.devApplicationInsightsInstrumentKeyName }}
     - name: {{ $languageValues.devApplicationInsightsInstrumentKeyName }}
       value: {{ $languageValues.devApplicationInsightsInstrumentKey | quote }}
     {{- end -}}
