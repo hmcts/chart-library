@@ -2,7 +2,10 @@
 All the common annotations needed for the annotations sections of the definitions.
 */}}
 {{- define "hmcts.annotations.v2" }}
-{{- $languageValues := (deepCopy .Values | merge (pluck .Values.language .Values | first) ) }}
+{{- $languageValues := deepCopy .Values}}
+{{- if hasKey .Values "language" -}}
+{{- $languageValues = (deepCopy .Values | merge (pluck .Values.language .Values | first) )}}
+{{- end -}}
 {{- with $languageValues }}
 annotations:
   {{- $applicationPort := .applicationPort -}} 

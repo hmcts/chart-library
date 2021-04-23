@@ -3,7 +3,10 @@
 Setup inter pod anti affinity
 */}}
 {{- define "hmcts.interpodantiaffinity.v2" }}
-{{- $languageValues := (deepCopy .Values | merge (pluck .Values.language .Values | first) ) -}}
+{{- $languageValues := deepCopy .Values -}}
+{{- if hasKey .Values "language" -}}
+{{- $languageValues = (deepCopy .Values | merge (pluck .Values.language .Values | first) ) -}}
+{{- end -}}
 {{- if $languageValues.useInterpodAntiAffinity }}
 affinity:
   podAntiAffinity:

@@ -13,7 +13,10 @@ The applied order is: "global prefix + prefix + name + suffix + global suffix"
 Usage: 'name: "{{- template "hmcts.releasename.v2" . -}}"'
 */ -}}
 {{- define "hmcts.releasename.v2" }}
-{{- $languageValues := (deepCopy .Values | merge (pluck .Values.language .Values | first) ) -}}
+{{- $languageValues := deepCopy .Values -}}
+{{- if hasKey .Values "language" -}}
+{{- $languageValues = (deepCopy .Values | merge (pluck .Values.language .Values | first) ) -}}
+{{- end -}}
   {{- $global := default (dict) $languageValues .global -}}
   {{- $base := printf "%s-%s" .Release.Name .Chart.Name -}}
   {{- if $languageValues.releaseNameOverride -}}

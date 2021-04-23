@@ -2,7 +2,10 @@
 The bit of templating needed to create the CSI driver keyvault for mounting
 */}}
 {{- define "hmcts.secretCSIVolumes.v2" }}
-{{- $languageValues := (deepCopy .Values | merge (pluck .Values.language .Values | first) ) -}}
+{{- $languageValues := deepCopy .Values -}}
+{{- if hasKey .Values "language" -}}
+{{- $languageValues = (deepCopy .Values | merge (pluck .Values.language .Values | first) ) -}}
+{{- end -}}
 {{- if and $languageValues.keyVaults $languageValues.global.enableKeyVaults (not $languageValues.disableKeyVaults) }}
 {{- $globals := $languageValues.global }}
 {{- $keyVaults := $languageValues.keyVaults }}
@@ -23,7 +26,10 @@ volumes:
 Mount the Key vaults on /mnt/secrets
 */}}
 {{- define "hmcts.secretMounts.v2" -}}
-{{- $languageValues := (deepCopy .Values | merge (pluck .Values.language .Values | first) ) -}}
+{{- $languageValues := deepCopy .Values -}}
+{{- if hasKey .Values "language" -}}
+{{- $languageValues = (deepCopy .Values | merge (pluck .Values.language .Values | first) ) -}}
+{{- end -}}
 {{- if and $languageValues.keyVaults $languageValues.global.enableKeyVaults (not $languageValues.disableKeyVaults) }}
 volumeMounts:
 {{- range $vault, $info := $languageValues.keyVaults }}

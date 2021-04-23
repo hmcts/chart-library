@@ -2,7 +2,10 @@
 Create pod template spec.
 */}}
 {{- define "hmcts.podtemplate.v2.tpl" -}}
-{{- $languageValues := (deepCopy .Values | merge (pluck .Values.language .Values | first) ) -}}
+{{- $languageValues := deepCopy .Values -}}
+{{- if hasKey .Values "language" -}}
+{{- $languageValues = (deepCopy .Values | merge (pluck .Values.language .Values | first) ) -}}
+{{- end -}}
 template:
   metadata:
     {{- (include "hmcts.labels.v2" .) | indent 4 }}

@@ -90,4 +90,3 @@ functionaltestscron:
 autoscaling:
   enabled: true
   maxReplicas: 5
-language: none

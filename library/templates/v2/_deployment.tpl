@@ -2,7 +2,10 @@
 apiVersion: apps/v1
 kind: Deployment
 {{ template "hmcts.metadata.v2" . }}
-{{- $languageValues := (deepCopy .Values | merge (pluck .Values.language .Values | first) ) }}
+{{- $languageValues := deepCopy .Values }}
+{{- if hasKey .Values "language" -}}
+{{- $languageValues = (deepCopy .Values | merge (pluck .Values.language .Values | first) ) }}
+{{- end }}
 spec:
   revisionHistoryLimit: 0
   replicas: {{ $languageValues.replicas }}
