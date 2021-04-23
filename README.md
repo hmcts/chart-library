@@ -270,7 +270,10 @@ As library charts are not installable, you can use [this script](tests/test-temp
 ### Adding new templates
 - To support language specific defaults in base charts, all the templates should give precedence to values under `language:` over the default values.
 - This can be achieved by using values from below in the templates:
- `{{- $languageValues := (deepCopy .Values | merge (pluck .Values.language .Values | first) ) }}`
+ `{{- $languageValues := deepCopy .Values}}
+  {{- if hasKey .Values "language" -}}
+  {{- $languageValues = (deepCopy .Values | merge (pluck .Values.language .Values | first) )}}
+  {{- end -}}`
 - Add the template you expect to  [results](tests/results)
 - Add a simple manifest which includes the template in [tests](tests)
 - Modify the [script](tests/test-templates.sh) to add to list of manifests being tested

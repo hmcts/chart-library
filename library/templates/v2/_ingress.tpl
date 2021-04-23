@@ -1,5 +1,8 @@
 {{- define "hmcts.ingress.v2.tpl" -}}
-{{- $languageValues := (deepCopy .Values | merge (pluck .Values.language .Values | first) ) }}
+{{- $languageValues := deepCopy .Values -}}
+{{- if hasKey .Values "language" -}}
+{{- $languageValues = (deepCopy .Values | merge (pluck .Values.language .Values | first) ) -}}
+{{- end -}}
 {{ if or ($languageValues.ingressHost ) ($languageValues.registerAdditionalDns.enabled) }}
 ---
 apiVersion: networking.k8s.io/v1beta1
@@ -42,7 +45,10 @@ spec:
 Additional Path based routes
 */}}
 {{- define "hmcts.additionalPathBasedRoutes.v2" }}
-{{- $languageValues := (deepCopy .Values | merge (pluck .Values.language .Values | first) ) }}
+{{- $languageValues := deepCopy .Values -}}
+{{- if hasKey .Values "language" -}}
+{{- $languageValues = (deepCopy .Values | merge (pluck .Values.language .Values | first) ) -}}
+{{- end -}}
 {{- range $path, $serviceName := $languageValues.additionalPathBasedRoutes }}
   - path: {{ $path }}
     backend:

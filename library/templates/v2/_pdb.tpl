@@ -1,5 +1,8 @@
 {{- define "hmcts.pdb.v2.tpl" -}}
-{{- $languageValues := (deepCopy .Values | merge (pluck .Values.language .Values | first) ) -}}
+{{- $languageValues := deepCopy .Values -}}
+{{- if hasKey .Values "language" -}}
+{{- $languageValues = (deepCopy .Values | merge (pluck .Values.language .Values | first) ) -}}
+{{- end -}}
 {{ if $languageValues.pdb.enabled }}
 ---
 apiVersion: policy/v1beta1

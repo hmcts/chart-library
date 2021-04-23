@@ -1,6 +1,8 @@
 {{- define "hmcts.deploymenttests.v2.tpl" -}}
-{{- $languageValues := (deepCopy .Values | merge (pluck .Values.language .Values | first) ) -}}
-
+{{- $languageValues := deepCopy .Values -}}
+{{- if hasKey .Values "language" -}}
+{{- $languageValues = (deepCopy .Values | merge (pluck .Values.language .Values | first) ) -}}
+{{- end -}}
 {{ if $languageValues.smoketests.enabled }}
 ---
 {{ $smokedata := dict "Values" $languageValues "Release" .Release "Chart" .Chart "Template" .Template "Files" .Files }}
