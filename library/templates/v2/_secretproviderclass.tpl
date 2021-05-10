@@ -8,6 +8,7 @@
 {{- $keyVaults := $languageValues.keyVaults -}}
 {{- $root := . -}}
 {{- range $vault, $info := $languageValues.keyVaults }}
+{{- if not $info.disable }}
 ---
 apiVersion: secrets-store.csi.x-k8s.io/v1alpha1
 kind: SecretProviderClass
@@ -38,6 +39,7 @@ spec:
 {{- end }}
 {{- end }}
 {{- end }}
+{{- end -}}
 
 {{- define "hmcts.secretproviderclass.v2" -}}
 {{- template "hmcts.util.merge.v2" (append . "hmcts.secretproviderclass.v2.tpl") -}}
