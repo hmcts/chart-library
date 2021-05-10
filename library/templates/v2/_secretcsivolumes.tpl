@@ -12,7 +12,7 @@ The bit of templating needed to create the CSI driver keyvault for mounting
 {{- $root := . }}
 volumes:
 {{- range $vault, $info := $languageValues.keyVaults }}
-{{- if not $info.disableKeyVaults }}
+{{- if not $info.disable }}
   - name: vault-{{ $vault }}
     csi:
       driver: "secrets-store.csi.k8s.io"
