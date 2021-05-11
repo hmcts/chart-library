@@ -8,7 +8,7 @@
 {{- $keyVaults := $languageValues.keyVaults -}}
 {{- $root := . -}}
 {{- range $vault, $info := $languageValues.keyVaults }}
-{{- if not $info.disable }}
+{{- if not $info.disabled }}
 ---
 apiVersion: secrets-store.csi.x-k8s.io/v1alpha1
 kind: SecretProviderClass
