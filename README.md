@@ -121,7 +121,7 @@ aadIdentityName: <Identity Binding>
 keyVaults:
     <VAULT_NAME>:
       excludeEnvironmentSuffix: true
-      disable: true
+      disabled: true
       secrets:
         - <SECRET_NAME>
         - <SECRET_NAME2>
