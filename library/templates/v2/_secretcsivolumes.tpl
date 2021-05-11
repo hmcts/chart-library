@@ -35,7 +35,7 @@ Mount the Key vaults on /mnt/secrets
 {{- if and $languageValues.keyVaults $languageValues.global.enableKeyVaults (not $languageValues.disableKeyVaults) }}
 volumeMounts:
 {{- range $vault, $info := $languageValues.keyVaults }}
-{{- if not $info.disable }}
+{{- if not $info.disabled }}
   - name: vault-{{ $vault }}
     mountPath: "/mnt/secrets/{{ $vault }}"
     readOnly: true

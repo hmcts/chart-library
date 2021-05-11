@@ -150,7 +150,7 @@ keyVaults:
 - *<SECRET_NAME>*: Secret name as it is in the vault. Note this is case and punctuation sensitive. i.e. in s2s there is the `microservicekey-cmcLegalFrontend` secret.
 - *<SECRET_ALIAS>*: Alias name for the secret.
 - *excludeEnvironmentSuffix*: This is used for the global key vaults where there is not environment suffix ( e.g `-aat` ) required. It defaults to false if it is not there and should only be added if you are using a global key-vault.
-- *disable*: This is an optional field used to disable key vaults either globally or per chart.
+- *disabled*: This is an optional field used to disable a specific key vault, useful when overriding defaults. 
 **Note**: To enable `keyVaults` to be mounted as flexvolumes :
 - When not using Jenkins, explicitly set global.enableKeyVaults to `true` .
 - When not using pod identity, your service principal credentials need to be added to your namespace as a Kubernetes secret named `kvcreds` and accessible by the KeyVault FlexVolume driver. 
