@@ -43,16 +43,16 @@ spec:
 {{- if and .Values.testsConfig.keyVaults .Values.global.enableKeyVaults }}
 {{- $root := . }}
 volumes:
-  {{- $globals := .Values.global }}
-  {{- $aadIdentityName := .Values.aadIdentityName }}
-  {{- range $key, $value := .Values.testsConfig.keyVaults }}
-  - name: vault-{{ $key }}
-    csi:
-      driver: "secrets-store.csi.k8s.io"
-      readOnly: true
-      volumeAttributes:
-        secretProviderClass: {{ template "hmcts.releasename.v2" $root }}-tests-{{ $key }}
-  {{- end }}
+{{- $globals := .Values.global }}
+{{- $aadIdentityName := .Values.aadIdentityName }}
+{{- range $key, $value := .Values.testsConfig.keyVaults }}
+- name: vault-{{ $key }}
+  csi:
+    driver: "secrets-store.csi.k8s.io"
+    readOnly: true
+    volumeAttributes:
+      secretProviderClass: {{ template "hmcts.releasename.v2" $root }}-tests-{{ $key }}
+{{- end }}
 {{- end }}
 securityContext:
   runAsUser: 1000
@@ -64,7 +64,7 @@ containers:
     image: {{ .Values.tests.image }}
     {{- if and .Values.testsConfig.keyVaults .Values.global.enableKeyVaults }}
     {{ $args := list }}
-    {{- range $key, $value := .Values.testsConfig.keyVaults -}}{{- range $secret, $var := $value.secrets -}} {{ $args = append $args (printf "%s=/mnt/secrets/%s/%s" $var $key $secret | quote) }} {{- end -}}{{- end -}}
+    {{- range $key, $value := .Values.testsConfig.keyVaults -}}{{- range $secret, $var := $value.secrets -}} {{ $args = append $args (printf "%s=/mnt/secrets/%s/%s" ($var | upper | replace  "-" "_") $key $var | quote) }} {{- end -}}{{- end -}}
     args: [{{ $args | join "," }}]
     {{- end }}
     securityContext:
@@ -90,11 +90,11 @@ containers:
     {{- end }}
     {{- if and .Values.testsConfig.keyVaults .Values.global.enableKeyVaults }}
     volumeMounts:
-      {{- range $key, $value := .Values.testsConfig.keyVaults }}
-      - name: vault-{{ $key }}
-        mountPath: /mnt/secrets/{{ $key }}
-        readOnly: true
-      {{- end }}
+    {{- range $key, $value := .Values.testsConfig.keyVaults }}
+    - name: vault-{{ $key }}
+      mountPath: /mnt/secrets/{{ $key }}
+      readOnly: true
+    {{- end }}
     {{- end }}
     resources:
       requests:
