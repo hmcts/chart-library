@@ -51,7 +51,7 @@ volumes:
       driver: "secrets-store.csi.k8s.io"
       readOnly: true
       volumeAttributes:
-        secretProviderClass: {{ template "hmcts.releasename.v2" $root }}-{{ $key }}
+        secretProviderClass: {{ template "hmcts.releasename.v2" $root }}-tests-{{ $key }}
   {{- end }}
 {{- end }}
 securityContext:
