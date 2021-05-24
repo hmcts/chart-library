@@ -161,6 +161,13 @@ java:
     memoryLimits: "2048Mi"
     cpuLimits: "1000m"
     serviceAccountName: tests-service-account
+    keyVaults:
+      bulk-scan:
+        excludeEnvironmentSuffix: true
+        disabled: true
+        secrets:
+          - idam-client-secret
+          - s2s-secret
   smoketests:
     image: hmctspublic.azurecr.io/spring-boot/template
     enabled: false

@@ -1,9 +1,9 @@
 {{- define "hmcts.tests.meta.v2" -}}
 metadata:
-  name: {{ .Release.Name | lower }}-{{ .Values.task }}{{ .Values.type }}-job
+  name: {{ .Release.Name }}-{{ .Values.task }}{{ .Values.type }}-job
   labels:
     app.kubernetes.io/managed-by: {{ .Release.Service }}
-    app.kubernetes.io/instance: {{ .Release.Name | lower }}-{{ .Values.task }}{{ .Values.type }}
+    app.kubernetes.io/instance: {{ .Release.Name }}-{{ .Values.task }}{{ .Values.type }}
     helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version }}
     app.kubernetes.io/name: {{ template "hmcts.releasename.v2" . }}-{{ .Values.task }}{{ .Values.type }}
 {{- end -}}
