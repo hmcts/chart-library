@@ -3,10 +3,10 @@
 apiVersion: batch/v1beta1
 kind: CronJob
 metadata:
-  name: RELEASE-NAME-functionaltestscron-job
+  name: release-name-functionaltestscron-job
   labels:
     app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/instance: RELEASE-NAME-functionaltestscron
+    app.kubernetes.io/instance: release-name-functionaltestscron
     helm.sh/chart: library-0.1.0
     app.kubernetes.io/name: release-name-library-functionaltestscron
 spec:
