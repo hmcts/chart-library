@@ -27,7 +27,6 @@ spec:
               readOnly: true
               volumeAttributes:
                 secretProviderClass: release-name-library-tests-bulk-scan
-          
           securityContext:
             runAsUser: 1000
             fsGroup: 1000
@@ -39,6 +38,10 @@ spec:
               args: ["IDAM_CLIENT_SECRET=/mnt/secrets/bulk-scan/idam-client-secret","S2S_SECRET=/mnt/secrets/bulk-scan/s2s-secret"]
               securityContext:
                 allowPrivilegeEscalation: false
+              volumeMounts:
+              - name: vault-bulk-scan
+                mountPath: /mnt/secrets/bulk-scan
+                readOnly: true
               resources:
                 requests:
                   memory: "256Mi"
@@ -46,7 +49,3 @@ spec:
                 limits:
                   memory: "2048Mi"
                   cpu: "1000m"
-              volumeMounts:
-              - name: vault-bulk-scan
-                mountPath: /mnt/secrets/bulk-scan
-                readOnly: true
