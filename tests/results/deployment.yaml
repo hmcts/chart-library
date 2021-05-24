@@ -60,7 +60,7 @@ spec:
             - name: STORAGE_ACCOUNT_NAME
               valueFrom:
                 secretKeyRef:
-                  name: storage-secret-example-RELEASE-NAME
+                  name: storage-secret-example-release-name
                   key: storageAccountName
             - name: REFORM_ENVIRONMENT
               value: "preview"
