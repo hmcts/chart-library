@@ -74,7 +74,6 @@ testsConfig:
   keyVaults:
     bulk-scan:
       excludeEnvironmentSuffix: true
-      disabled: true
       secrets:
         - idam-client-secret
         - s2s-secret
