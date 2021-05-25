@@ -215,11 +215,7 @@ autoscaling:
 
 | Parameter                  | Description                                | Default  |
 | -------------------------- | ------------------------------------------ | ----- |
-| `testsConfig.keyVaults`      | Tests keyvaults. Shared by all tests pods | `bulk-scan:
-        excludeEnvironmentSuffix: true
-        secrets:
-          - idam-client-secret
-          - s2s-secret` |
+| `testsConfig.keyVaults`      | Tests keyvaults. Shared by all tests pods | `nil` |
 | `testsConfig.environment`    | Tests environment variables. Shared by all tests pods. Merged, with duplicate variables overridden, by specific tests environment  | `nil` |
 | `testsConfig.memoryRequests` | Tests Requests for memory. Applies to all test pods. Can be overridden by single test pods | `256Mi`|
 | `testsConfig.cpuRequests`    | Tests Requests for cpu. Applies to all test pods. Can be overridden by single test pods | `100m`|
