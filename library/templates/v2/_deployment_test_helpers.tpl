@@ -64,7 +64,7 @@ containers:
     image: {{ .Values.tests.image }}
     {{- if and .Values.testsConfig.keyVaults .Values.global.enableKeyVaults }}
     {{ $args := list }}
-    {{- range $key, $value := .Values.testsConfig.keyVaults -}}{{- range $secret, $var := $value.secrets -}} {{ $args = append $args (printf "%s=/mnt/secrets/%s/%s" ($var | upper | replace  "-" "_") $key $var | quote) }} {{- end -}}{{- end -}}
+    {{- range $key, $value := .Values.testsConfig.keyVaults -}}{{- range $secret, $var := $value.secrets -}} {{ $args = append $args (printf "%s=/mnt/secrets/%s/%s" (ternary ($var.name | upper |  replace "-" "_") $var.alias (empty $var.alias)) $key $var.name | quote) }} {{- end -}}{{- end -}}
     args: [{{ $args | join "," }}]
     {{- end }}
     securityContext:

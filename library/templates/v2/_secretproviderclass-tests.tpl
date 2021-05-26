@@ -33,6 +33,7 @@ spec:
         - |
           objectName: {{ . }}
           objectType: secret
+          objectAlias: {{ "  "}}
      {{- end }}
       {{- end }}
     tenantId: {{ $globals.tenantId | quote }}
