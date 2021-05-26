@@ -26,14 +26,15 @@ spec:
         - |
           objectName: {{ .name }}
           objectType: secret
-     {{- if hasKey . "alias" }}
+        {{- if hasKey . "alias" }}
           objectAlias: {{ .alias }}
-     {{- end }}
+        {{- else }}
+          objectAlias: {{ .name | upper | replace "-" "_"}}
+        {{- end }}
      {{- else }}
         - |
           objectName: {{ . }}
           objectType: secret
-          objectAlias: {{ "  "}}
      {{- end }}
       {{- end }}
     tenantId: {{ $globals.tenantId | quote }}
