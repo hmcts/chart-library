@@ -130,7 +130,7 @@ keyVaults:
         - <SECRET_NAME>
         - <SECRET_NAME2>
 ```
-
+#### Example for adding Azure Key Vault Secrets to testsConfig
 In some cases, you may want to alias the secrets to a different name (An environment variable for example), you can configure it using
 
 ```yaml
@@ -215,7 +215,7 @@ autoscaling:
 
 | Parameter                  | Description                                | Default  |
 | -------------------------- | ------------------------------------------ | ----- |
-| `testsConfig.keyVaults`      | Tests keyvaults. Shared by all tests pods | `nil` |
+| `testsConfig.keyVaults`      | Tests keyvaults config [here](https://github.com/hmcts/chart-library#example-for-adding-azure-key-vault-secrets-to-testsconfig). Shared by all tests pods  | `nil` |
 | `testsConfig.environment`    | Tests environment variables. Shared by all tests pods. Merged, with duplicate variables overridden, by specific tests environment  | `nil` |
 | `testsConfig.memoryRequests` | Tests Requests for memory. Applies to all test pods. Can be overridden by single test pods | `256Mi`|
 | `testsConfig.cpuRequests`    | Tests Requests for cpu. Applies to all test pods. Can be overridden by single test pods | `100m`|
