@@ -130,7 +130,6 @@ keyVaults:
         - <SECRET_NAME>
         - <SECRET_NAME2>
 ```
-
 In some cases, you may want to alias the secrets to a different name (An environment variable for example), you can configure it using
 
 ```yaml
@@ -150,10 +149,8 @@ keyVaults:
 - *<SECRET_NAME>*: Secret name as it is in the vault. Note this is case and punctuation sensitive. i.e. in s2s there is the `microservicekey-cmcLegalFrontend` secret.
 - *<SECRET_ALIAS>*: Alias name for the secret.
 - *excludeEnvironmentSuffix*: This is used for the global key vaults where there is not environment suffix ( e.g `-aat` ) required. It defaults to false if it is not there and should only be added if you are using a global key-vault.
-- *disabled*: This is an optional field used to disable a specific key vault, useful when overriding defaults. 
-**Note**: To enable `keyVaults` to be mounted as flexvolumes :
+- *disabled*: This is an optional field used to disable a specific key vault, useful when overriding defaults.
 - When not using Jenkins, explicitly set global.enableKeyVaults to `true` .
-- When not using pod identity, your service principal credentials need to be added to your namespace as a Kubernetes secret named `kvcreds` and accessible by the KeyVault FlexVolume driver. 
 
 ### Ingress
 
@@ -217,7 +214,7 @@ autoscaling:
 
 | Parameter                  | Description                                | Default  |
 | -------------------------- | ------------------------------------------ | ----- |
-| `testsConfig.keyVaults`      | Tests keyvaults. Shared by all tests pods | `nil` |
+| `testsConfig.keyVaults`      | Tests keyvaults config [here](#example-for-adding-azure-key-vault-secrets-to-testsconfig). Shared by all tests pods  | `nil` |
 | `testsConfig.environment`    | Tests environment variables. Shared by all tests pods. Merged, with duplicate variables overridden, by specific tests environment  | `nil` |
 | `testsConfig.memoryRequests` | Tests Requests for memory. Applies to all test pods. Can be overridden by single test pods | `256Mi`|
 | `testsConfig.cpuRequests`    | Tests Requests for cpu. Applies to all test pods. Can be overridden by single test pods | `100m`|

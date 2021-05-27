@@ -13,12 +13,12 @@ metadata:
     kubernetes.io/ingress.class: traefik
 spec:
   rules:
-  - host: RELEASE-NAME.service.core-compute-preview.internal
+  - host: release-name.service.core-compute-preview.internal
     http:
       paths:
       - path: /test
         backend:
-          serviceName: RELEASE-NAME
+          serviceName: release-name
           servicePort: 80
       - path: /
         backend:

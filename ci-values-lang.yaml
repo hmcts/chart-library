@@ -48,8 +48,9 @@ keyVaults:
   bulk-scan:
     excludeEnvironmentSuffix: false
     secrets:
-      - idam-secret
-      - s2s-secrets
+      - name: idam-client-secret
+        alias: idam.client.secret
+      - name: s2s-secret
 additionalPathBasedRoutes:
   "/test": "{{.Release.Name}}"
 secrets:
@@ -68,6 +69,13 @@ testsConfig:
   memoryLimits: "1024Mi"
   cpuLimits: "2000m"
   serviceAccountName: tests-account
+  keyVaults:
+      bulk-scan:
+        excludeEnvironmentSuffix: true
+        secrets:
+          - name: idam-client-secret
+            alias: IDAM_CLIENT_SECRET
+          - name: s2s-secret
 smoketests:
   image: hmctspublic.azurecr.io/boot/template
   enabled: false
@@ -161,6 +169,13 @@ java:
     memoryLimits: "2048Mi"
     cpuLimits: "1000m"
     serviceAccountName: tests-service-account
+    keyVaults:
+      bulk-scan:
+        excludeEnvironmentSuffix: true
+        secrets:
+          - name: idam-client-secret
+            alias: IDAM_CLIENT_SECRET
+          - name: s2s-secret
   smoketests:
     image: hmctspublic.azurecr.io/spring-boot/template
     enabled: false

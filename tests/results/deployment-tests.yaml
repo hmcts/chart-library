@@ -3,10 +3,10 @@
 apiVersion: batch/v1beta1
 kind: CronJob
 metadata:
-  name: RELEASE-NAME-functionaltestscron-job
+  name: release-name-functionaltestscron-job
   labels:
     app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/instance: RELEASE-NAME-functionaltestscron
+    app.kubernetes.io/instance: release-name-functionaltestscron
     helm.sh/chart: library-0.1.0
     app.kubernetes.io/name: release-name-library-functionaltestscron
 spec:
@@ -20,6 +20,13 @@ spec:
             app.kubernetes.io/name: release-name-library-functionaltestscron
         spec:
           
+          volumes:
+          - name: vault-bulk-scan
+            csi:
+              driver: "secrets-store.csi.k8s.io"
+              readOnly: true
+              volumeAttributes:
+                secretProviderClass: release-name-library-tests-bulk-scan
           securityContext:
             runAsUser: 1000
             fsGroup: 1000
@@ -28,8 +35,13 @@ spec:
           containers:
             - name: tests
               image: hmctspublic.azurecr.io/spring-boot/template
+              args: ["IDAM_CLIENT_SECRET=/mnt/secrets/bulk-scan/idam-client-secret","S2S_SECRET=/mnt/secrets/bulk-scan/s2s-secret"]
               securityContext:
                 allowPrivilegeEscalation: false
+              volumeMounts:
+              - name: vault-bulk-scan
+                mountPath: /mnt/secrets/bulk-scan
+                readOnly: true
               resources:
                 requests:
                   memory: "256Mi"

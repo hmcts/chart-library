@@ -15,7 +15,7 @@ metadata:
 spec:
   rules:
   {{- if $languageValues.ingressHost }}
-  - host: {{ tpl $languageValues.ingressHost $ }}
+  - host: {{ tpl $languageValues.ingressHost $ | lower }}
     http:
       paths:
       {{- ( include "hmcts.additionalPathBasedRoutes.v2" .) | indent 4 }}
@@ -52,7 +52,7 @@ Additional Path based routes
 {{- range $path, $serviceName := $languageValues.additionalPathBasedRoutes }}
   - path: {{ $path }}
     backend:
-      serviceName: {{ tpl $serviceName $ }}
+      serviceName: {{ tpl $serviceName $ | lower }}
       servicePort: 80
 {{- end }}
 {{- end -}}

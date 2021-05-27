@@ -24,7 +24,7 @@ Example format:
         {{- end }}
   valueFrom:
     secretKeyRef:
-      name: {{  tpl (required "Each item in \"secrets:\" needs a secretRef member" $val.secretRef) $ }}
+      name: {{  tpl (required "Each item in \"secrets:\" needs a secretRef member" $val.secretRef) $ | lower }}
       key: {{ required "Each item in \"secrets:\" needs a key member" $val.key }}
       {{- end }}
     {{- end }}
