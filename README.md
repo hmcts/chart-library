@@ -280,3 +280,4 @@ As library charts are not installable, you can use [this script](tests/test-temp
 - Run the script and verify the generated templates match.
 - Generated manifests can be installed on a cluster if you want to see they are working as expected.
 - Make sure language specific cases are covered in the tests [see](ci-values-lang.yaml)
+- Once you release the chart , include the new template in applicable base charts [see](https://github.com/hmcts/chart-java/pull/115)
