@@ -28,8 +28,6 @@ spec:
           objectType: secret
         {{- if hasKey . "alias" }}
           objectAlias: {{ .alias }}
-        {{- else }}
-          objectAlias: {{ .name | upper | replace "-" "_"}}
         {{- end }}
      {{- else }}
         - |
