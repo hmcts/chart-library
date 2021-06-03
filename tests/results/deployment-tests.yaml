@@ -35,7 +35,7 @@ spec:
           containers:
             - name: tests
               image: hmctspublic.azurecr.io/spring-boot/template
-              args: ["IDAM_CLIENT_SECRET=/mnt/secrets/bulk-scan/idam-client-secret","S2S_SECRET=/mnt/secrets/bulk-scan/s2s-secret"]
+              args: ["IDAM_CLIENT_SECRET=/mnt/secrets/bulk-scan/IDAM_CLIENT_SECRET","S2S_SECRET=/mnt/secrets/bulk-scan/s2s-secret"]
               securityContext:
                 allowPrivilegeEscalation: false
               volumeMounts:
