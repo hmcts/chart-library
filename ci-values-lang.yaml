@@ -34,7 +34,7 @@ image: hmctspublic.azurecr.io/chart-java/testapp
 replicas: 1
 useInterpodAntiAffinity: flase
 ingressHost: "{{.Release.Name}}.service.core-compute-prod.internal"
-tls: true
+tls: false
 livenessPath: /health/livenezz
 imagePullPolicy: Alwayz
 environment:
