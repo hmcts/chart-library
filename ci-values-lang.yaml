@@ -34,7 +34,7 @@ image: hmctspublic.azurecr.io/chart-java/testapp
 replicas: 1
 useInterpodAntiAffinity: flase
 ingressHost: "{{.Release.Name}}.service.core-compute-prod.internal"
-tlsenabled: false
+disableTraefikTls: true
 livenessPath: /health/livenezz
 imagePullPolicy: Alwayz
 environment:
@@ -135,7 +135,7 @@ java:
   replicas: 2
   useInterpodAntiAffinity: true
   ingressHost: "{{.Release.Name}}.service.core-compute-preview.internal"
-  tlsenabled: true
+  disableTraefikTls: false
   livenessPath: /health/liveness
   imagePullPolicy: Always
   environment:
