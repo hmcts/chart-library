@@ -14,7 +14,7 @@ metadata:
     kubernetes.io/ingress.class: {{ $languageValues.ingressClass }}
     {{- if not $languageValues.disableTraefikTls }}
     traefik.ingress.kubernetes.io/router.tls: "true"
-    {{- end -}}
+    {{- end }}
 spec:
   rules:
   {{- if $languageValues.ingressHost }}
