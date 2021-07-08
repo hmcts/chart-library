@@ -13,7 +13,7 @@ metadata:
   annotations:
     kubernetes.io/ingress.class: {{ $languageValues.ingressClass }}
     {{- if not $languageValues.disableTraefikTls }}
-    traefik.ingress.kubernetes.io/router.tls: {{ $languageValues.traefikTlsValue | quote }}
+    traefik.ingress.kubernetes.io/router.tls: "true"
     {{- end }}
 spec:
   rules:

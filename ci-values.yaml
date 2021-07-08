@@ -36,7 +36,6 @@ replicas: 2
 useInterpodAntiAffinity: true
 ingressHost: "{{.Release.Name}}.service.core-compute-preview.internal"
 disableTraefikTls: false
-traefikTlsValue: "true"
 livenessPath: /health/liveness
 imagePullPolicy: Always
 environment:
