@@ -11,7 +11,6 @@ metadata:
     app.kubernetes.io/instance: release-name-library
   annotations:
     kubernetes.io/ingress.class: traefik
-    traefik.ingress.kubernetes.io/router.tls: "true"
 spec:
   rules:
   - host: release-name.service.core-compute-preview.internal
