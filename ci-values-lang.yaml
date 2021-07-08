@@ -35,6 +35,7 @@ replicas: 1
 useInterpodAntiAffinity: flase
 ingressHost: "{{.Release.Name}}.service.core-compute-prod.internal"
 disableTraefikTls: true
+traefikTlsValue: "true"
 livenessPath: /health/livenezz
 imagePullPolicy: Alwayz
 environment:
@@ -136,6 +137,7 @@ java:
   useInterpodAntiAffinity: true
   ingressHost: "{{.Release.Name}}.service.core-compute-preview.internal"
   disableTraefikTls: false
+  traefikTlsValue: "true"
   livenessPath: /health/liveness
   imagePullPolicy: Always
   environment:
