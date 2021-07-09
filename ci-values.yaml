@@ -35,7 +35,7 @@ image: hmctspublic.azurecr.io/chart-nodejs/testapp
 replicas: 2
 useInterpodAntiAffinity: true
 ingressHost: "{{.Release.Name}}.service.core-compute-preview.internal"
-disableTraefikTls: false
+disableTraefikTls: true
 livenessPath: /health/liveness
 imagePullPolicy: Always
 environment:
