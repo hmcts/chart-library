@@ -12,18 +12,10 @@ for version in $(echo "v2"); do
     cp tests/$version/$file library/templates/
     helm template release-name library -f ci-values.yaml > $file
 
-    echo "Using ci-values.yaml"
-    cat $file
-
-    echo "Here is the test results file"
-    cat tests/results/$file
-
     diff -w $file tests/results/$file
     
     #Language specific test
     helm template release-name library -f ci-values-lang.yaml > $file
-    echo "Using ci-values-lang.yaml"
-    cat $file
     diff -w $file tests/results/$file
 
     rm -rf library/templates/$file $file
