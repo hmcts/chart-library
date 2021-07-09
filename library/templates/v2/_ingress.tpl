@@ -12,6 +12,9 @@ metadata:
   {{- ( include "hmcts.labels.v2" . ) | indent 2 }}
   annotations:
     kubernetes.io/ingress.class: {{ $languageValues.ingressClass }}
+    {{- if not $languageValues.disableTraefikTls }}
+    traefik.ingress.kubernetes.io/router.tls: "true"
+    {{- end }}
 spec:
   rules:
   {{- if $languageValues.ingressHost }}
