@@ -15,6 +15,9 @@ for version in $(echo "v2"); do
     echo "Using ci-values.yaml"
     cat $file
 
+    echo "Here is the test results file"
+    cat /test/results/$file
+
     diff -w $file tests/results/$file
     
     #Language specific test
