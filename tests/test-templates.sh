@@ -16,7 +16,7 @@ for version in $(echo "v2"); do
     cat $file
 
     echo "Here is the test results file"
-    cat /test/results/$file
+    cat tests/results/$file
 
     diff -w $file tests/results/$file
     
