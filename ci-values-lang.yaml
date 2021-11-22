@@ -11,6 +11,10 @@ livenessDelay: 50
 livenessTimeout: 30
 livenessPeriod: 150
 livenessFailureThreshold: 30
+startupDelay: 50
+startupTimeout: 30
+startupPeriod: 150
+startupFailureThreshold: 30
 envFromSecret: "env-secret"
 dnsConfig:
   ndots: "2"
@@ -113,6 +117,10 @@ java:
   livenessTimeout: 3
   livenessPeriod: 15
   livenessFailureThreshold: 3
+  startupDelay: 5
+  startupTimeout: 3
+  startupPeriod: 15
+  startupFailureThreshold: 3
   dnsConfig:
     ndots: "3"
   pdb:
