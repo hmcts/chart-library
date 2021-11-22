@@ -145,6 +145,7 @@ java:
   ingressHost: "{{.Release.Name}}.service.core-compute-preview.internal"
   disableTraefikTls: true
   livenessPath: /health/liveness
+  startupPath: /health/liveness
   imagePullPolicy: Always
   environment:
     REFORM_TEAM: cnp
