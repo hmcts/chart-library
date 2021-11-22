@@ -51,6 +51,16 @@
     - containerPort: {{ $languageValues.applicationPort }}
       name: http
   {{- end }}
+  {{- if $languageValues.startupPath }}
+  startupProbe:
+    httpGet:
+      path: {{ $languageValues.startupPath }}
+      port: {{ $languageValues.applicationPort }}
+    initialDelaySeconds: {{ $languageValues.startupDelay }}
+    timeoutSeconds: {{ $languageValues.startupTimeout }}
+    periodSeconds: {{ $languageValues.startupPeriod }}
+    failureThreshold: {{ $languageValues.startupFailureThreshold }}
+  {{- end }}
   {{- if $languageValues.livenessPath }}
   livenessProbe:
     httpGet:
