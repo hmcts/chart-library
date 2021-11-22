@@ -11,7 +11,7 @@ livenessDelay: 50
 livenessTimeout: 30
 livenessPeriod: 150
 livenessFailureThreshold: 30
-startupDelay: 50
+startupDelay: 5
 startupTimeout: 30
 startupPeriod: 150
 startupFailureThreshold: 30
