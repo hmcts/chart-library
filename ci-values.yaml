@@ -13,6 +13,10 @@ livenessDelay: 5
 livenessTimeout: 3
 livenessPeriod: 15
 livenessFailureThreshold: 3
+startupDelay: 5
+startupTimeout: 3
+startupPeriod: 15
+startupFailureThreshold: 3
 dnsConfig:
   ndots: "3"
 pdb:
@@ -37,6 +41,7 @@ useInterpodAntiAffinity: true
 ingressHost: "{{.Release.Name}}.service.core-compute-preview.internal"
 disableTraefikTls: true
 livenessPath: /health/liveness
+startupPath: /health/liveness
 imagePullPolicy: Always
 environment:
   REFORM_TEAM: cnp

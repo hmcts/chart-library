@@ -93,14 +93,19 @@ It includes below templates :
 | `memoryLimits`             | Memory limits, set when `global.devMode` is set to false|
 | `cpuLimits`                | CPU limits, set when `global.devMode` is set to false |
 | `readinessPath`            | Path of HTTP readiness probe |
-| `readinessDelay`           | Readiness probe inital delay (seconds)|
+| `readinessDelay`           | Readiness probe initial delay (seconds)|
 | `readinessTimeout`         | Readiness probe timeout (seconds)|
 | `readinessPeriod`          | Readiness probe period (seconds) |
 | `livenessPath`             | Path of HTTP liveness probe |
-| `livenessDelay`            | Liveness probe inital delay (seconds)  |
+| `livenessDelay`            | Liveness probe initial delay (seconds)  |
 | `livenessTimeout`          | Liveness probe timeout (seconds) |
 | `livenessPeriod`           | Liveness probe period (seconds) | 
 | `livenessFailureThreshold` | Liveness failure threshold |
+| `startupPath`              | Path of HTTP startup probe |
+| `startupDelay`             | Startup probe initial delay (seconds)  |
+| `startupTimeout`           | Startup probe timeout (seconds) |
+| `startupPeriod`            | Startup probe period (seconds) | 
+| `startupFailureThreshold`  | Startup failure threshold |
 
 It includes below templates :
 - [Key Vault Secrets](#KeyVault-Secret-CSI-Volumes)
