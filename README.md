@@ -209,8 +209,8 @@ Prior to the availability of startup probes, such applications have liveness pro
 Whilst this achieves intended effect, it also means timely detection of deadlocks does not occur during the period the container successfully starts up much faster than the specified initialDelaySeconds.
 
 To use startup probes, refer to examples below for the relevant dependant charts
-[chart-java](https://github.com/hmcts/chart-java)  
-[chart-nodejs](https://github.com/hmcts/chart-nodejs)
+[chart-java](https://github.com/hmcts/chart-java)    
+[chart-nodejs](https://github.com/hmcts/chart-nodejs)  
 [chart-base](https://github.com/hmcts/base)
 
 ### HPA Horizontal Pod Auto scaler
