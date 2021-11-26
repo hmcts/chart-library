@@ -199,6 +199,20 @@ secretRef is the service instance ( as in the case of PaaS wrappers ) or referen
 key is the named secret in the secret reference.
 disabled is optional and used to disable setting this environment value. This can be used to override the behaviour of default chart secrets.
 
+
+### Startup Probes
+
+Startup probes are intended to provide a mechanism for allowing slow starting applications perform the relevant checks to determine the application has fully started before commencement of higher level liveness and readiness probes.  
+
+Prior to the availability of startup probes, such applications have liveness probes configured with a relatively long (more than 60s) livenessDelay as a means of allowing sufficient time to startup before probes become active.  
+
+Whilst this achieves intended effect, it also means timely detection of deadlocks does not occur during the period the container successfully starts up much faster than the specified initialDelaySeconds.
+
+To use startup probes, refer to examples below for the relevant dependant charts
+[chart-java](https://github.com/hmcts/chart-java)  
+[chart-nodejs](https://github.com/hmcts/chart-nodejs)
+[chart-base](https://github.com/hmcts/base)
+
 ### HPA Horizontal Pod Auto scaler
 To adjust the number of pods in a deployment depending on CPU utilization AKS supports horizontal pod autoscaling. To enable horizontal pod autoscaling you can enable the autoscaling section. https://docs.microsoft.com/en-us/azure/aks/tutorial-kubernetes-scale#autoscale-pods
 
