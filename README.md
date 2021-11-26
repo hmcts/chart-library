@@ -208,7 +208,7 @@ Prior to the availability of startup probes, such applications have liveness pro
 
 Whilst this achieves intended effect, it also means timely detection of deadlocks does not occur during the period the container successfully starts up much faster than the specified initialDelaySeconds.
 
-To use startup probes, refer to examples below for the relevant dependant charts  
+To use startup probes, refer to instructions for the relevant dependant charts below:   
 [chart-java](https://github.com/hmcts/chart-library/tree/master#startup-probes)    
 [chart-nodejs](https://github.com/hmcts/chart-nodejs/tree/master#startup-probes)  
 [chart-base](https://github.com/hmcts/base/tree/master)
