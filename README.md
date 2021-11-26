@@ -210,8 +210,7 @@ Whilst this achieves intended effect, it also means timely detection of deadlock
 
 To use startup probes, refer to instructions for the relevant dependant charts below:   
 - [chart-java](https://github.com/hmcts/chart-java/tree/master#startup-probes)    
-- [chart-nodejs](https://github.com/hmcts/chart-nodejs/tree/master#startup-probes)  
-- [chart-base](https://github.com/hmcts/base/tree/master#startup-probes)
+- [chart-nodejs](https://github.com/hmcts/chart-nodejs/tree/master#startup-probes)
 
 ### HPA Horizontal Pod Auto scaler
 To adjust the number of pods in a deployment depending on CPU utilization AKS supports horizontal pod autoscaling. To enable horizontal pod autoscaling you can enable the autoscaling section. https://docs.microsoft.com/en-us/azure/aks/tutorial-kubernetes-scale#autoscale-pods
