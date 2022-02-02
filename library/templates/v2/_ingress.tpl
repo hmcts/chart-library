@@ -5,17 +5,17 @@
 {{- end -}}
 {{ if or ($languageValues.ingressHost ) ($languageValues.registerAdditionalDns.enabled) }}
 ---
-apiVersion: networking.k8s.io/v1beta1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: {{ template "hmcts.releasename.v2" . }}
   {{- ( include "hmcts.labels.v2" . ) | indent 2 }}
   annotations:
-    kubernetes.io/ingress.class: {{ $languageValues.ingressClass }}
     {{- if not $languageValues.disableTraefikTls }}
     traefik.ingress.kubernetes.io/router.tls: "true"
     {{- end }}
 spec:
+  ingressClassName: {{ $languageValues.ingressClassName }}
   rules:
   {{- if $languageValues.ingressHost }}
   - host: {{ tpl $languageValues.ingressHost $ | lower }}
