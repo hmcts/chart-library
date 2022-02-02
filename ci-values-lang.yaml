@@ -24,7 +24,8 @@ pdb:
 prometheus:
   enabled: false
   path: /metricz
-ingressClass: traefic
+ingressClas: traefic
+ingressClassName: traefic
 global:
   tenantId: "8d2d8d2d-0ae9-462a-8d2d-bec7c0b42082"
   environment: prod
@@ -130,6 +131,7 @@ java:
     enabled: false
     path: /metrics
   ingressClass: traefik
+  ingressClassName: traefik
   global:
     tenantId: "531ff96d-0ae9-462a-8d2d-bec7c0b42082"
     environment: aat
