@@ -17,9 +17,7 @@ metadata:
     traefik.ingress.kubernetes.io/router.tls: "true"
     {{- end }}
 spec:
-  {{- if not $languageValues.ingressClassName }}
   ingressClassName: {{ $languageValues.ingressClassName }}
-  {{- end }}
   rules:
   {{- if $languageValues.ingressHost }}
   - host: {{ tpl $languageValues.ingressHost $ | lower }}
