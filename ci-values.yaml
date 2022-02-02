@@ -1,6 +1,6 @@
 applicationPort: 3000
 registerAdditionalDns:
-  enabled: true
+  enabled: false
 memoryRequests: 64Mi
 cpuRequests: 25m
 memoryLimits: 512Mi
