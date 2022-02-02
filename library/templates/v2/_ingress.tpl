@@ -11,7 +11,6 @@ metadata:
   name: {{ template "hmcts.releasename.v2" . }}
   {{- ( include "hmcts.labels.v2" . ) | indent 2 }}
   annotations:
-    /* deprecated, to be removed once fully upgraded to traefik v2 */
     {{- if not $languageValues.ingressClassName }}
     kubernetes.io/ingress.class: {{ $languageValues.ingressClass }}
     {{- end }}
