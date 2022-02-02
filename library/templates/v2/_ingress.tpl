@@ -11,7 +11,7 @@ metadata:
   name: {{ template "hmcts.releasename.v2" . }}
   {{- ( include "hmcts.labels.v2" . ) | indent 2 }}
   annotations:
-    {{- if not .ingressClassName }}
+    {{- if not .spec.ingressClassName }}
     kubernetes.io/ingress.class: {{ $languageValues.ingressClass }}
     {{- end }}
     {{- if not $languageValues.disableTraefikTls }}
@@ -26,9 +26,12 @@ spec:
       paths:
       {{- ( include "hmcts.additionalPathBasedRoutes.v2" .) | indent 4 }}
       - path: /
+        PathType: Prefix
         backend:
-          serviceName: {{ template "hmcts.releasename.v2" . }}
-          servicePort: 80
+          service:
+            name: {{ template "hmcts.releasename.v2" . }}
+            port:
+              number: 80
   {{- end }}
   {{- if $languageValues.registerAdditionalDns.enabled }}
   - host: {{ $languageValues.registerAdditionalDns.prefix }}-{{ tpl $languageValues.registerAdditionalDns.primaryIngressHost $ }}
@@ -36,9 +39,12 @@ spec:
       paths:
       {{- ( include "hmcts.additionalPathBasedRoutes.v2" .) | indent 4 }}
       - path: /
+        pathType: Prefix
         backend:
-          serviceName: {{ template "hmcts.releasename.v2" . }}
-          servicePort: 80
+          service:
+            name: {{ template "hmcts.releasename.v2" . }}
+            port:
+              number: 80
   {{- end }}
 {{- end}}
 {{- end }}
