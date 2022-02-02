@@ -24,7 +24,7 @@ spec:
       paths:
       {{- ( include "hmcts.additionalPathBasedRoutes.v2" .) | indent 4 }}
       - path: /
-        PathType: Prefix
+        pathType: Prefix
         backend:
           service:
             name: {{ template "hmcts.releasename.v2" . }}
@@ -62,7 +62,9 @@ Additional Path based routes
 {{- range $path, $serviceName := $languageValues.additionalPathBasedRoutes }}
   - path: {{ $path }}
     backend:
-      serviceName: {{ tpl $serviceName $ | lower }}
-      servicePort: 80
+      service:
+        name: {{ tpl $serviceName $ | lower }}
+      port:
+        number: 80
 {{- end }}
 {{- end -}}
