@@ -64,7 +64,7 @@ Additional Path based routes
     backend:
       service:
         name: {{ tpl $serviceName $ | lower }}
-      port:
-        number: 80
+        port:
+          number: 80
 {{- end }}
 {{- end -}}
