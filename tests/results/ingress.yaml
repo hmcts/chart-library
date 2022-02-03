@@ -12,7 +12,6 @@ metadata:
   annotations:
     kubernetes.io/ingress.class: traefik
 spec:
-  ingressClassName: traefik
   rules:
   - host: release-name.service.core-compute-preview.internal
     http:
