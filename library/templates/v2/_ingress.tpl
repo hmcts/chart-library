@@ -11,7 +11,7 @@ metadata:
   name: {{ template "hmcts.releasename.v2" . }}
   {{- ( include "hmcts.labels.v2" . ) | indent 2 }}
   annotations:
-    {{- if not .spec.disableIngressClassAnnotation }}
+    {{- if not $languageValues.spec.disableIngressClassAnnotation }}
     kubernetes.io/ingress.class: {{ $languageValues.ingressClass }}
     {{- end }}
     {{- if not $languageValues.disableTraefikTls }}
@@ -34,7 +34,7 @@ spec:
               number: 80
   {{- end }}
   {{- if $languageValues.registerAdditionalDns.enabled }}
-  - host: {{ $languageValues.registerAdditionalDns.prefix }}-{{ tpl $languageValues.registerAdditionalDns.primaryIngressHost $ }}
+  - host: {{ $languageValues.registerAdditionalDns.prefix }}-{{ $languageValues.registerAdditionalDns }}
     http:
       paths:
       {{- ( include "hmcts.additionalPathBasedRoutes.v2" .) | indent 4 }}

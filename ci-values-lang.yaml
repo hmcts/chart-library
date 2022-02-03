@@ -39,6 +39,8 @@ replicas: 1
 useInterpodAntiAffinity: flase
 ingressHost: "{{.Release.Name}}.service.core-compute-prod.internal"
 disableTraefikTls: true
+spec:
+  disableIngressClassAnnotation: true
 livenessPath: /health/livenezz
 imagePullPolicy: Alwayz
 environment:
@@ -104,7 +106,7 @@ language: java
 java:
   applicationPort: 3000
   registerAdditionalDns:
-    enabled: false
+    enabled: true
   memoryRequests: 64Mi
   cpuRequests: 25m
   memoryLimits: 512Mi
@@ -144,6 +146,7 @@ java:
   useInterpodAntiAffinity: true
   ingressHost: "{{.Release.Name}}.service.core-compute-preview.internal"
   disableTraefikTls: true
+  disableIngressClassAnnotation: true
   livenessPath: /health/liveness
   startupPath: /health/liveness
   imagePullPolicy: Always
