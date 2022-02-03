@@ -17,10 +17,16 @@ spec:
     http:
       paths:
       - path: /test
+        pathType: Prefix
         backend:
-          serviceName: release-name
-          servicePort: 80
+          service:
+            name: release-name
+            port:
+              number: 80
       - path: /
+        pathType: Prefix
         backend:
-          serviceName: release-name-library
-          servicePort: 80
+          service:
+            name: release-name-library
+            port:
+              number: 80
