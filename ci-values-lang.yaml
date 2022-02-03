@@ -39,7 +39,6 @@ replicas: 1
 useInterpodAntiAffinity: flase
 ingressHost: "{{.Release.Name}}.service.core-compute-prod.internal"
 disableTraefikTls: true
-disableIngressClassAnnotation: false
 livenessPath: /health/livenezz
 imagePullPolicy: Alwayz
 environment:
