@@ -11,7 +11,7 @@ metadata:
   name: {{ template "hmcts.releasename.v2" . }}
   {{- ( include "hmcts.labels.v2" . ) | indent 2 }}
   annotations:
-    {{- if not $languageValues.spec.disableIngressClassAnnotation }}
+    {{- if not $languageValues.disableIngressClassAnnotation }}
     kubernetes.io/ingress.class: {{ $languageValues.ingressClass }}
     {{- end }}
     {{- if not $languageValues.disableTraefikTls }}
