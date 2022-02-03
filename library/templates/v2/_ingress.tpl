@@ -1,4 +1,4 @@
-{{- define "hmcts.ingress.v2.tpl" -}}
+{{- define "hmcts.ingress.v3.tpl" -}}
 {{- $languageValues := deepCopy .Values -}}
 {{- if hasKey .Values "language" -}}
 {{- $languageValues = (deepCopy .Values | merge (pluck .Values.language .Values | first) ) -}}
@@ -50,7 +50,7 @@ spec:
 {{- end }}
 
 {{- define "hmcts.ingress.v2" -}}
-{{- template "hmcts.util.merge.v2" (append . "hmcts.ingress.v2.tpl") -}}
+{{- template "hmcts.util.merge.v2" (append . "hmcts.ingress.v3.tpl") -}}
 {{- end -}}
 
 {{/*
