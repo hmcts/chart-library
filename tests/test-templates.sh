@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
-set -e
+set -ex
 
-# helm lint library/
+helm lint library/
 
 #change library chart to application
 yq eval -i '.type = "application"' library/Chart.yaml

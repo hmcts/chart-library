@@ -8,7 +8,7 @@ apiVersion: autoscaling/v1
 kind: HorizontalPodAutoscaler
 {{ template "hmcts.metadata.v2" . }}
 spec:
-  maxReplicas: {{ $languageValues.autoscaling.maxReplicas }} 
+  maxReplicas: {{ $languageValues.autoscaling.maxReplicas }}
   minReplicas: {{ $languageValues.replicas }}
   scaleTargetRef:
     apiVersion: apps/v1

@@ -100,13 +100,13 @@ functionaltestscron:
 
 # HPA
 autoscaling:
-  enabled: false
+  enabled: true
   maxReplicas: 4
 language: java
 java:
   applicationPort: 3000
   registerAdditionalDns:
-    enabled: true
+    enabled: false
   memoryRequests: 64Mi
   cpuRequests: 25m
   memoryLimits: 512Mi
