@@ -1,6 +1,6 @@
 ---
 # Source: library/templates/ingress.yaml
-apiVersion: networking.k8s.io/v1beta1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: release-name-library  
@@ -12,15 +12,22 @@ metadata:
   annotations:
     kubernetes.io/ingress.class: traefik
 spec:
+  ingressClassName: traefik
   rules:
   - host: release-name.service.core-compute-preview.internal
     http:
       paths:
       - path: /test
+        pathType: Prefix
         backend:
-          serviceName: release-name
-          servicePort: 80
+          service:
+            name: release-name
+            port:
+              number: 80
       - path: /
+        pathType: Prefix
         backend:
-          serviceName: release-name-library
-          servicePort: 80
+          service:
+            name: release-name-library
+            port:
+              number: 80
