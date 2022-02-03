@@ -68,6 +68,6 @@ Additional Path based routes
       service:
         name: {{ tpl $serviceName $ | lower }}
         port:
-          number: 80s
+          number: 80
 {{- end }}
 {{- end -}}
