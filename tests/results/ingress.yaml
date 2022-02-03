@@ -16,7 +16,7 @@ spec:
   rules:
   - host: release-name.service.core-compute-preview.internal
     http:
-      paths:    
+      paths:
       - path: /test
         pathType: Prefix
         backend:

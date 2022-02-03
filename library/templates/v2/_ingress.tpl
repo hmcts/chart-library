@@ -32,7 +32,7 @@ spec:
               number: 80
   {{- end }}
   {{- if $languageValues.registerAdditionalDns.enabled }}
-  - host: {{ $languageValues.registerAdditionalDns.prefix }}-{{ tpl $languageValues.registerAdditionalDns.prsimaryIngressHost $ }}
+  - host: {{ $languageValues.registerAdditionalDns.prefix }}-{{ tpl $languageValues.registerAdditionalDns.primaryIngressHost $ }}
     http:
       paths:
       {{- ( include "hmcts.additionalPathBasedRoutes.v2" .) | indent 4 }}
