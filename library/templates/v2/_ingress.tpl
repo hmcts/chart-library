@@ -63,10 +63,11 @@ Additional Path based routes
 {{- end -}}
 {{- range $path, $serviceName := $languageValues.additionalPathBasedRoutes }}
   - path: {{ $path }}
+    pathType: Prefix
     backend:
       service:
         name: {{ tpl $serviceName $ | lower }}
         port:
-          number: 80
+          number: 80s
 {{- end }}
 {{- end -}}
