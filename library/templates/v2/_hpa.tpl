@@ -3,7 +3,7 @@
 {{- if hasKey .Values "language" -}}
 {{- $languageValues = (deepCopy .Values | merge (pluck .Values.language .Values | first) ) -}}
 {{- end -}}
-{{- if $languageValues.autoscaling.enabled }}
+{{- if $languageValues.autoscaling }}
 apiVersion: autoscaling/v1
 kind: HorizontalPodAutoscaler
 {{ template "hmcts.metadata.v2" . }}
