@@ -3,7 +3,7 @@
 {{- if hasKey .Values "language" -}}
 {{- $languageValues = (deepCopy .Values | merge (pluck .Values.language .Values | first) ) -}}
 {{- end -}}
-{{ if or ($languageValues.ingressHost ) ($languageValues.registerAdditionalDns) }}
+{{ if or ($languageValues.ingressHost ) ($languageValues.registerAdditionalDns.enabled) }}
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
