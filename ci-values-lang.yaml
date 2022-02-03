@@ -100,7 +100,7 @@ functionaltestscron:
 
 # HPA
 autoscaling:
-  enabled: true
+  enabled: false
   maxReplicas: 4
 language: java
 java:
