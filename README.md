@@ -1,8 +1,6 @@
 # chart-library
 Library Helm Chart
 
-Note: `V1 templates are no longer available`
-
 ## Template Configuration
 
 ### Language
