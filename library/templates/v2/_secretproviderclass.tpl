@@ -56,6 +56,6 @@ spec:
 {{- end }}
 {{- end -}}
 
-{{- define "hmcts.secretproviderclass.v2" -}}
+{{- define "hmcts.secretproviderclass.v3" -}}
 {{- template "hmcts.util.merge.v2" (append . "hmcts.secretproviderclass.v3.tpl") -}}
 {{- end -}}
