@@ -35,6 +35,21 @@ spec:
           objectType: secret
      {{- end }}
       {{- end }}
+
+      {{- range $info.certs }}
+     {{- if kindIs "map" . }}
+        - |
+          objectName: {{ .name }}
+          objectType: cert
+     {{- if hasKey . "alias" }}
+          objectAlias: {{ .alias }}
+     {{- end }}
+     {{- else }}
+        - |
+          objectName: {{ . }}
+          objectType: cert
+     {{- end }}
+      {{- end }}
     tenantId: {{ $globals.tenantId | quote }}
 {{- end }}
 {{- end }}

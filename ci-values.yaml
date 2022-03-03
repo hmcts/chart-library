@@ -59,6 +59,10 @@ keyVaults:
       - name: idam-client-secret
         alias: idam.client.secret
       - name: s2s-secret
+    certs:
+      - name: idam-client-cert
+        alias: idam.client.cert
+      - name: s2s-cert
 additionalPathBasedRoutes:
   "/test": "{{.Release.Name}}"
 secrets:
@@ -84,6 +88,10 @@ testsConfig:
         - name: idam-client-secret
           alias: IDAM_CLIENT_SECRET
         - name: s2s-secret
+      certs:
+        - name: idam-client-cert
+          alias: IDAM_CLIENT_CERT
+        - name: s2s-cert
 smoketests:
   image: hmctspublic.azurecr.io/spring-boot/template
   enabled: false
