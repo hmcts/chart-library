@@ -1,4 +1,4 @@
-{{- define "hmcts.secretproviderclass.v2.tpl" -}}
+{{- define "hmcts.secretproviderclass.v3.tpl" -}}
 {{- $languageValues := deepCopy .Values -}}
 {{- if hasKey .Values "language" -}}
 {{- $languageValues = (deepCopy .Values | merge (pluck .Values.language .Values | first) ) -}}
@@ -35,12 +35,27 @@ spec:
           objectType: secret
      {{- end }}
       {{- end }}
+
+      {{- range $info.certs }}
+     {{- if kindIs "map" . }}
+        - |
+          objectName: {{ .name }}
+          objectType: cert
+     {{- if hasKey . "alias" }}
+          objectAlias: {{ .alias }}
+     {{- end }}
+     {{- else }}
+        - |
+          objectName: {{ . }}
+          objectType: cert
+     {{- end }}
+      {{- end }}
     tenantId: {{ $globals.tenantId | quote }}
 {{- end }}
 {{- end }}
 {{- end }}
 {{- end -}}
 
-{{- define "hmcts.secretproviderclass.v2" -}}
-{{- template "hmcts.util.merge.v2" (append . "hmcts.secretproviderclass.v2.tpl") -}}
+{{- define "hmcts.secretproviderclass.v3" -}}
+{{- template "hmcts.util.merge.v2" (append . "hmcts.secretproviderclass.v3.tpl") -}}
 {{- end -}}

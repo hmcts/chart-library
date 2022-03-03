@@ -149,10 +149,47 @@ keyVaults:
           alias: <SECRET_ALIAS2>
 ```
 
+#### Example for adding Azure Key Vault Certificates
+Key vault certificates can be mounted to the container filesystem using what's called a [secrets-store-csi-driver-provider-azure](https://github.com/Azure/secrets-store-csi-driver-provider-azure). This means that the keyvault certificates are accessible as files after they have been mounted.
+To do this you need to add the **keyVaults** section to the configuration.
+```yaml
+aadIdentityName: <Identity Binding>
+keyVaults:
+    <VAULT_NAME>:
+      excludeEnvironmentSuffix: true
+      disabled: true
+      certs:
+        - <CERT_NAME>
+        - <CERT_NAME2>
+    <VAULT_NAME_2>:
+      certs:
+        - <CERT_NAME>
+        - <CERT_NAME2>
+```
+
+#### Example for adding Azure Key Vault Certificates using aliases
+In some cases, you may want to alias the certificates to a different name (An environment variable for example), you can configure it using
+
+```yaml
+aadIdentityName: <Identity Binding>
+keyVaults:
+    <VAULT_NAME>:
+      excludeEnvironmentSuffix: true
+      certs:
+        - name: <CERT_NAME>
+          alias: <CERT_ALIAS>
+        - name: <CERT_NAME2>
+          alias: <CERT_ALIAS2>
+```
+
+
 **Where**:
 - *<VAULT_NAME>*: Name of the vault to access without the environment tag i.e. `s2s` or `bulkscan`.
 - *<SECRET_NAME>*: Secret name as it is in the vault. Note this is case and punctuation sensitive. i.e. in s2s there is the `microservicekey-cmcLegalFrontend` secret.
 - *<SECRET_ALIAS>*: Alias name for the secret.
+- *excludeEnvironmentSuffix*: This is used for the global key vaults 
+- *<CERT_NAME>*: Certificate name as it is in the vault. Note this is case and punctuation sensitive. i.e. in s2s there is the `microservicekey-cmcLegalFrontend` certificate.
+- *<CERT_ALIAS>*: Alias name for the certificate.
 - *excludeEnvironmentSuffix*: This is used for the global key vaults where there is not environment suffix ( e.g `-aat` ) required. It defaults to false if it is not there and should only be added if you are using a global key-vault.
 - *disabled*: This is an optional field used to disable a specific key vault, useful when overriding defaults.
 - When not using Jenkins, explicitly set global.enableKeyVaults to `true` .
