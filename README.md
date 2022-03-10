@@ -201,7 +201,9 @@ keyVaults:
 | `ingressHost`              | Host for ingress controller to map the container to. It supports templating, Example : {{.Release.Name}}.service.core-compute-preview.internal   | `nil`|
 | `registerAdditionalDns.enabled`            | If you want to use this chart as a secondary dependency - e.g. providing a frontend to a backend, and the backend is using primary ingressHost DNS mapping.                            | `false`      
 | `registerAdditionalDns.primaryIngressHost`            | The hostname for primary chart. It supports templating, Example : {{.Release.Name}}.service.core-compute-preview.internal                           | `nil`      
-| `registerAdditionalDns.prefix`            | DNS prefix for this chart - will resolve as: `prefix-{registerAdditionalDns.primaryIngressHost}`                         | `nil`      
+| `registerAdditionalDns.prefix`            | DNS prefix for this chart - will resolve as: `prefix-{registerAdditionalDns.primaryIngressHost}`                         | `nil`     
+| `disableTraefikTls`            | Boolean value to enable or disable TLS on application specific HTTP router created on Traefik ingress controller                           | `false`
+| `enableOAuth`            | Boolean value to enable or disable OAuth2 proxy. Setting to `true` will force signing into Azure AD when navigating to application frontend            | `false`
 
 ### Pod Disruption Budget
 
