@@ -217,7 +217,7 @@ keyVaults:
 | -------------------------- | ------------------------------------------ | ----- |
 | `secrets`                  | Mappings of environment variables to service objects or pre-configured kubernetes secrets |  nil |
 
-]To map existing kubernetes secrets such as passwords to environment variable in the container. e.g :
+To map existing kubernetes secrets such as passwords to environment variable in the container. e.g :
 
 ```yaml
 secrets: 
