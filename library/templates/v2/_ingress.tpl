@@ -18,7 +18,7 @@ metadata:
     traefik.ingress.kubernetes.io/router.tls: "true"
     {{- end }}
     {{- if $languageValues.enableOauth }}
-    traefik.ingress.kubernetes.io/router.middlewares: admin-oauth-headers@kubernetescrd,admin-oauth-errors@kubernetescrd,admin-oauth-auth@kubernetescrd
+    traefik.ingress.kubernetes.io/router.middlewares: admin-oauth-headers@kubernetescrd,admin-oauth-auth@kubernetescrd
     {{- end }}
 spec:
   {{- if $languageValues.disableIngressClassAnnotation }}
