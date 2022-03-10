@@ -17,7 +17,7 @@ metadata:
     {{- if not $languageValues.disableTraefikTls }}
     traefik.ingress.kubernetes.io/router.tls: "true"
     {{- end }}
-    {{- if $languageValues.enableOauth }}
+    {{- if $languageValues.enableOAuth }}
     traefik.ingress.kubernetes.io/router.middlewares: admin-oauth-headers@kubernetescrd,admin-oauth-auth@kubernetescrd
     {{- end }}
 spec:
