@@ -16,6 +16,9 @@ metadata:
   {{- if hasKey $languageValues "ingressSessionAffinity" }}
   {{- if and $languageValues.ingressSessionAffinity $languageValues.ingressSessionAffinity.enabled }}
   annotations:
+  # TODO remove v1 traefik annotations on next two lines when CFT no longer uses traefix v1
+    traefik.ingress.kubernetes.io/affinity: "true"
+    traefik.ingress.kubernetes.io/session-cookie-name: {{ $languageValues.ingressSessionAffinity.sessionCookieName | quote }}
     traefik.ingress.kubernetes.io/service.sticky.cookie: "true"
     traefik.ingress.kubernetes.io/session.cookie.name: {{ $languageValues.ingressSessionAffinity.sessionCookieName | quote }}
   {{- end }}
