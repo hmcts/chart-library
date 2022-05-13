@@ -12,7 +12,7 @@
 ---
 apiVersion: secrets-store.csi.x-k8s.io/v1alpha1
 kind: SecretProviderClass
-metadata:
+metadata
   name: {{ template "hmcts.releasename.v2" $root }}-{{ $vault }}
 spec:
   provider: azure
@@ -24,7 +24,7 @@ spec:
       array: {{- range $info.secrets }}
      {{- if kindIs "map" . }}
         - |
-          objectName: {{ .name }}
+          objectName: {{ .name | replace "<ENV>" $globals.environment }} 
           objectType: secret
      {{- if hasKey . "alias" }}
           objectAlias: {{ .alias }}
