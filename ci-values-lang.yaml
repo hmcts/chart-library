@@ -57,6 +57,9 @@ keyVaults:
       - name: idam-client-secret
         alias: idam.client.secret
       - name: s2s-secret
+      - name: idam-client-<ENV>-secret
+        alias: idam.client.env.secret
+      - name: s2s-<ENV>-secret
     certs:
       - name: idam-client-cert
         alias: idam.client.cert
@@ -86,6 +89,9 @@ testsConfig:
           - name: idam-client-secret
             alias: IDAM_CLIENT_SECRET
           - name: s2s-secret
+          - name: idam-client-<ENV>-secret
+            alias: idam.client.env.secret
+          - name: s2s-<ENV>-secret
         certs:
           - name: idam-client-cert
             alias: IDAM_CLIENT_CERT
@@ -171,6 +177,9 @@ java:
         - name: idam-client-secret
           alias: idam.client.secret
         - name: s2s-secret
+        - name: idam-client-<ENV>-secret
+          alias: idam.client.env.secret
+        - name: s2s-<ENV>-secret
       certs:
         - name: idam-client-cert
           alias: idam.client.cert
@@ -200,6 +209,9 @@ java:
           - name: idam-client-secret
             alias: IDAM_CLIENT_SECRET
           - name: s2s-secret
+          - name: idam-client-<ENV>-secret
+            alias: idam.client.env.secret
+          - name: s2s-<ENV>-secret
         certs:
           - name: idam-client-cert
             alias: IDAM_CLIENT_CERT

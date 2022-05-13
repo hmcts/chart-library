@@ -149,6 +149,21 @@ keyVaults:
           alias: <SECRET_ALIAS2>
 ```
 
+#### Example for adding Environment Name to Azure Key Vault Secrets
+In some cases, you may want to have the environment name in the secret name, you can configure it by adding `<ENV>` in the secret name
+
+```yaml
+aadIdentityName: <Identity Binding>
+keyVaults:
+    <VAULT_NAME>:
+      excludeEnvironmentSuffix: true
+      secrets:
+        - name: example-secret-<ENV>
+          alias: <SECRET_ALIAS>
+        - name: secret-<ENV>-example
+```
+
+
 #### Example for adding Azure Key Vault Certificates
 Key vault certificates can be mounted to the container filesystem using what's called a [secrets-store-csi-driver-provider-azure](https://github.com/Azure/secrets-store-csi-driver-provider-azure). This means that the keyvault certificates are accessible as files after they have been mounted.
 To do this you need to add the **keyVaults** section to the configuration.
