@@ -31,7 +31,7 @@ spec:
      {{- end }}
      {{- else }}
         - |
-          objectName: {{ . }}
+          objectName: {{ . | replace "<ENV>" $globals.environment }} 
           objectType: secret
      {{- end }}
       {{- end }}
