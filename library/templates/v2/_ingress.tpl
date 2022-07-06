@@ -3,6 +3,7 @@
 {{- if hasKey .Values "language" -}}
 {{- $languageValues = (deepCopy .Values | merge (pluck .Values.language .Values | first) ) -}}
 {{- end -}}
+{{- $globals := $languageValues.global | default dict -}}
 {{ if or ($languageValues.ingressHost ) ($languageValues.registerAdditionalDns.enabled) }}
 ---
 apiVersion: networking.k8s.io/v1
@@ -14,7 +15,7 @@ metadata:
     {{- if not $languageValues.disableIngressClassAnnotation }}
     kubernetes.io/ingress.class: {{ $languageValues.ingressClass }}
     {{- end }}
-    {{- if not $languageValues.disableTraefikTls }}
+    {{- if not ($globals.disableTraefikTls | default $languageValues.disableTraefikTls) }}
     traefik.ingress.kubernetes.io/router.tls: "true"
     {{- end }}
     {{- if $languageValues.enableOAuth }}
