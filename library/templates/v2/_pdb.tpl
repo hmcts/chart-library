@@ -5,10 +5,10 @@
 {{- end -}}
 {{ if $languageValues.pdb.enabled }}
 ---
-apiVersion: policy/v1beta1
+apiVersion: policy/v1
 kind: PodDisruptionBudget
 metadata:
-  name:  {{ template "hmcts.releasename.v2" . }}
+  name:  {{ template "hmcts.releasename.v2" . }}-pdb
   {{- ( include "hmcts.labels.v2" . ) | indent 2 }}
 spec:
   {{ if $languageValues.pdb.minAvailable }}

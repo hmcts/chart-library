@@ -1,9 +1,9 @@
 ---
 # Source: library/templates/pdb.yaml
-apiVersion: policy/v1beta1
+apiVersion: policy/v1
 kind: PodDisruptionBudget
 metadata:
-  name:  release-name-library  
+  name:  release-name-library-pdb
   labels:
     app.kubernetes.io/name: release-name-library
     helm.sh/chart: library-0.1.0
