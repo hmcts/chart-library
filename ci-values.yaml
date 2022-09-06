@@ -67,6 +67,11 @@ keyVaults:
       - name: idam-client-cert
         alias: idam.client.cert
       - name: s2s-cert
+  bulk-scan-v2:
+    alias: bulk-scan-alias
+    excludeEnvironmentSuffix: false
+    secrets:
+      - name: alias-secret
 additionalPathBasedRoutes:
   "/test": "{{.Release.Name}}"
 secrets:
