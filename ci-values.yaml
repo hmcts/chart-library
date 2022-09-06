@@ -68,6 +68,7 @@ keyVaults:
         alias: idam.client.cert
       - name: s2s-cert
   bulk-scan-v2:
+    mountPath: /run/secrets/
     alias: bulk-scan-alias
     excludeEnvironmentSuffix: false
     secrets:

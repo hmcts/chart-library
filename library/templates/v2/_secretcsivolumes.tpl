@@ -37,7 +37,7 @@ volumeMounts:
 {{- range $vault, $info := $languageValues.keyVaults }}
 {{- if not $info.disabled }}
   - name: vault-{{ default $vault $info.alias }}
-    mountPath: "{{ default "/mnt/secrets/" $languageValues.keyVaultMountPath }}{{ default $vault $info.alias }}"
+    mountPath: "{{ default "/mnt/secrets/" $info.mountPath }}{{ default $vault $info.alias }}"
     readOnly: true
 {{- end }}
 {{- end }}

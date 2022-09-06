@@ -84,7 +84,7 @@ spec:
               mountPath: "/mnt/secrets/bulk-scan"
               readOnly: true
             - name: vault-bulk-scan-alias
-              mountPath: "/mnt/secrets/bulk-scan-alias"
+              mountPath: "/run/secrets/bulk-scan-alias"
               readOnly: true
           resources:
             requests:
