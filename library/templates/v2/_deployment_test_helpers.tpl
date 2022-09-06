@@ -64,7 +64,7 @@ containers:
     image: {{ .Values.tests.image }}
     {{- if and .Values.testsConfig.keyVaults .Values.global.enableKeyVaults }}
     {{ $args := list }}
-    {{- range $key, $value := .Values.testsConfig.keyVaults -}}{{- range $secret, $var := $value.secrets -}} {{ $args = append $args (printf "%s=%s%s/%s" (ternary ($var.name | upper |  replace "-" "_") $var.alias (empty $var.alias)) (ternary "/mnt/secrets/" $value.mountPath (empty $value.mountPath)) (ternary $key $value.alias (empty $value.alias)) (ternary $var.name $var.alias (empty $var.alias)) | quote) }} {{- end -}}{{- end -}}
+    {{- range $key, $value := .Values.testsConfig.keyVaults -}}{{- range $secret, $var := $value.secrets -}} {{ $args = append $args (printf "%s=%s/%s" (ternary ($var.name | upper |  replace "-" "_") $var.alias (empty $var.alias)) (ternary (printf "/mnt/secrets/%s" $key) $value.mountPath (empty $value.mountPath)) (ternary $var.name $var.alias (empty $var.alias)) | quote) }} {{- end -}}{{- end -}}
     args: [{{ $args | join "," }}]
     {{- end }}
     securityContext:
@@ -92,7 +92,7 @@ containers:
     volumeMounts: 
     {{- range $key, $value := .Values.testsConfig.keyVaults }}
     - name: vault-{{ $key }}
-      mountPath: {{ default "/mnt/secrets/" $value.mountPath }}{{ default $key $value.alias }}
+      mountPath: {{ default (printf "/mnt/secrets/%s" $key) $value.mountPath }}
       readOnly: true
     {{- end }}
     {{- end }}
