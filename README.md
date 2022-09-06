@@ -115,6 +115,8 @@ It includes below templates :
 | `disableKeyVaults`         | Disables key vault support, useful in pull requests if you don't need any secrets (usually because you're using an embedded DB) |
 | `keyVaults`                | Mappings of keyvaults to be mounted as CSI Volumes (see Example Configuration) | 
 | `aadIdentityName`          | Pod identity binding for accessing the key vaults  |
+| `mountPath`                | (Optional) Custom path to mount the secrets to the pod. Default: `/mnt/secrets/`  |
+| `alias`                    | (Optional) Customise the name of the folder mounted to the pod. Default: `<VAULT_NAME>`  |
 
 #### Example for adding Azure Key Vault Secrets
 Key vault secrets can be mounted to the container filesystem using what's called a [secrets-store-csi-driver-provider-azure](https://github.com/Azure/secrets-store-csi-driver-provider-azure). This means that the keyvault secrets are accessible as files after they have been mounted.
