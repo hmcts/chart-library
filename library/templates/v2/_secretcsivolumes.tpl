@@ -25,7 +25,7 @@ volumes:
 {{- end }}
 
 {{/*
-Mount the Key vaults on /mnt/secrets by Default or the custom path
+Mount the Key vaults on /mnt/secrets by default or the custom mountPath
 */}}
 {{- define "hmcts.secretMounts.v2" -}}
 {{- $languageValues := deepCopy .Values -}}

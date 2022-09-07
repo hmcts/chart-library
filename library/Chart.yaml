@@ -2,26 +2,17 @@ apiVersion: v2
 name: library
 description: A Helm chart for Kubernetes
 # A chart can be either an 'application' or a 'application' chart.
-
 #
-
 # Application charts are a collection of templates that can be packaged into versioned archives
-
 # to be deployed.
-
 #
-
 # Library charts provide useful utilities or functions for the chart developer. They're included as
-
 # a dependency of application charts to inject those utilities and functions into the rendering
-
 # pipeline. Library charts do not define any templates and therefore cannot be deployed.
 type: library
 # This is the chart version. This doesn't need to be incremented on every change. 
-
 # It is managed by release pipeline based on Github tag
 version: 0.1.0 # Do not change
 # This is the version number of the application being deployed. This doesn't need to be incremented on every change.
-
 # It is managed by release pipeline based on Github tag
 appVersion: 0.1.0

@@ -89,7 +89,7 @@ containers:
     {{- end }}
     {{- end }}
     {{- if and .Values.testsConfig.keyVaults .Values.global.enableKeyVaults }}
-    volumeMounts: 
+    volumeMounts:
     {{- range $key, $value := .Values.testsConfig.keyVaults }}
     - name: vault-{{ $key }}
       mountPath: {{ default (printf "/mnt/secrets/%s" $key) $value.mountPath }}
