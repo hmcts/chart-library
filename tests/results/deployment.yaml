@@ -46,6 +46,12 @@ spec:
             readOnly: true
             volumeAttributes:
               secretProviderClass: release-name-library-bulk-scan
+        - name: vault-bulk-scan-v2
+          csi:
+            driver: "secrets-store.csi.k8s.io"
+            readOnly: true
+            volumeAttributes:
+              secretProviderClass: release-name-library-bulk-scan-v2
       dnsConfig:
         options:
           - name: ndots
@@ -76,6 +82,9 @@ spec:
           volumeMounts:
             - name: vault-bulk-scan
               mountPath: "/mnt/secrets/bulk-scan"
+              readOnly: true
+            - name: vault-bulk-scan-v2
+              mountPath: "/run/secrets/bulk-scan-alias"
               readOnly: true
           resources:
             requests:
