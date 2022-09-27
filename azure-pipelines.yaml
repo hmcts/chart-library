@@ -25,7 +25,7 @@ jobs:
     pool:
       vmImage: ${{ variables.agentPool }}
     steps:
-      - task: HelmInstaller@1
+      - task: HelmInstaller@1.210.0
         displayName: 'Install Helm'
         inputs:
           helmVersionToInstall: 3.0.2
