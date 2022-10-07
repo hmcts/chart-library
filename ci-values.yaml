@@ -120,5 +120,5 @@ autoscaling:
   maxReplicas: 5
 
 args:
-  - This
-  - That
+  - this
+  - that

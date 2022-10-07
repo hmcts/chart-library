@@ -7,6 +7,14 @@
   name: {{ template "hmcts.releasename.v2" . }}
   securityContext:
     allowPrivilegeEscalation: false
+  {{- if $languageValues.args }}
+  args:
+{{ toYaml $languageValues.args | indent 4 }}
+  {{- end}}
+  {{- if $languageValues.command }}
+  command: {{ $languageValues.command }}
+{{ toYaml $languageValues.args | indent 4 }}
+  {{- end}}
   env:
     {{- if and $languageValues.global.devMode $languageValues.devApplicationInsightsInstrumentKeyName }}
     - name: {{ $languageValues.devApplicationInsightsInstrumentKeyName }}
@@ -17,12 +25,6 @@
     - name: {{ $key }}
       value: {{ tpl ($val | quote) $ }}
       {{- end}}
-  {{- if $languageValues.args }}
-  args:
-  {{- end}}
-  {{- if $languageValues.command }}
-  command:
-  {{- end}}
   {{- if or ($languageValues.configmap) ($languageValues.envFromSecret) }}
   envFrom:
   {{- if $languageValues.configmap }}
