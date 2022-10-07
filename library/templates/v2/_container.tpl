@@ -17,6 +17,12 @@
     - name: {{ $key }}
       value: {{ tpl ($val | quote) $ }}
       {{- end}}
+  {{- if $languageValues.args }}
+  args:
+  {{- end}}
+  {{- if $languageValues.command }}
+  command:
+  {{- end}}
   {{- if or ($languageValues.configmap) ($languageValues.envFromSecret) }}
   envFrom:
   {{- if $languageValues.configmap }}

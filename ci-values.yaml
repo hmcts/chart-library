@@ -118,3 +118,7 @@ functionaltestscron:
 autoscaling:
   enabled: true
   maxReplicas: 5
+
+args:
+  - This
+  - That
