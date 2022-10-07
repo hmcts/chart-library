@@ -25,7 +25,7 @@ volumes:
 {{- end }}
 
 {{/*
-Mount the Key vaults on /mnt/secrets
+Mount the Key vaults on /mnt/secrets by default or the custom mountPath
 */}}
 {{- define "hmcts.secretMounts.v2" -}}
 {{- $languageValues := deepCopy .Values -}}
@@ -37,7 +37,7 @@ volumeMounts:
 {{- range $vault, $info := $languageValues.keyVaults }}
 {{- if not $info.disabled }}
   - name: vault-{{ $vault }}
-    mountPath: "/mnt/secrets/{{ $vault }}"
+    mountPath: "{{ default (printf "/mnt/secrets/%s" $vault) $info.mountPath }}"
     readOnly: true
 {{- end }}
 {{- end }}
