@@ -62,6 +62,9 @@ spec:
           name: release-name-library
           securityContext:
             allowPrivilegeEscalation: false
+          args:
+            - this
+            - that
           env:
             - name: STORAGE_ACCOUNT_NAME
               valueFrom:

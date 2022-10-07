@@ -241,6 +241,6 @@ java:
     enabled: true
     maxReplicas: 5
 
-args:
-  - this
-  - that
+  args:
+    - this
+    - that

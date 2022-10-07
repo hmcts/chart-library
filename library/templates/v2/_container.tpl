@@ -12,7 +12,7 @@
 {{ toYaml $languageValues.args | indent 4 }}
   {{- end}}
   {{- if $languageValues.command }}
-  command: {{ $languageValues.command }}
+  command:
 {{ toYaml $languageValues.args | indent 4 }}
   {{- end}}
   env:
