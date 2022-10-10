@@ -244,3 +244,7 @@ java:
   args:
     - this
     - that
+
+  command:
+    - this
+    - that

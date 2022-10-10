@@ -127,3 +127,6 @@ autoscaling:
 args:
   - this
   - that
+command:
+  - this
+  - that
