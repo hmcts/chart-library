@@ -240,3 +240,11 @@ java:
   autoscaling:
     enabled: true
     maxReplicas: 5
+
+  args:
+    - this
+    - that
+
+  command:
+    - this
+    - that

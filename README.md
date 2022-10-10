@@ -104,6 +104,8 @@ It includes below templates :
 | `startupTimeout`           | Startup probe timeout (seconds) |
 | `startupPeriod`            | Startup probe period (seconds) | 
 | `startupFailureThreshold`  | Startup failure threshold |
+| `args`                     | Arguments to pass to the container |
+| `command`                  | Commands to pass to the container |
 
 It includes below templates :
 - [Key Vault Secrets](#KeyVault-Secret-CSI-Volumes)
