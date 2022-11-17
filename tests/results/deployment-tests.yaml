@@ -6,7 +6,7 @@ metadata:
   name: release-name-functionaltestscron-job
   labels:
     app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/instance: release-name-functionaltestscron
+    app.kubernetes.io/instance: release-name
     helm.sh/chart: library-0.1.0
     app.kubernetes.io/name: release-name-library-functionaltestscron
 spec:

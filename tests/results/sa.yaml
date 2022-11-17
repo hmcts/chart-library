@@ -8,4 +8,4 @@ metadata:
     app.kubernetes.io/name: release-name-library
     helm.sh/chart: library-0.1.0
     app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/instance: release-name-library
+    app.kubernetes.io/instance: release-name
