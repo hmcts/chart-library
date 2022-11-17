@@ -9,9 +9,8 @@ metadata:
     helm.sh/chart: library-0.1.0
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/instance: release-name-library
-  annotations:
-    kubernetes.io/ingress.class: traefik
 spec:
+  ingressClassName: traefik
   rules:
   - host: release-name.service.core-compute-preview.internal
     http:
