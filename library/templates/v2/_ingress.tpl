@@ -18,7 +18,7 @@ metadata:
     {{- if $languageValues.enableOAuth }}
     traefik.ingress.kubernetes.io/router.middlewares: admin-oauth-headers@kubernetescrd,admin-oauth-auth@kubernetescrd
     {{- end }}
-    dtDashboardEnabled: {{ not (hasKey $globals "dtDashboardEnabled") }}
+    dynatraceIngressMonitorsEnabled: {{ not (hasKey $globals "dynatraceIngressMonitorsEnabled") }}
 spec:
   ingressClassName: {{ $languageValues.ingressClass }}
   rules:
