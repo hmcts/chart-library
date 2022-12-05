@@ -17,7 +17,7 @@ metadata:
   {{- if and $languageValues.ingressSessionAffinity $languageValues.ingressSessionAffinity.enabled }}
   annotations:
     traefik.ingress.kubernetes.io/service.sticky.cookie: "true"
-    traefik.ingress.kubernetes.io/session.cookie.name: {{ $languageValues.ingressSessionAffinity.sessionCookieName | quote }}
+    traefik.ingress.kubernetes.io/service.sticky.cookie.name: {{ $languageValues.ingressSessionAffinity.sessionCookieName | quote }}
   {{- end }}
   {{- end }}
 spec:
