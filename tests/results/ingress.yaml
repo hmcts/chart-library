@@ -30,3 +30,37 @@ spec:
             name: release-name-library
             port:
               number: 80
+  - host: ci-01.platform.hmcts.net
+    http:
+      paths:
+      - path: /test
+        pathType: Prefix
+        backend:
+          service:
+            name: release-name
+            port:
+              number: 80
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: release-name-library
+            port:
+              number: 80
+  - host: ci-02.platform.hmcts.net
+    http:
+      paths:
+      - path: /test
+        pathType: Prefix
+        backend:
+          service:
+            name: release-name
+            port:
+              number: 80
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: release-name-library
+            port:
+              number: 80
