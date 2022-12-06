@@ -52,6 +52,21 @@ spec:
             port:
               number: 80
   {{- end }}
+  {{- if $languageValues.additionalIngressHosts }}
+  {{- range $languageValues.additionalIngressHosts }}
+  - host: {{ . | lower }}
+    http:
+      paths:
+      {{- ( include "hmcts.additionalPathBasedRoutes.v2" $ ) | indent 4 }}
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: {{ template "hmcts.releasename.v2" $ }}
+            port:
+              number: 80
+  {{- end }}
+  {{- end }}
 {{- end}}
 {{- end }}
 
