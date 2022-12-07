@@ -131,4 +131,4 @@ command:
   - this
   - that
 
-additionalIngressHosts: ["ci-01.platform.hmcts.net", "ci-02.platform.hmcts.net"]
+additionalIngressHosts: ["{{ .Release.Name }}-ci-01.platform.hmcts.net", "ci-02.platform.hmcts.net"]

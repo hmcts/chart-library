@@ -30,7 +30,7 @@ spec:
             name: release-name-library
             port:
               number: 80
-  - host: ci-01.platform.hmcts.net
+  - host: release-name-ci-01.platform.hmcts.net
     http:
       paths:
       - path: /test
