@@ -49,7 +49,7 @@ spec:
   {{- end }}
   {{- if $languageValues.additionalIngressHosts }}
   {{- range $languageValues.additionalIngressHosts }}
-  - host: {{ . | lower }}
+  - host: {{ tpl . $ | lower }}
     http:
       paths:
       {{- ( include "hmcts.additionalPathBasedRoutes.v2" $ ) | indent 4 }}
