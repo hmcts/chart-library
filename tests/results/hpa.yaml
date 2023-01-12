@@ -1,6 +1,6 @@
 ---
 # Source: library/templates/hpa.yaml
-apiVersion: autoscaling/v1
+apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
   name: release-name-library
