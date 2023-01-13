@@ -123,10 +123,10 @@ functionaltestscron:
 autoscaling:
   enabled: true
   maxReplicas: 5
-  cpu:
-    averageUtilization: 80
-  memory:
-    averageUtilization: 80
+  # cpu:
+  #   averageUtilization: 80
+  # memory:
+  #   averageUtilization: 80
 
 args:
   - this
