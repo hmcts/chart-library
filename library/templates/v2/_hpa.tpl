@@ -25,5 +25,15 @@ spec:
           {{- else }}
           averageUtilization: 80
           {{- end }}
+    - type: Resource
+      resource:
+        name: memory
+        target:
+          type: Utilization
+          {{- if $languageValues.autoscaling.targetMemoryUtilizationPercentage }}
+          averageUtilization: {{ $languageValues.autoscaling.targetMemoryUtilizationPercentage }}
+          {{- else }}
+          averageUtilization: 80
+          {{- end }}
 {{- end }}
 {{- end }}
