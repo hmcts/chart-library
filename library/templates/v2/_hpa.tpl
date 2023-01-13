@@ -20,8 +20,8 @@ spec:
         name: cpu
         target:
           type: Utilization
-          {{- if $languageValues.autoscaling.targetCPUUtilizationPercentage }}
-          averageUtilization: {{ $languageValues.autoscaling.targetCPUUtilizationPercentage }}
+          {{- if $languageValues.autoscaling.cpu.averageUtilization }}
+          averageUtilization: {{ $languageValues.autoscaling.cpu.averageUtilization }}
           {{- else }}
           averageUtilization: 80
           {{- end }}
@@ -30,8 +30,8 @@ spec:
         name: memory
         target:
           type: Utilization
-          {{- if $languageValues.autoscaling.targetMemoryUtilizationPercentage }}
-          averageUtilization: {{ $languageValues.autoscaling.targetMemoryUtilizationPercentage }}
+          {{- if $languageValues.autoscaling.memory.averageUtilization }}
+          averageUtilization: {{ $languageValues.autoscaling.memory.averageUtilization }}
           {{- else }}
           averageUtilization: 80
           {{- end }}
