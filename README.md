@@ -276,6 +276,8 @@ To adjust the number of pods in a deployment depending on CPU utilization AKS su
 | `autoscaling.enabled` | Enable horizontal pod autoscaling. | `false` |
 | `autoscaling.maxReplicas` | Max replica count. Required if autoscaling.enabled is true | `` |
 | `autoscaling.targetCPUUtilizationPercentage` | target CPU utilization | `80` |
+| `autoscaling.targetMemoryUtilizationPercentage` | target CPU utilization | `80` |
+
 
 Example Config:
 
@@ -284,6 +286,7 @@ autoscaling:
   enabled: true     # Default is false
   maxReplicas: 5    # Required setting
   targetCPUUtilizationPercentage: 80 # Default is 80% target CPU utilization
+  targetMemoryUtilizationPercentage: 80 # Default is 80% target Memory utilization 
 ```
 
 ### Smoke and functional tests
