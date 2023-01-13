@@ -15,15 +15,15 @@ spec:
     kind: Deployment
     name: {{ template "hmcts.releasename.v2" . }}
     metrics:
-  - type: Resource
-    resource:
-      name: cpu
-      target:
-        type: Utilization
-        {{- if $languageValues.autoscaling.targetCPUUtilizationPercentage }}
-        averageUtilization: {{ $languageValues.autoscaling.targetCPUUtilizationPercentage }}
-        {{- else }}
-        averageUtilization: 80
-        {{- end }}
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          {{- if $languageValues.autoscaling.targetCPUUtilizationPercentage }}
+          averageUtilization: {{ $languageValues.autoscaling.targetCPUUtilizationPercentage }}
+          {{- else }}
+          averageUtilization: 80
+          {{- end }}
 {{- end }}
 {{- end }}
