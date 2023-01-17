@@ -21,7 +21,6 @@ spec:
         target:
           type: Utilization
           averageUtilization: {{ $languageValues.autoscaling.cpu.averageUtilization }}
-
     - type: Resource
       resource:
         name: memory
