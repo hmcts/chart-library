@@ -20,16 +20,13 @@ spec:
         name: cpu
         target:
           type: Utilization
-          {{- if $languageValues.autoscaling.cpu.averageUtilization }}
           averageUtilization: {{ $languageValues.autoscaling.cpu.averageUtilization }}
-          {{- end }}
+
     - type: Resource
       resource:
         name: memory
         target:
           type: Utilization
-          {{- if $languageValues.autoscaling.memory.averageUtilization }}
           averageUtilization: {{ $languageValues.autoscaling.memory.averageUtilization }}
-          {{- end }}
 {{- end }}
 {{- end }}
