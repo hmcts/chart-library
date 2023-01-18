@@ -14,18 +14,18 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: {{ template "hmcts.releasename.v2" . }}
-    metrics:
-    - type: Resource
-      resource:
-        name: cpu
-        target:
-          type: Utilization
-          averageUtilization: {{ $languageValues.autoscaling.cpu.averageUtilization }}
-    - type: Resource
-      resource:
-        name: memory
-        target:
-          type: Utilization
-          averageUtilization: {{ $languageValues.autoscaling.memory.averageUtilization }}
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: {{ $languageValues.autoscaling.cpu.averageUtilization }}
+  - type: Resource
+    resource:
+      name: memory
+      target:
+        type: Utilization
+        averageUtilization: {{ $languageValues.autoscaling.memory.averageUtilization }}
 {{- end }}
 {{- end }}
