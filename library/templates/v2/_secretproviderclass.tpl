@@ -49,9 +49,9 @@ spec:
         - |
           objectName: {{ .name }}
           objectType: cert
-     {{- if hasKey . "alias" }}
+        {{- if hasKey . "alias" }}
           objectAlias: {{ .alias }}
-     {{- end }}
+        {{- end }}
      {{- else }}
         - |
           objectName: {{ . }}
