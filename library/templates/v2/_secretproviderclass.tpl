@@ -41,7 +41,7 @@ spec:
           objectName: {{ . }}
         {{- end }} 
           objectType: secret
-      {{- end }}
+     {{- end }}
       {{- end }}
 
       {{- range $info.certs }}
