@@ -15,6 +15,7 @@ metadata:
     {{- if not (hasKey $globals "disableTraefikTls" | ternary $globals.disableTraefikTls $languageValues.disableTraefikTls) }}
     traefik.ingress.kubernetes.io/router.tls: "true"
     {{- end }}
+    external-dns-selector: {{ $languageValues.ingressClass }}
     {{- if $languageValues.enableOAuth }}
     traefik.ingress.kubernetes.io/router.middlewares: admin-oauth-headers@kubernetescrd,admin-oauth-auth@kubernetescrd
     {{- end }}

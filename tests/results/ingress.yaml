@@ -10,6 +10,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/instance: release-name
   annotations:
+    external-dns-selector: traefik
 spec:
   ingressClassName: traefik
   rules:
