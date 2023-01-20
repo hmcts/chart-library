@@ -24,14 +24,22 @@ spec:
       array: {{- range $info.secrets }}
      {{- if kindIs "map" . }}
         - |
+        {{- if $globals.environment }}
+          objectName: {{ .name | replace "<ENV>" $globals.environment }} 
+        {{- else }}
           objectName: {{ .name }}
+        {{- end }}
           objectType: secret
         {{- if hasKey . "alias" }}
           objectAlias: {{ .alias }}
         {{- end }}
      {{- else }}
         - |
+        {{- if $globals.environment }}
+          objectName: {{ . | replace "<ENV>" $globals.environment }} 
+        {{- else }}
           objectName: {{ . }}
+        {{- end }}
           objectType: secret
      {{- end }}
       {{- end }}
