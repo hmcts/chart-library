@@ -10,6 +10,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/instance: release-name
   annotations:
+    # TODO remove after https://github.com/kubernetes-sigs/external-dns/issues/2386 is solved
     external-dns-selector: traefik
 spec:
   ingressClassName: traefik
