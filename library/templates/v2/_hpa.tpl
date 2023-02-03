@@ -15,17 +15,21 @@ spec:
     kind: Deployment
     name: {{ template "hmcts.releasename.v2" . }}
   metrics:
+ {{- if gt ( $languageValues.autoscaling.cpu.averageUtilization | int ) 0 }}
   - type: Resource
     resource:
       name: cpu
       target:
         type: Utilization
         averageUtilization: {{ $languageValues.autoscaling.cpu.averageUtilization }}
+ {{- end }}
+ {{- if gt ( $languageValues.autoscaling.memory.averageUtilization | int ) 0 }}
   - type: Resource
     resource:
       name: memory
       target:
         type: Utilization
         averageUtilization: {{ $languageValues.autoscaling.memory.averageUtilization }}
+{{- end }}
 {{- end }}
 {{- end }}
