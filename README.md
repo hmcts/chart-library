@@ -271,12 +271,14 @@ To use startup probes, refer to instructions for the relevant dependant charts b
 ### HPA Horizontal Pod Auto scaler
 To adjust the number of pods in a deployment depending on CPU utilization AKS supports horizontal pod autoscaling. To enable horizontal pod autoscaling you can enable the autoscaling section. https://docs.microsoft.com/en-us/azure/aks/tutorial-kubernetes-scale#autoscale-pods
 
-| Parameter                  | Description                                | Default  |
-| -------------------------- | ------------------------------------------ | ----- |
-| `autoscaling.enabled` | Enable horizontal pod autoscaling. | `false` |
-| `autoscaling.maxReplicas` | Max replica count. Required if autoscaling.enabled is true | `` |
-| `autoscaling.cpu.averageUtilization` | Average CPU utilization | `80` |
-| `autoscaling.memory.averageUtilization` | Average memory utilization | `80` |
+| Parameter                               | Description                                                | Default |
+|-----------------------------------------|------------------------------------------------------------|---------|
+| `autoscaling.enabled`                   | Enable horizontal pod autoscaling.                         | `false` |
+| `autoscaling.maxReplicas`               | Max replica count. Required if autoscaling.enabled is true | ``      |
+| `autoscaling.cpu.enabled`               | Enable CPU based Autoscaling                               | `true`  |
+| `autoscaling.cpu.averageUtilization`    | Average CPU utilization                                    | `80`    |
+| `autoscaling.memory.enabled`            | Enable Memory based Autoscaling                            | `true`  |
+| `autoscaling.memory.averageUtilization` | Average memory utilization                                 | `80`    |
 
 
 Example Config:

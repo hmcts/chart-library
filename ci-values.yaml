@@ -124,8 +124,10 @@ autoscaling:
   enabled: true
   maxReplicas: 5
   cpu:
+    enabled: true
     averageUtilization: 80
   memory:
+    enabled: true
     averageUtilization: 80
 
 args:

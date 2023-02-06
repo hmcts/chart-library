@@ -121,8 +121,10 @@ autoscaling:
   enabled: false
   maxReplicas: 4
   cpu:
+    enabled: true
     averageUtilization: 80
   memory:
+    enabled: true
     averageUtilization: 80
 language: java
 java:
@@ -245,8 +247,10 @@ java:
     enabled: true
     maxReplicas: 5
     cpu:
+      enabled: true
       averageUtilization: 80
     memory:
+      enabled: true
       averageUtilization: 80
 
   args:
