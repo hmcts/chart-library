@@ -4,6 +4,7 @@
 {{- $languageValues = (deepCopy .Values | merge (pluck .Values.language .Values | first) ) -}}
 {{- end -}}
 {{- if $languageValues.autoscaling.enabled }}
+{{- if or (not $languageValues.global.devMode) $languageValues.autoscaling.enabledForDevMode}}
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 {{ template "hmcts.metadata.v2" . }}
@@ -30,6 +31,7 @@ spec:
       target:
         type: Utilization
         averageUtilization: {{ $languageValues.autoscaling.memory.averageUtilization }}
+{{- end }}
 {{- end }}
 {{- end }}
 {{- end }}
