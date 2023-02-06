@@ -1,4 +1,4 @@
-{{- define "hmcts.hpa.v3.tpl" -}}
+{{- define "hmcts.hpa.v4.tpl" -}}
 {{- $languageValues := deepCopy .Values -}}
 {{- if hasKey .Values "language" -}}
 {{- $languageValues = (deepCopy .Values | merge (pluck .Values.language .Values | first) ) -}}
