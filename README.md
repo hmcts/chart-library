@@ -274,7 +274,7 @@ To adjust the number of pods in a deployment depending on CPU utilization AKS su
 | Parameter                               | Description                                                              | Default |
 |-----------------------------------------|--------------------------------------------------------------------------|---------|
 | `autoscaling.enabled`                   | Enable horizontal pod autoscaling.                                       | `false` |
-| `autoscaling.enabledForDevMode`         | Additional flaf needed to enable horizontal pod autoscaling in Dev mode. | `false` |
+| `autoscaling.enabledForDevMode`         | Additional flag needed to enable horizontal pod autoscaling in Dev mode. | `false` |
 | `autoscaling.maxReplicas`               | Max replica count. Required if autoscaling.enabled is true               | ``      |
 | `autoscaling.cpu.enabled`               | Enable CPU based Autoscaling                                             | `true`  |
 | `autoscaling.cpu.averageUtilization`    | Average CPU utilization                                                  | `80`    |
