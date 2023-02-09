@@ -15,8 +15,6 @@ metadata:
     {{- if not (hasKey $globals "disableTraefikTls" | ternary $globals.disableTraefikTls $languageValues.disableTraefikTls) }}
     traefik.ingress.kubernetes.io/router.tls: "true"
     {{- end }}
-    # TODO remove after https://github.com/kubernetes-sigs/external-dns/issues/2386 is solved
-    external-dns-selector: {{ $languageValues.ingressClass }}
     {{- if $languageValues.enableOAuth }}
     traefik.ingress.kubernetes.io/router.middlewares: admin-oauth-headers@kubernetescrd,admin-oauth-auth@kubernetescrd
     {{- end }}
