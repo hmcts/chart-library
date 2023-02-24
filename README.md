@@ -25,22 +25,22 @@ Library Helm Chart
 
 Behaviour is applicable for all templates
 
-| Parameter                  | Description                                | 
-| -------------------------- | ------------------------------------------ |
-| `releaseNameOverride`          | Will override the default resource name - It supports templating, example:`releaseNameOverride: {{ .Release.Name }}-my-custom-name`      |
-| `releaseNamePrefix`          | Prefix for the release name |
-| `.global.releaseNamePrefix`          | Global Prefix for the release name |
-| `releaseNameSuffix`          | Suffix for the release name |
-| `.global.releaseNameSuffix`          | Global Suffix for the release name |
+| Parameter                   | Description                                                                                                                         | 
+|-----------------------------|-------------------------------------------------------------------------------------------------------------------------------------|
+| `releaseNameOverride`       | Will override the default resource name - It supports templating, example:`releaseNameOverride: {{ .Release.Name }}-my-custom-name` |
+| `releaseNamePrefix`         | Prefix for the release name                                                                                                         |
+| `.global.releaseNamePrefix` | Global Prefix for the release name                                                                                                  |
+| `releaseNameSuffix`         | Suffix for the release name                                                                                                         |
+| `.global.releaseNameSuffix` | Global Suffix for the release name                                                                                                  |
 
 The applied order is: `global prefix + prefix + name + suffix + global suffix`
 
 ### Deployment
 
 
-| Parameter                  | Description                                |
-| -------------------------- | ------------------------------------------ |
-| `replicas`          | Number of pod replicas |
+| Parameter  | Description            |
+|------------|------------------------|
+| `replicas` | Number of pod replicas |
 
 It includes below templates :
 
@@ -48,10 +48,11 @@ It includes below templates :
 
 ### PodTemplate
 
-| Parameter                  | Description                                |
-| -------------------------- | ------------------------------------------ |
-| `saEnabled`          | Flag to Enable Service Account |
-| `useInterpodAntiAffinity` | Always schedule replicas on different nodes | 
+| Parameter                 | Description                                                                                                 |
+|---------------------------|-------------------------------------------------------------------------------------------------------------|
+| `saEnabled`               | Flag to Enable Service Account                                                                              |
+| `useInterpodAntiAffinity` | Always schedule replicas on different nodes                                                                 |
+| `affinity`                | Pod/Node affinity and anti-affinity set as `yaml`, works only when `useInterpodAntiAffinity` isn't enabled. |
 
 It includes below templates :
 - [Metadata](#Metadata)
@@ -60,11 +61,11 @@ It includes below templates :
 
 ### Metadata
 
-| Parameter                  | Description                                |
-| -------------------------- | ------------------------------------------ |
-| `aadIdentityName`          | Added as a label for binding pod identity |
-| `prometheus.enabled`          | Enables adding prometheus annotations |
-| `prometheus.path`          | Path for scraping prometheus metrics |
+| Parameter            | Description                               |
+|----------------------|-------------------------------------------|
+| `aadIdentityName`    | Added as a label for binding pod identity |
+| `prometheus.enabled` | Enables adding prometheus annotations     |
+| `prometheus.path`    | Path for scraping prometheus metrics      |
 
 ### DNS Config
 
@@ -112,12 +113,12 @@ It includes below templates :
 - [Kubernetes Secrets As Environment Variables](#kubernetes-secrets-as-environment-variables)
 
 ### KeyVault Secret CSI Volumes
-| Parameter                  | Description                                |
-| -------------------------- | ------------------------------------------ |
-| `disableKeyVaults`         | Disables key vault support, useful in pull requests if you don't need any secrets (usually because you're using an embedded DB) |
-| `keyVaults`                | Mappings of keyvaults to be mounted as CSI Volumes (see Example Configuration) | 
-| `aadIdentityName`          | Pod identity binding for accessing the key vaults  |
-| `mountPath`                | (Optional) Custom path to mount the secrets to the pod. Default: `/mnt/secrets/<VAULT_NAME>`  |
+| Parameter          | Description                                                                                                                     |
+|--------------------|---------------------------------------------------------------------------------------------------------------------------------|
+| `disableKeyVaults` | Disables key vault support, useful in pull requests if you don't need any secrets (usually because you're using an embedded DB) |
+| `keyVaults`        | Mappings of keyvaults to be mounted as CSI Volumes (see Example Configuration)                                                  | 
+| `aadIdentityName`  | Pod identity binding for accessing the key vaults                                                                               |
+| `mountPath`        | (Optional) Custom path to mount the secrets to the pod. Default: `/mnt/secrets/<VAULT_NAME>`                                    |
 
 #### Example for adding Azure Key Vault Secrets
 Key vault secrets can be mounted to the container filesystem using what's called a [secrets-store-csi-driver-provider-azure](https://github.com/Azure/secrets-store-csi-driver-provider-azure). This means that the keyvault secrets are accessible as files after they have been mounted.
@@ -214,29 +215,29 @@ keyVaults:
 
 ### Ingress
 
-| Parameter                  | Description                                | Default  |
-| -------------------------- | ------------------------------------------ | ----- |
-| `ingressHost`              | Host for ingress controller to map the container to. It supports templating, Example : {{.Release.Name}}.service.core-compute-preview.internal   | `nil`|
-| `registerAdditionalDns.enabled`            | If you want to use this chart as a secondary dependency - e.g. providing a frontend to a backend, and the backend is using primary ingressHost DNS mapping.                            | `false`      
-| `registerAdditionalDns.primaryIngressHost`            | The hostname for primary chart. It supports templating, Example : {{.Release.Name}}.service.core-compute-preview.internal                           | `nil`      
-| `registerAdditionalDns.prefix`            | DNS prefix for this chart - will resolve as: `prefix-{registerAdditionalDns.primaryIngressHost}`                         | `nil`     
-| `disableTraefikTls`            | Boolean value to enable or disable TLS on application specific HTTP router created on Traefik ingress controller. This will usually be set by Jenkins through global which takes precedence over app settings.                           | `false`
-| `enableOAuth`            | Boolean value to enable or disable OAuth2 proxy. Setting to `true` will force signing into Azure AD when navigating to application frontend            | `false`
-| `additionalIngressHosts`            | List of string values for additional ingress hosts. For example ["one.domain.com", "two.domain.com"]            | `nil`
+| Parameter                                  | Description                                                                                                                                                                                                    | Default |
+|--------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------|
+| `ingressHost`                              | Host for ingress controller to map the container to. It supports templating, Example : {{.Release.Name}}.service.core-compute-preview.internal                                                                 | `nil`   |
+| `registerAdditionalDns.enabled`            | If you want to use this chart as a secondary dependency - e.g. providing a frontend to a backend, and the backend is using primary ingressHost DNS mapping.                                                    | `false` |
+| `registerAdditionalDns.primaryIngressHost` | The hostname for primary chart. It supports templating, Example : {{.Release.Name}}.service.core-compute-preview.internal                                                                                      | `nil`   |
+| `registerAdditionalDns.prefix`             | DNS prefix for this chart - will resolve as: `prefix-{registerAdditionalDns.primaryIngressHost}`                                                                                                               | `nil`   |
+| `disableTraefikTls`                        | Boolean value to enable or disable TLS on application specific HTTP router created on Traefik ingress controller. This will usually be set by Jenkins through global which takes precedence over app settings. | `false` |
+| `enableOAuth`                              | Boolean value to enable or disable OAuth2 proxy. Setting to `true` will force signing into Azure AD when navigating to application frontend                                                                    | `false` |
+| `additionalIngressHosts`                   | List of string values for additional ingress hosts. For example ["one.domain.com", "two.domain.com"]                                                                                                           | `nil`   |
 
 ### Pod Disruption Budget
 
-| Parameter                  | Description                                | Default  |
-| -------------------------- | ------------------------------------------ | ----- |
-| `pdb.enabled` | To enable PodDisruptionBudget on the pods for handling disruptions | `true` |
-| `pdb.maxUnavailable` |  To configure the number of pods from the set that can be unavailable after the eviction. It can be either an absolute number or a percentage. pdb.minAvailable takes precedence over this if not nil | `50%` means evictions are allowed as long as no more than 50% of the desired replicas are unhealthy. It will allow disruption if you have only 1 replica.|
-| `pdb.minAvailable` |  To configure the number of pods from that set that must still be available after the eviction, even in the absence of the evicted pod. minAvailable can be either an absolute number or a percentage. This takes precedence over pdb.maxUnavailable if not nil. | `nil`|
+| Parameter            | Description                                                                                                                                                                                                                                                     | Default                                                                                                                                                   |
+|----------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `pdb.enabled`        | To enable PodDisruptionBudget on the pods for handling disruptions                                                                                                                                                                                              | `true`                                                                                                                                                    |
+| `pdb.maxUnavailable` | To configure the number of pods from the set that can be unavailable after the eviction. It can be either an absolute number or a percentage. pdb.minAvailable takes precedence over this if not nil                                                            | `50%` means evictions are allowed as long as no more than 50% of the desired replicas are unhealthy. It will allow disruption if you have only 1 replica. |
+| `pdb.minAvailable`   | To configure the number of pods from that set that must still be available after the eviction, even in the absence of the evicted pod. minAvailable can be either an absolute number or a percentage. This takes precedence over pdb.maxUnavailable if not nil. | `nil`                                                                                                                                                     |
 
 ### Kubernetes Secrets as Environment Variables
 
-| Parameter                  | Description                                | Default  |
-| -------------------------- | ------------------------------------------ | ----- |
-| `secrets`                  | Mappings of environment variables to service objects or pre-configured kubernetes secrets |  nil |
+| Parameter | Description                                                                               | Default |
+|-----------|-------------------------------------------------------------------------------------------|---------|
+| `secrets` | Mappings of environment variables to service objects or pre-configured kubernetes secrets | nil     |
 
 To map existing kubernetes secrets such as passwords to environment variable in the container. e.g :
 
@@ -296,44 +297,44 @@ autoscaling:
 
 ### Smoke and functional tests
 
-| Parameter                  | Description                                | Default  |
-| -------------------------- | ------------------------------------------ | ----- |
-| `testsConfig.keyVaults`      | Tests keyvaults config [here](#example-for-adding-azure-key-vault-secrets-using-aliases). Shared by all tests pods  | `nil` |
-| `testsConfig.environment`    | Tests environment variables. Shared by all tests pods. Merged, with duplicate variables overridden, by specific tests environment  | `nil` |
-| `testsConfig.memoryRequests` | Tests Requests for memory. Applies to all test pods. Can be overridden by single test pods | `256Mi`|
-| `testsConfig.cpuRequests`    | Tests Requests for cpu. Applies to all test pods. Can be overridden by single test pods | `100m`|
-| `testsConfig.memoryLimits`   | Tests Memory limits. Applies to all test pods. Can be overridden by single test pods | `1024Mi`|
-| `testsConfig.cpuLimits`      | Tests CPU limits. Applies to all test pods. Can be overridden by single test pods | `1000m`|
-| `smoketests.enabled`         | Enable smoke tests single run after deployment. | `false` |
-| `smoketests.image`           | Full smoke tests image url. | `hmctspublic.azurecr.io/spring-boot/template` |
-| `smoketests.environment`     | Smoke tests environment variables. Merged with testsConfig.environment. Overrides duplicates. | `nil` |  
-| `smoketests.memoryRequests`  | Smoke tests Requests for memory | `256Mi`|
-| `smoketests.cpuRequests`     | Smoke tests Requests for cpu | `100m`|
-| `smoketests.memoryLimits`    | Smoke tests Memory limits | `1024Mi`|
-| `smoketests.cpuLimits`       | Smoke tests CPU limits | `1000m`|
-| `functionaltests.enabled`         | Enable functional tests single run after deployment. | `false` |
-| `functionaltests.image`           | Full functional tests image url. | `hmctspublic.azurecr.io/spring-boot/template` |
-| `functionaltests.environment`     | Functional tests environment variables. Merged with testsConfig.environment. Overrides duplicates. | `nil` |  
-| `functionaltests.memoryRequests`  | Functional tests Requests for memory | `256Mi`|
-| `functionaltests.cpuRequests`     | Functional tests Requests for cpu | `100m`|
-| `functionaltests.memoryLimits`    | Functional tests Memory limits | `1024Mi`|
-| `functionaltests.cpuLimits`       | Functional tests CPU limits | `1000m`|
-| `smoketestscron.enabled`         | Enable smoke tests cron job. Runs tests at scheduled times | `false` |
-| `smoketestscron.schedule`         | Cron expression for scheduling smoke tests cron job | `20 0/1 * * *` |
-| `smoketestscron.image`           | Full cron smoke tests image url. | `hmctspublic.azurecr.io/spring-boot/template` |
-| `smoketestscron.environment`     | Smoke cron tests environment variables. Merged with testsConfig.environment. Overrides duplicates. | `nil` |  
-| `smoketestscron.memoryRequests`  | Smoke cron tests Requests for memory | `256Mi`|
-| `smoketestscron.cpuRequests`     | Smoke cron tests Requests for cpu | `100m`|
-| `smoketestscron.memoryLimits`    | Smoke cron tests Memory limits | `1024Mi`|
-| `smoketestscron.cpuLimits`       | Smoke cron tests CPU limits | `1000m`|
-| `functionaltestscron.enabled`         | Enable functional tests cron job. Runs tests at scheduled times | `false` |
-| `smoketestscron.schedule`             | Cron expression for scheduling functional tests cron job | `30 0/6 * * *` |
-| `functionaltestscron.image`           | Full functional tests image url. | `hmctspublic.azurecr.io/spring-boot/template` |
-| `functionaltestscron.environment`     | Functional cron tests environment variables. Merged with testsConfig.environment. Overrides duplicates. | `nil` |  
-| `functionaltestscron.memoryRequests`  | Functional cron tests Requests for memory | `256Mi`|
-| `functionaltestscron.cpuRequests`     | Functional cron tests Requests for cpu | `100m`|
-| `functionaltestscron.memoryLimits`    | Functional cron tests Memory limits | `1024Mi`|
-| `functionaltestscron.cpuLimits`       | Functional cron tests CPU limits | `1000m`|
+| Parameter                            | Description                                                                                                                       | Default                                       |
+|--------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------|
+| `testsConfig.keyVaults`              | Tests keyvaults config [here](#example-for-adding-azure-key-vault-secrets-using-aliases). Shared by all tests pods                | `nil`                                         |
+| `testsConfig.environment`            | Tests environment variables. Shared by all tests pods. Merged, with duplicate variables overridden, by specific tests environment | `nil`                                         |
+| `testsConfig.memoryRequests`         | Tests Requests for memory. Applies to all test pods. Can be overridden by single test pods                                        | `256Mi`                                       |
+| `testsConfig.cpuRequests`            | Tests Requests for cpu. Applies to all test pods. Can be overridden by single test pods                                           | `100m`                                        |
+| `testsConfig.memoryLimits`           | Tests Memory limits. Applies to all test pods. Can be overridden by single test pods                                              | `1024Mi`                                      |
+| `testsConfig.cpuLimits`              | Tests CPU limits. Applies to all test pods. Can be overridden by single test pods                                                 | `1000m`                                       |
+| `smoketests.enabled`                 | Enable smoke tests single run after deployment.                                                                                   | `false`                                       |
+| `smoketests.image`                   | Full smoke tests image url.                                                                                                       | `hmctspublic.azurecr.io/spring-boot/template` |
+| `smoketests.environment`             | Smoke tests environment variables. Merged with testsConfig.environment. Overrides duplicates.                                     | `nil`                                         |  
+| `smoketests.memoryRequests`          | Smoke tests Requests for memory                                                                                                   | `256Mi`                                       |
+| `smoketests.cpuRequests`             | Smoke tests Requests for cpu                                                                                                      | `100m`                                        |
+| `smoketests.memoryLimits`            | Smoke tests Memory limits                                                                                                         | `1024Mi`                                      |
+| `smoketests.cpuLimits`               | Smoke tests CPU limits                                                                                                            | `1000m`                                       |
+| `functionaltests.enabled`            | Enable functional tests single run after deployment.                                                                              | `false`                                       |
+| `functionaltests.image`              | Full functional tests image url.                                                                                                  | `hmctspublic.azurecr.io/spring-boot/template` |
+| `functionaltests.environment`        | Functional tests environment variables. Merged with testsConfig.environment. Overrides duplicates.                                | `nil`                                         |  
+| `functionaltests.memoryRequests`     | Functional tests Requests for memory                                                                                              | `256Mi`                                       |
+| `functionaltests.cpuRequests`        | Functional tests Requests for cpu                                                                                                 | `100m`                                        |
+| `functionaltests.memoryLimits`       | Functional tests Memory limits                                                                                                    | `1024Mi`                                      |
+| `functionaltests.cpuLimits`          | Functional tests CPU limits                                                                                                       | `1000m`                                       |
+| `smoketestscron.enabled`             | Enable smoke tests cron job. Runs tests at scheduled times                                                                        | `false`                                       |
+| `smoketestscron.schedule`            | Cron expression for scheduling smoke tests cron job                                                                               | `20 0/1 * * *`                                |
+| `smoketestscron.image`               | Full cron smoke tests image url.                                                                                                  | `hmctspublic.azurecr.io/spring-boot/template` |
+| `smoketestscron.environment`         | Smoke cron tests environment variables. Merged with testsConfig.environment. Overrides duplicates.                                | `nil`                                         |  
+| `smoketestscron.memoryRequests`      | Smoke cron tests Requests for memory                                                                                              | `256Mi`                                       |
+| `smoketestscron.cpuRequests`         | Smoke cron tests Requests for cpu                                                                                                 | `100m`                                        |
+| `smoketestscron.memoryLimits`        | Smoke cron tests Memory limits                                                                                                    | `1024Mi`                                      |
+| `smoketestscron.cpuLimits`           | Smoke cron tests CPU limits                                                                                                       | `1000m`                                       |
+| `functionaltestscron.enabled`        | Enable functional tests cron job. Runs tests at scheduled times                                                                   | `false`                                       |
+| `smoketestscron.schedule`            | Cron expression for scheduling functional tests cron job                                                                          | `30 0/6 * * *`                                |
+| `functionaltestscron.image`          | Full functional tests image url.                                                                                                  | `hmctspublic.azurecr.io/spring-boot/template` |
+| `functionaltestscron.environment`    | Functional cron tests environment variables. Merged with testsConfig.environment. Overrides duplicates.                           | `nil`                                         |  
+| `functionaltestscron.memoryRequests` | Functional cron tests Requests for memory                                                                                         | `256Mi`                                       |
+| `functionaltestscron.cpuRequests`    | Functional cron tests Requests for cpu                                                                                            | `100m`                                        |
+| `functionaltestscron.memoryLimits`   | Functional cron tests Memory limits                                                                                               | `1024Mi`                                      |
+| `functionaltestscron.cpuLimits`      | Functional cron tests CPU limits                                                                                                  | `1000m`                                       |
 
 ### Service
 
