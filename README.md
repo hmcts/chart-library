@@ -48,10 +48,11 @@ It includes below templates :
 
 ### PodTemplate
 
-| Parameter                  | Description                                |
-| -------------------------- | ------------------------------------------ |
-| `saEnabled`          | Flag to Enable Service Account |
-| `useInterpodAntiAffinity` | Always schedule replicas on different nodes | 
+| Parameter                 | Description                                                                                                 |
+|---------------------------|-------------------------------------------------------------------------------------------------------------|
+| `saEnabled`               | Flag to Enable Service Account                                                                              |
+| `useInterpodAntiAffinity` | Always schedule replicas on different nodes                                                                 |
+| `affinity`                | Pod/Node affinity and anti-affinity set as `yaml`, works only when `useInterpodAntiAffinity` isn't enabled. |
 
 It includes below templates :
 - [Metadata](#Metadata)
@@ -60,11 +61,11 @@ It includes below templates :
 
 ### Metadata
 
-| Parameter                  | Description                                |
-| -------------------------- | ------------------------------------------ |
-| `aadIdentityName`          | Added as a label for binding pod identity |
-| `prometheus.enabled`          | Enables adding prometheus annotations |
-| `prometheus.path`          | Path for scraping prometheus metrics |
+| Parameter            | Description                               |
+|----------------------|-------------------------------------------|
+| `aadIdentityName`    | Added as a label for binding pod identity |
+| `prometheus.enabled` | Enables adding prometheus annotations     |
+| `prometheus.path`    | Path for scraping prometheus metrics      |
 
 ### DNS Config
 

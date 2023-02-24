@@ -18,5 +18,8 @@ affinity:
               values:
               - {{ template "hmcts.releasename.v2" . }}
         topologyKey: "kubernetes.io/hostname"
+{{ else if $languageValues.affinity }}
+affinity:
+{{ toYaml $languageValues.affinity| indent 2 }}
 {{- end }}
 {{- end }}
