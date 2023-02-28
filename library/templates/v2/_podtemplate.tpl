@@ -15,7 +15,7 @@ template:
     serviceAccountName: {{ template "hmcts.releasename.v2" . }}
     {{- end }}
     {{- include "hmcts.interpodantiaffinity.v2" . | indent 4 }}
-    {{- if not $languageValues.runAsRoot -}}
+    {{- if not $languageValues.runAsRoot }}
     securityContext:
       runAsUser: 1000
       fsGroup: 1000
