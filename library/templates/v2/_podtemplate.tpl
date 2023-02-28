@@ -15,9 +15,11 @@ template:
     serviceAccountName: {{ template "hmcts.releasename.v2" . }}
     {{- end }}
     {{- include "hmcts.interpodantiaffinity.v2" . | indent 4 }}
+    {{- if not $languageValues.runAsRoot -}}
     securityContext:
       runAsUser: 1000
       fsGroup: 1000
+    {{- end }}
     {{- ( include "hmcts.secretCSIVolumes.v2" . ) | indent 4 }}
     {{- ( include "hmcts.dnsConfig.v2" . ) | indent 4 }}
     restartPolicy: {{ .Values.restartPolicy | default "Always" | quote }}
