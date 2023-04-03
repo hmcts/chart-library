@@ -222,7 +222,6 @@ keyVaults:
 | `registerAdditionalDns.primaryIngressHost` | The hostname for primary chart. It supports templating, Example : {{.Release.Name}}.service.core-compute-preview.internal                                                                                      | `nil`   |
 | `registerAdditionalDns.prefix`             | DNS prefix for this chart - will resolve as: `prefix-{registerAdditionalDns.primaryIngressHost}`                                                                                                               | `nil`   |
 | `disableTraefikTls`                        | Boolean value to enable or disable TLS on application specific HTTP router created on Traefik ingress controller. This will usually be set by Jenkins through global which takes precedence over app settings. | `false` |
-| `enableOAuth`                              | Boolean value to enable or disable OAuth2 proxy. Setting to `true` will force signing into Azure AD when navigating to application frontend                                                                    | `false` |
 | `additionalIngressHosts`                   | List of string values for additional ingress hosts. For example ["one.domain.com", "two.domain.com"]                                                                                                           | `nil`   |
 
 ### Pod Disruption Budget
