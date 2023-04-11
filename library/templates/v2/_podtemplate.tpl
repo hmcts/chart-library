@@ -8,8 +8,8 @@ Create pod template spec.
 {{- end -}}
 template:
   metadata:
-    azure.workload.identity/use: "true"
     {{- (include "hmcts.labels.v2" .) | indent 4 }}
+      azure.workload.identity/use: "true"
     {{- (include "hmcts.annotations.v2" .) | indent 4 }}
   spec:
     {{- if $languageValues.saEnabled }}
