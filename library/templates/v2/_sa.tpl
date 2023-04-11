@@ -9,9 +9,13 @@ kind: ServiceAccount
 metadata:
   name: {{ template "hmcts.releasename.v2" . }} 
   annotations:
+    {{- if $languageValues.workloadIdentityEnabled }}
     azure.workload.identity/client-id: {{ $languageValues.workloadIdentityClientID }}
+    {{- end }}
   {{- ( include "hmcts.labels.v2" . ) | indent 2 }}
+  {{- if $languageValues.workloadIdentityEnabled }}
     azure.workload.identity/use: "true"
+  {{- end }}
 {{- end -}}
 {{- end -}}
 
