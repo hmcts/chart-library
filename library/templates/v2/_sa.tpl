@@ -7,7 +7,7 @@
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: {{ template "hmcts.releasename.v2" . }} 
+  name: {{ .Release.Namespace }} 
   annotations:
     {{- if $languageValues.workloadIdentityClientID }}
     azure.workload.identity/client-id: {{ $languageValues.workloadIdentityClientID }}
