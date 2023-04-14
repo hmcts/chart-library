@@ -15,7 +15,7 @@ template:
     {{- (include "hmcts.annotations.v2" .) | indent 4 }}
   spec:
     {{- if $languageValues.saEnabled }}
-    serviceAccountName: {{ template "hmcts.releasename.v2" . }}
+    serviceAccountName: {{ .Release.Namespace }}
     {{- end }}
     {{- include "hmcts.interpodantiaffinity.v2" . | indent 4 }}
     {{- if not $languageValues.runAsRoot }}
