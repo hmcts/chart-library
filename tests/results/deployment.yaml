@@ -19,7 +19,6 @@ spec:
   template:
     metadata:
       labels:
-        azure.workload.identity/use: "true"
         app.kubernetes.io/name: release-name-library
         helm.sh/chart: library-0.1.0
         app.kubernetes.io/managed-by: Helm
