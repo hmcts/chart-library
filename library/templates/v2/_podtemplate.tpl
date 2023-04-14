@@ -9,7 +9,7 @@ Create pod template spec.
 template:
   metadata:
     {{- (include "hmcts.labels.v2" .) | indent 4 }}
-    {{- if $languageValues.workloadIdentityClientID }}
+    {{- if $languageValues.useWorkloadIdentity }}
       azure.workload.identity/use: "true"
     {{- end }}
     {{- (include "hmcts.annotations.v2" .) | indent 4 }}
