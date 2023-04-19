@@ -8,7 +8,7 @@
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: {{ ternary $languageValues.serviceAccount.name .Release.Namespace $languageValues.serviceAccount.saEnabled }}
+  name: {{ default .Release.Namespace $languageValues.serviceAccount.name }}
   {{- ( include "hmcts.labels.v2" . ) | indent 2 }}
 {{- end -}}
 {{- end -}}
