@@ -49,7 +49,9 @@ environment:
 configmap:
   VAR_A: VALUE_C
   VAR_B: VALUE_D
-saEnabled: false
+serviceAccount:
+  saEnabled: false
+  name: serviceAccountName
 keyVaults:
   bulk-scan:
     excludeEnvironmentSuffix: false
@@ -180,7 +182,9 @@ java:
   configmap:
     VAR_A: VALUE_A
     VAR_B: VALUE_B
-  saEnabled: true
+  serviceAccount:
+    saEnabled: false
+    name: serviceAccountName
   keyVaults:
     bulk-scan:
       excludeEnvironmentSuffix: false

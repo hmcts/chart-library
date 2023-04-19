@@ -14,8 +14,8 @@ template:
     {{- end }}
     {{- (include "hmcts.annotations.v2" .) | indent 4 }}
   spec:
-    {{- if $languageValues.saEnabled }}
-    serviceAccountName: {{ .Release.Namespace }}
+    {{- if $languageValues.serviceAccount.saEnabled }}
+    serviceAccountName: {{ ternary $languageValues.serviceAccount.name .Release.Namespace $languageValues.serviceAccount.saEnabled }}
     {{- end }}
     {{- include "hmcts.interpodantiaffinity.v2" . | indent 4 }}
     {{- if not $languageValues.runAsRoot }}

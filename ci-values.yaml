@@ -27,6 +27,9 @@ prometheus:
   path: /metrics
 ingressClass: traefik
 useWorkloadIdentity: false
+serviceAccount:
+  saEnabled: false
+  name: serviceAccountName
 global:
   tenantId: "531ff96d-0ae9-462a-8d2d-bec7c0b42082"
   environment: aat
@@ -51,7 +54,7 @@ environment:
 configmap:
   VAR_A: VALUE_A
   VAR_B: VALUE_B
-saEnabled: true
+saEnabled: false
 envFromSecret: "env-secret"
 keyVaults:
   bulk-scan:
