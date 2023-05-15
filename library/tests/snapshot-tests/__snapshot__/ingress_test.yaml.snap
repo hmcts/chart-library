@@ -1,0 +1,66 @@
+manifest should match snapshot:
+  1: |
+    apiVersion: networking.k8s.io/v1
+    kind: Ingress
+    metadata:
+      annotations: null
+      labels:
+        app.kubernetes.io/instance: RELEASE-NAME
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/name: release-name-library
+        helm.sh/chart: library-0.1.0
+      name: release-name-library
+    spec:
+      ingressClassName: traefik
+      rules:
+        - host: release-name.service.core-compute-preview.internal
+          http:
+            paths:
+              - backend:
+                  service:
+                    name: release-name
+                    port:
+                      number: 80
+                path: /test
+                pathType: Prefix
+              - backend:
+                  service:
+                    name: release-name-library
+                    port:
+                      number: 80
+                path: /
+                pathType: Prefix
+        - host: release-name-ci-01.platform.hmcts.net
+          http:
+            paths:
+              - backend:
+                  service:
+                    name: release-name
+                    port:
+                      number: 80
+                path: /test
+                pathType: Prefix
+              - backend:
+                  service:
+                    name: release-name-library
+                    port:
+                      number: 80
+                path: /
+                pathType: Prefix
+        - host: ci-02.platform.hmcts.net
+          http:
+            paths:
+              - backend:
+                  service:
+                    name: release-name
+                    port:
+                      number: 80
+                path: /test
+                pathType: Prefix
+              - backend:
+                  service:
+                    name: release-name-library
+                    port:
+                      number: 80
+                path: /
+                pathType: Prefix

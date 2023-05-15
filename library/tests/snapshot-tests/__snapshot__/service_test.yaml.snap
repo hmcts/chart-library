@@ -1,0 +1,19 @@
+manifest should match snapshot:
+  1: |
+    apiVersion: v1
+    kind: Service
+    metadata:
+      labels:
+        app.kubernetes.io/instance: RELEASE-NAME
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/name: release-name-library
+        helm.sh/chart: library-0.1.0
+      name: release-name-library
+    spec:
+      ports:
+        - name: http
+          port: 80
+          protocol: TCP
+          targetPort: 3000
+      selector:
+        app.kubernetes.io/name: release-name-library

@@ -1,0 +1,7 @@
+suite: Snapshot tests
+templates:
+  - templates/v2/service.yaml
+tests:
+  - it: manifest should match snapshot
+    asserts:
+      - matchSnapshot: {}
