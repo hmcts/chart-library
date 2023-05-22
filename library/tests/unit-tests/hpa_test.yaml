@@ -20,7 +20,7 @@ tests:
 
   - it: should not create parameters for CPU autoscaling when CPU autoscaling is disabled.
     set:
-      autoscaling.cpu.enabled: fals
+      autoscaling.cpu.enabled: false
     asserts:
       - isKind:
           of: HorizontalPodAutoscaler
