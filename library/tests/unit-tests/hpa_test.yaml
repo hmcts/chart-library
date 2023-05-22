@@ -30,9 +30,6 @@ tests:
             maxReplicas: 5
             resource:
               name: cpu
-              target:
-                averageUtilization: 80
-                type: Utilization
             type: Resource
 
   - it: should create parameters for memory autoscaling when memory autoscaling is enabled.
@@ -63,7 +60,4 @@ tests:
             maxReplicas: 5
             resource:
               name: memory
-              target:
-                averageUtilization: 80
-                type: Utilization
             type: Resource
