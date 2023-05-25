@@ -1,4 +1,4 @@
-{{- define "hmcts.pdb.v3.tpl" -}}
+{{- define "hmcts.pdb.v2.tpl" -}}
 {{- $languageValues := deepCopy .Values -}}
 {{- if hasKey .Values "language" -}}
 {{- $languageValues = (deepCopy .Values | merge (pluck .Values.language .Values | first) ) -}}
@@ -22,6 +22,6 @@ spec:
 {{- end }}
 {{- end }}
 
-{{- define "hmcts.pdb.v3" -}}
-{{- template "hmcts.util.merge.v2" (append . "hmcts.pdb.v3.tpl") -}}
+{{- define "hmcts.pdb.v2" -}}
+{{- template "hmcts.util.merge.v2" (append . "hmcts.pdb.v2.tpl") -}}
 {{- end -}}
