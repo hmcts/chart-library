@@ -27,6 +27,8 @@ jobs:
     steps:
       - task: HelmInstaller@1
         displayName: 'Install Helm'
+        inputs:
+          helmVersionToInstall: 3.12.0
       - script: sudo snap install yq
       - script: ./tests/test-templates.sh
   - job: Release
