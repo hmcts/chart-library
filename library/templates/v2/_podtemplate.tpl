@@ -1,7 +1,7 @@
 {{/*
 Create pod template spec.
 */}}
-{{- define "hmcts.podtemplate.v2.tpl" -}}
+{{- define "hmcts.podtemplate.v3.tpl" -}}
 {{- $languageValues := deepCopy .Values -}}
 {{- if hasKey .Values "language" -}}
 {{- $languageValues = (deepCopy .Values | merge (pluck .Values.language .Values | first) ) -}}
