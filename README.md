@@ -344,7 +344,7 @@ Adds a Kubernetes service based on the pod's properties.
 As library charts are not installable, you can use [this script](tests/test-templates.sh) to generate templates and validate your changes.
 
 ### Changing existing templates
-- Add the change you want to see in the code and run [this script](tests/test-templates.sh)
+- Add the change you want to see in the code and run [the tests](tests/test-templates.sh)
 - The snapshot tests will fail and tell you that there are differences. 
 - Make sure language specific cases are covered in the tests [see](ci-values-lang.yaml)
 - If you are happy with these changes run:
