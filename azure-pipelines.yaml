@@ -32,7 +32,6 @@ jobs:
       # Install helm unittest plugin
       - script: helm plugin install https://github.com/helm-unittest/helm-unittest.git
       - script: sudo snap install yq
-      # Run tests
       - script: ./tests/test-templates.sh
   - job: Release
     # Make sure we have a tag to run this job
