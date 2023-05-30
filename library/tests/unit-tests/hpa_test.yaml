@@ -1,0 +1,63 @@
+suite: Unit tests
+templates:
+  - templates/v2/hpa.yaml
+tests:
+  - it: should create parameters for CPU autoscaling when CPU autoscaling is enabled.
+    set:
+      autoscaling.cpu.enabled: true
+    asserts:
+      - isKind:
+          of: HorizontalPodAutoscaler
+      - contains:
+          path: spec.metrics
+          content:
+           resource:
+                name: cpu
+                target:
+                  averageUtilization: 80
+                  type: Utilization
+           type: Resource
+
+  - it: should not create parameters for CPU autoscaling when CPU autoscaling is disabled.
+    set:
+      autoscaling.cpu.enabled: false
+    asserts:
+      - isKind:
+          of: HorizontalPodAutoscaler
+      - notContains:
+          path: spec.metrics
+          content:
+            maxReplicas: 5
+            resource:
+              name: cpu
+            type: Resource
+
+  - it: should create parameters for memory autoscaling when memory autoscaling is enabled.
+    set:
+      autoscaling.memory.enabled: true
+    asserts:
+      - isKind:
+          of: HorizontalPodAutoscaler
+      - contains:
+          path: spec.metrics
+          content:
+             resource:
+                name: memory
+                target:
+                  averageUtilization: 80
+                  type: Utilization
+             type: Resource
+
+  - it: should not create parameters for memory scaling when memory autoscaling is disabled
+    set:
+      autoscaling.memory.enabled: false
+    asserts:
+      - isKind:
+          of: HorizontalPodAutoscaler
+      - notContains:
+          path: spec.metrics
+          content:
+            maxReplicas: 5
+            resource:
+              name: memory
+            type: Resource

@@ -1,0 +1,1 @@
+{{- template "hmcts.hpa.v4.tpl" . -}}

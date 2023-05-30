@@ -344,10 +344,13 @@ Adds a Kubernetes service based on the pod's properties.
 As library charts are not installable, you can use [this script](tests/test-templates.sh) to generate templates and validate your changes.
 
 ### Changing existing templates
- - Add the change you want to see in [results](tests/results/) 
- - Run the [script](tests/test-templates.sh) to see if the generated templates match.
- - Generated manifests can be installed on a cluster if you want to see they are working as expected.
- - Make sure language specific cases are covered in the tests [see](ci-values-lang.yaml) 
+- Add the change you want to see in the code and run [the tests](tests/test-templates.sh)
+- The snapshot tests will fail and tell you that there are differences. 
+- Make sure language specific cases are covered in the tests [see](ci-values-lang.yaml)
+- If you are happy with these changes run:
+  ``helm unittest -v ci-values.yaml library -q -f -u 'tests/snapshot-tests/*.yaml'``
+  the -u flag updates the cache.
+- Commit your changes to both the cache and the tests
 
 ### Adding new templates
 - To support language specific defaults in base charts, all the templates should give precedence to values under `language:` over the default values.

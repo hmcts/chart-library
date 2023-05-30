@@ -1,0 +1,16 @@
+manifest should match snapshot:
+  1: |
+    apiVersion: policy/v1
+    kind: PodDisruptionBudget
+    metadata:
+      labels:
+        app.kubernetes.io/instance: RELEASE-NAME
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/name: release-name-library
+        helm.sh/chart: library-0.1.0
+      name: release-name-library-pdb
+    spec:
+      maxUnavailable: 50%
+      selector:
+        matchLabels:
+          app.kubernetes.io/name: release-name-library

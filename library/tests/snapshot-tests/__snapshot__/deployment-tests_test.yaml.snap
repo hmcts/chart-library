@@ -1,0 +1,54 @@
+manifest should match snapshot:
+  1: |
+    apiVersion: batch/v1beta1
+    kind: CronJob
+    metadata:
+      labels:
+        app.kubernetes.io/instance: RELEASE-NAME
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/name: release-name-library-functionaltestscron
+        helm.sh/chart: library-0.1.0
+      name: RELEASE-NAME-functionaltestscron-job
+    spec:
+      jobTemplate:
+        spec:
+          backoffLimit: 2
+          template:
+            metadata:
+              labels:
+                app.kubernetes.io/name: release-name-library-functionaltestscron
+            spec:
+              containers:
+                - args:
+                    - IDAM_CLIENT_SECRET=/mnt/secrets/bulk-scan/IDAM_CLIENT_SECRET
+                    - S2S_SECRET=/mnt/secrets/bulk-scan/s2s-secret
+                    - idam.client.env.secret=/mnt/secrets/bulk-scan/idam.client.env.secret
+                    - S2S_<ENV>_SECRET=/mnt/secrets/bulk-scan/s2s-<ENV>-secret
+                  image: hmctspublic.azurecr.io/spring-boot/template
+                  name: tests
+                  resources:
+                    limits:
+                      cpu: 1000m
+                      memory: 2048Mi
+                    requests:
+                      cpu: 100m
+                      memory: 256Mi
+                  securityContext:
+                    allowPrivilegeEscalation: false
+                  volumeMounts:
+                    - mountPath: /mnt/secrets/bulk-scan
+                      name: vault-bulk-scan
+                      readOnly: true
+              restartPolicy: Never
+              securityContext:
+                fsGroup: 1000
+                runAsUser: 1000
+              serviceAccountName: tests-service-account
+              volumes:
+                - csi:
+                    driver: secrets-store.csi.k8s.io
+                    readOnly: true
+                    volumeAttributes:
+                      secretProviderClass: release-name-library-tests-bulk-scan
+                  name: vault-bulk-scan
+      schedule: 30 0/6 * * *
