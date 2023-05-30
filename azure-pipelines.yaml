@@ -29,7 +29,6 @@ jobs:
         displayName: 'Install Helm'
         inputs:
           helmVersionToInstall: 3.12.0
-      # Install helm unittest plugin
       - script: helm plugin install https://github.com/helm-unittest/helm-unittest.git
       - script: sudo snap install yq
       - script: ./tests/test-templates.sh
