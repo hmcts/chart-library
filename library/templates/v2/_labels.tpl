@@ -15,7 +15,7 @@ labels:
   helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version }}
   app.kubernetes.io/managed-by: {{ .Release.Service }}
   app.kubernetes.io/instance: {{ .Release.Name }}
-  {{- if $languageValues.aadIdentityName }}
+  {{- if and $languageValues.aadIdentityName (not $languageValues.useWorkloadIdentity) }}
   aadpodidbinding: {{ $languageValues.aadIdentityName }}
   {{- end }}
 {{- end}}
