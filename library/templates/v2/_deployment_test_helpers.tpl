@@ -12,7 +12,7 @@ metadata:
 apiVersion: v1
 kind: Pod
 {{ template "hmcts.tests.meta.v2" . }}
-    {{- if .Values.aadIdentityName }}
+    {{- if and .Values.aadIdentityName (not .Values.useWorkloadIdentity) }}
     aadpodidbinding: {{ .Values.aadIdentityName }}
     {{- end }}
   annotations:
@@ -33,7 +33,7 @@ spec:
         metadata:
           labels:
             app.kubernetes.io/name: {{ template "hmcts.releasename.v2" . }}-{{ .Values.task }}testscron
-            {{- if .Values.aadIdentityName }}
+            {{- if and .Values.aadIdentityName (not .Values.useWorkloadIdentity) }}
             aadpodidbinding: {{ .Values.aadIdentityName }}
             {{- end }}
         spec:
