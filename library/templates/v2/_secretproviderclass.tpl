@@ -18,7 +18,11 @@ spec:
   provider: azure
   parameters:
     userAssignedIdentityID: ""
-    usePodIdentity: "true"
+    {{- if $languageValues.useWorkloadIdentity }}
+      clientID: "${WORKLOAD_IDENTITY_ID}"
+    {{- else }}
+      usePodIdentity: "true" 
+    {{- end }}
     keyvaultName: "{{ $vault }}{{ if not (default $info.excludeEnvironmentSuffix false) }}-{{ $globals.environment }}{{ end }}"
     objects: |
       array: {{- range $info.secrets }}
