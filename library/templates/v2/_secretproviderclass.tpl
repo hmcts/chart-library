@@ -19,7 +19,7 @@ spec:
   parameters:
     userAssignedIdentityID: ""
   {{- if $languageValues.useWorkloadIdentity }}
-    clientID: "${WORKLOAD_IDENTITY_ID}"
+    clientID: {{ $languageValues.workloadClientID }}
   {{- else }}
     usePodIdentity: "true" 
   {{- end }}
