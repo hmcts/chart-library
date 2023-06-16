@@ -348,7 +348,7 @@ As library charts are not installable, you can use [this script](tests/test-temp
 - The snapshot tests will fail and tell you that there are differences. 
 - Make sure language specific cases are covered in the tests [see](ci-values-lang.yaml)
 - If you are happy with these changes run:
-  ``helm unittest -v ci-values.yaml library -q -f -u 'tests/snapshot-tests/*.yaml'``
+  ``helm unittest -v ci-values.yaml library -u -q -f'tests/snapshot-tests/*.yaml'``
   the -u flag updates the cache.
 - Commit your changes to both the cache and the tests
 
