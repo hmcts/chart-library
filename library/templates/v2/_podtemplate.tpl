@@ -25,7 +25,8 @@ template:
     {{- end }}
     {{- ( include "hmcts.secretCSIVolumes.v2" . ) | indent 4 }}
     {{- ( include "hmcts.dnsConfig.v2" . ) | indent 4 }}
-    restartPolicy: {{ .Values.restartPolicy | default "Always" | quote }}
+    restartPolicy: {{ $languageValues.restartPolicy | default "Always" | quote }}
+    terminationGracePeriodSeconds: {{ $languageValues.terminationGracePeriodSeconds | default 30 }}
     containers:
 {{ include "hmcts.container.v2.tpl" . | indent 6 -}}
 

@@ -109,6 +109,7 @@ manifest should match snapshot:
               - name: ndots
                 value: "3"
           restartPolicy: Always
+          terminationGracePeriodSeconds: 30
           securityContext:
             fsGroup: 1000
             runAsUser: 1000
