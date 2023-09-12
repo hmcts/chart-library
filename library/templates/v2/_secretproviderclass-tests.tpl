@@ -1,4 +1,4 @@
-{{- define "hmcts.secretproviderclass-tests.v2.tpl" -}}
+{{- define "hmcts.secretproviderclass-tests.v3.tpl" -}}
 {{- $languageValues := deepCopy .Values -}}
 {{- if hasKey .Values "language" -}}
 {{- $languageValues = (deepCopy .Values | merge (pluck .Values.language .Values | first) ) -}}
@@ -10,7 +10,7 @@
 {{- range $vault, $info := $languageValues.testsConfig.keyVaults }}
 {{- if not $info.disabled }}
 ---
-apiVersion: secrets-store.csi.x-k8s.io/v1alpha1
+apiVersion: secrets-store.csi.x-k8s.io/v1
 kind: SecretProviderClass
 metadata:
   name: {{ template "hmcts.releasename.v2" $root }}-tests-{{ $vault }}
