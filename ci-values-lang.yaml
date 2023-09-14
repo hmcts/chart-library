@@ -258,8 +258,4 @@ java:
     - this
     - that
 
-  command:
-    - this
-    - that
-
   additionalIngressHosts: ["{{ .Release.Name }}-ci-01.platform.hmcts.net", "ci-02.platform.hmcts.net"]

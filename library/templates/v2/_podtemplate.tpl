@@ -1,7 +1,7 @@
 {{/*
 Create pod template spec.
 */}}
-{{- define "hmcts.podtemplate.v3.tpl" -}}
+{{- define "hmcts.podtemplate.v4.tpl" -}}
 {{- $languageValues := deepCopy .Values -}}
 {{- if hasKey .Values "language" -}}
 {{- $languageValues = (deepCopy .Values | merge (pluck .Values.language .Values | first) ) -}}
@@ -28,6 +28,6 @@ template:
     restartPolicy: {{ $languageValues.restartPolicy | default "Always" | quote }}
     terminationGracePeriodSeconds: {{ $languageValues.terminationGracePeriodSeconds | default 30 }}
     containers:
-{{ include "hmcts.container.v2.tpl" . | indent 6 -}}
+{{ include "hmcts.container.v3.tpl" . | indent 6 -}}
 
 {{- end -}}
