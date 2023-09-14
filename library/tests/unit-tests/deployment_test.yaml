@@ -1,0 +1,15 @@
+suite: Deployment tests
+templates:
+  - templates/v2/deployment.yaml
+tests:
+  - it: should set command
+    set:
+      command: ['echo', 'Hello']
+    asserts:
+      - isKind:
+          of: Deployment
+      - equal:
+          path: spec.template.spec.containers[?(@.name == "release-name-library")].command
+          value:
+           - 'echo'
+           - 'Hello'

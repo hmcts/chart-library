@@ -1,4 +1,4 @@
-{{- define "hmcts.container.v2.tpl" -}}
+{{- define "hmcts.container.v3.tpl" -}}
 {{- $languageValues := deepCopy .Values -}}
 {{- if hasKey .Values "language" -}}
 {{- $languageValues = (deepCopy .Values | merge (pluck .Values.language .Values | first) ) -}}
@@ -13,7 +13,7 @@
   {{- end}}
   {{- if $languageValues.command }}
   command:
-{{ toYaml $languageValues.args | indent 4 }}
+{{ toYaml $languageValues.command | indent 4 }}
   {{- end}}
   env:
     {{- if and $languageValues.global.devMode $languageValues.devApplicationInsightsInstrumentKeyName }}
@@ -94,5 +94,5 @@
 {{- define "hmcts.container.v2" -}}
 {{- /* clear new line so indentation works correctly */ -}}
 {{- println "" -}}
-{{- include "hmcts.util.merge.v2" (append . "hmcts.container.v2.tpl") | indent 6 -}}
+{{- include "hmcts.util.merge.v2" (append . "hmcts.container.v3.tpl") | indent 6 -}}
 {{- end -}}

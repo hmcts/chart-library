@@ -28,6 +28,6 @@ template:
     restartPolicy: {{ $languageValues.restartPolicy | default "Always" | quote }}
     terminationGracePeriodSeconds: {{ $languageValues.terminationGracePeriodSeconds | default 30 }}
     containers:
-{{ include "hmcts.container.v2.tpl" . | indent 6 -}}
+{{ include "hmcts.container.v3.tpl" . | indent 6 -}}
 
 {{- end -}}
