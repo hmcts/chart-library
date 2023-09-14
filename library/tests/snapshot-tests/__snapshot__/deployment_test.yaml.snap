@@ -39,9 +39,6 @@ manifest should match snapshot:
             - args:
                 - this
                 - that
-              command:
-                - this
-                - that
               env:
                 - name: STORAGE_ACCOUNT_NAME
                   valueFrom:
