@@ -1,4 +1,4 @@
-{{- define "hmcts.secretproviderclass.v4.tpl" -}}
+{{- define "hmcts.secretproviderclass.v5.tpl" -}}
 {{- $languageValues := deepCopy .Values -}}
 {{- if hasKey .Values "language" -}}
 {{- $languageValues = (deepCopy .Values | merge (pluck .Values.language .Values | first) ) -}}
@@ -70,6 +70,6 @@ spec:
 {{- end }}
 {{- end -}}
 
-{{- define "hmcts.secretproviderclass.v3" -}}
-{{- template "hmcts.util.merge.v2" (append . "hmcts.secretproviderclass.v3.tpl") -}}
+{{- define "hmcts.secretproviderclass.v5" -}}
+{{- template "hmcts.util.merge.v2" (append . "hmcts.secretproviderclass.v5.tpl") -}}
 {{- end -}}
