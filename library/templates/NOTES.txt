@@ -1,0 +1,6 @@
+{{- if .Values.aadIdentityName }}
+🚨 `aadIdentityName` is deprecated, please remove it to avoid failures in future upgrades🚨
+{{- end }}
+{{- if .Values.workloadClientID }}
+🚨 `workloadClientID` is deprecated, please remove it to avoid failures in future upgrades🚨
+{{- end }}
