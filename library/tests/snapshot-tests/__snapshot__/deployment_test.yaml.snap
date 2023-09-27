@@ -23,6 +23,7 @@ manifest should match snapshot:
             app.kubernetes.io/instance: RELEASE-NAME
             app.kubernetes.io/managed-by: Helm
             app.kubernetes.io/name: release-name-library
+            azure.workload.identity/use: "true"
             helm.sh/chart: library-0.1.0
         spec:
           affinity:
