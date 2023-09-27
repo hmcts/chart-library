@@ -5,7 +5,7 @@
 {{- end -}}
 {{- if and $languageValues.keyVaults $languageValues.global.enableKeyVaults (not $languageValues.disableKeyVaults) -}}
 {{- $globals := $languageValues.global -}}
-{{- $keyVaults := $languageValues.keyVaults -}}
+{{- $namespace := .Release.Namespace -}}
 {{- $root := . -}}
 {{- range $vault, $info := $languageValues.keyVaults }}
 {{- if not $info.disabled }}
@@ -19,7 +19,9 @@ spec:
   parameters:
     userAssignedIdentityID: ""
   {{- if $languageValues.useWorkloadIdentity }}
-    clientID: {{ $languageValues.workloadClientID }}
+  {{- $serviceAccount := (lookup "v1" "ServiceAccount" $namespace $namespace ).metadata.annotations }}
+  {{- $clientId := (index $serviceAccount "azure.workload.identity/client-id" )}}
+    clientID: {{ $clientId }}
   {{- else }}
     usePodIdentity: "true" 
   {{- end }}
