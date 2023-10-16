@@ -53,6 +53,13 @@ configmap:
   VAR_B: VALUE_B
 saEnabled: true
 envFromSecret: "env-secret"
+nodeSelector:
+  agentpool: cronjob
+tolerations:
+  - effect: NoSchedule
+    key: dedicated
+    operator: Equal
+    value: jobs
 keyVaults:
   bulk-scan:
     excludeEnvironmentSuffix: false
