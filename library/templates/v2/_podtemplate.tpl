@@ -29,7 +29,7 @@ template:
     {{- end }}
     {{- if $languageValues.tolerations }}
     tolerations:
-      {{- $languageValues.tolerations | toYaml | indent 4 }}
+    {{- $languageValues.tolerations | toYaml | indent 4 }}
     {{- end }}
     {{- ( include "hmcts.secretCSIVolumes.v2" . ) | indent 4 }}
     {{- ( include "hmcts.dnsConfig.v2" . ) | indent 4 }}
