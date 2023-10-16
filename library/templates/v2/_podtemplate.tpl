@@ -25,8 +25,12 @@ template:
     {{- end }}
     {{- if $languageValues.nodeSelector }}
     nodeSelector:
-  {{ toYaml $languageValues.nodeSelector | indent 6 }}
+  {{ toYaml $languageValues.nodeSelector | indent 4 }}
     {{- end }}
+    tolerations:
+      {{- with $languageValues.tolerations }}
+      {{ toYaml . | indent 6 | trim }}
+      {{- end }}
     {{- ( include "hmcts.secretCSIVolumes.v2" . ) | indent 4 }}
     {{- ( include "hmcts.dnsConfig.v2" . ) | indent 4 }}
     restartPolicy: {{ $languageValues.restartPolicy | default "Always" | quote }}
