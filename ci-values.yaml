@@ -48,11 +48,6 @@ environment:
   REFORM_TEAM: cnp
   REFORM_SERVICE_NAME: rhubarb-frontend
   REFORM_ENVIRONMENT: preview
-configmap:
-  VAR_A: VALUE_A
-  VAR_B: VALUE_B
-saEnabled: true
-envFromSecret: "env-secret"
 nodeSelector:
   agentpool: cronjob
 tolerations:
@@ -60,6 +55,11 @@ tolerations:
     key: dedicated
     operator: Equal
     value: jobs
+configmap:
+  VAR_A: VALUE_A
+  VAR_B: VALUE_B
+saEnabled: true
+envFromSecret: "env-secret"
 keyVaults:
   bulk-scan:
     excludeEnvironmentSuffix: false
