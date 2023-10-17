@@ -27,17 +27,7 @@ template:
     nodeSelector:
   {{ toYaml $languageValues.nodeSelector | indent 4 }}
     {{- end }}
-    {{- if $languageValues.tolerations }}
-    tolerations:
-    {{- with .Values.tolerations }}
-    {{- range . }}
-      - key: {{ .key }}
-        effect: {{ .effect }}
-        operator: {{ .operator }}
-        value: {{ .value }}
-    {{- end }}
-    {{- end }}
-    {{- end }}
+    {{- ( include "hmcts.tolerations.v2" . ) | indent 4 }}
     {{- ( include "hmcts.secretCSIVolumes.v2" . ) | indent 4 }}
     {{- ( include "hmcts.dnsConfig.v2" . ) | indent 4 }}
     restartPolicy: {{ $languageValues.restartPolicy | default "Always" | quote }}
