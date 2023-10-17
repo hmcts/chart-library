@@ -50,6 +50,8 @@ disableTraefikTls: true
 livenessPath: /health/liveness
 startupPath: /health/liveness
 imagePullPolicy: Always
+nodeSelector: {}
+tolerations: []
 environment:
   REFORM_TEAM: cnp
   REFORM_SERVICE_NAME: rhubarb-frontend
