@@ -18,7 +18,11 @@ startupTimeout: 3
 startupPeriod: 15
 startupFailureThreshold: 3
 nodeSelector: {}
-tolerations: []
+tolerations:
+- key: {}
+  effect: {}
+  operator: {}
+  value: {}
 dnsConfig:
   ndots: "3"
 pdb:
