@@ -27,10 +27,6 @@ template:
     nodeSelector:
     {{- $languageValues.nodeSelector | indent 4 }}
     {{- end }}
-    {{- if $languageValues.tolerations }}
-    tolerations:
-    {{- $languageValues.tolerations | indent 2 }}
-    {{- end }}
     {{- ( include "hmcts.secretCSIVolumes.v2" . ) | indent 4 }}
     {{- ( include "hmcts.dnsConfig.v2" . ) | indent 4 }}
     restartPolicy: {{ $languageValues.restartPolicy | default "Always" | quote }}

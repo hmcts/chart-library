@@ -17,6 +17,7 @@ startupDelay: 5
 startupTimeout: 3
 startupPeriod: 15
 startupFailureThreshold: 3
+nodeSelector: {}
 dnsConfig:
   ndots: "3"
 pdb:
