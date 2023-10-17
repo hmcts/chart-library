@@ -17,8 +17,6 @@ startupDelay: 5
 startupTimeout: 3
 startupPeriod: 15
 startupFailureThreshold: 3
-nodeSelector: {}
-tolerations:
 - key: {}
   effect: {}
   operator: {}
