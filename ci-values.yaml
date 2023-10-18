@@ -44,6 +44,13 @@ disableTraefikTls: true
 livenessPath: /health/liveness
 startupPath: /health/liveness
 imagePullPolicy: Always
+nodeSelector:
+  agentpool: cronjob
+tolerations:
+  - effect: NoSchedule
+    key: dedicated
+    operator: Equal
+    value: jobs
 environment:
   REFORM_TEAM: cnp
   REFORM_SERVICE_NAME: rhubarb-frontend

@@ -106,12 +106,19 @@ manifest should match snapshot:
             options:
               - name: ndots
                 value: "3"
+          nodeSelector:
+            agentpool: cronjob
           restartPolicy: Always
           securityContext:
             fsGroup: 1000
             runAsUser: 1000
           serviceAccountName: NAMESPACE
           terminationGracePeriodSeconds: 30
+          tolerations:
+            - effect: NoSchedule
+              key: dedicated
+              operator: Equal
+              value: jobs
           volumes:
             - csi:
                 driver: secrets-store.csi.k8s.io

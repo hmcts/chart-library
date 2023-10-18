@@ -23,6 +23,11 @@ template:
       runAsUser: 1000
       fsGroup: 1000
     {{- end }}
+    {{- if $languageValues.nodeSelector }}
+    nodeSelector:
+  {{ toYaml $languageValues.nodeSelector | indent 4 }}
+    {{- end }}
+    {{- ( include "hmcts.tolerations.v2" . ) | indent 4 }}
     {{- ( include "hmcts.secretCSIVolumes.v2" . ) | indent 4 }}
     {{- ( include "hmcts.dnsConfig.v2" . ) | indent 4 }}
     restartPolicy: {{ $languageValues.restartPolicy | default "Always" | quote }}

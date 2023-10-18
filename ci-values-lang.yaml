@@ -46,6 +46,13 @@ environment:
   REFORM_TEAM: rpe
   REFORM_SERVICE_NAME: rhubarb
   REFORM_ENVIRONMENT: prod
+nodeSelector:
+  agentpool: cronjob
+tolerations:
+  - effect: NoSchedule
+    key: dedicated
+    operator: Equal
+    value: jobs
 configmap:
   VAR_A: VALUE_C
   VAR_B: VALUE_D
