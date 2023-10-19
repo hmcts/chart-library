@@ -7,6 +7,10 @@
   name: {{ template "hmcts.releasename.v2" . }}
   securityContext:
     allowPrivilegeEscalation: false
+  {{- if $languageValues.volumeMounts }}
+  volumeMounts:
+{{ toYaml $languageValues.volumeMounts | indent 4 }}
+  {{- end}}
   {{- if $languageValues.args }}
   args:
 {{ toYaml $languageValues.args | indent 4 }}
