@@ -47,11 +47,6 @@ imagePullPolicy: Always
 volumeMounts:
   - name: hung-pod-script
     mountPath: /mnt
-volumes:
-  - name: hung-pod-script
-    configMap:
-      name: delete-hung-pods
-      defaultMode: 0777
 nodeSelector:
   agentpool: cronjob
 tolerations:
