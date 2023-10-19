@@ -13,6 +13,7 @@ volumes:
       name: {{ .configMap.name }}
       defaultMode: {{ .configMap.defaultMode }}
 {{- end }}
+{{- end }}
 {{- if $languageValues.volumeMounts }}
 volumeMounts:
 {{- range $languageValues.volumeMounts }}
