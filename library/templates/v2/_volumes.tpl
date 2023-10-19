@@ -9,9 +9,9 @@
 volumes:
 {{- range $languageValues.volumes }}
   - name: {{ .name }}
-    configMap: {{ .configMap }}
-      name: {{ .nameconfigMap }}
-      defaultMode: {{ .defaultMode }}
+    configMap:
+      name: {{ .configMap.name }}
+      defaultMode: {{ .configMap.defaultMode }}
 {{- end }}
 {{- if $languageValues.volumeMounts }}
 volumeMounts:
