@@ -6,19 +6,26 @@
 {{- $languageValues = (deepCopy .Values | merge (pluck .Values.language .Values | first) ) -}}
 {{- end -}}
 {{- if $languageValues.volumes }}
-volumes:
-{{- range $languageValues.volumes }}
-  - name: {{ .name }}
+{{- range $name, $info := $languageValues.volumes }}
+  - name: {{ $name }}
     configMap:
-      name: {{ .configMap.name }}
-      defaultMode: {{ .configMap.defaultMode }}
+      name: {{ $name }}
+      defaultMode: {{ $info.defaultMode }}
 {{- end }}
 {{- end }}
+{{- end }}
+
+{{/*
+*/}}
+{{- define "hmcts.volumeMounts.v2" -}}
+{{- $languageValues := deepCopy .Values -}}
+{{- if hasKey .Values "language" -}}
+{{- $languageValues = (deepCopy .Values | merge (pluck .Values.language .Values | first) ) -}}
+{{- end -}}
 {{- if $languageValues.volumeMounts }}
-volumeMounts:
-{{- range $languageValues.volumeMounts }}
-  - name: {{ .name }}
-    mountPath: {{ .mountPath }}
+{{- range $name, $info := $languageValues.volumeMounts }}
+  - name: {{ $name }}
+    mountPath: {{ $info.mountPath }}
 {{- end }}
 {{- end }}
 {{- end }}

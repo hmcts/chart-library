@@ -7,10 +7,6 @@
   name: {{ template "hmcts.releasename.v2" . }}
   securityContext:
     allowPrivilegeEscalation: false
-  {{- if $languageValues.volumeMounts }}
-  volumeMounts:
-{{ toYaml $languageValues.volumeMounts | indent 4 }}
-  {{- end}}
   {{- if $languageValues.args }}
   args:
 {{ toYaml $languageValues.args | indent 4 }}
@@ -33,13 +29,15 @@
   envFrom:
   {{- if $languageValues.configmap }}
     - configMapRef:
-        name: {{ template "hmcts.releasename.v2" . }}
+      name: {{ template "hmcts.releasename.v2" . }}
   {{- end }}
   {{- if $languageValues.envFromSecret }}
     - secretRef:
         name: {{ $languageValues.envFromSecret }}
   {{- end }}
   {{- end }}
+  volumeMounts:
+  {{- ( include "hmcts.volumeMounts.v2" . ) | indent 2 }}
   {{- ( include "hmcts.secretMounts.v2" . ) | indent 2 }}
   {{if $languageValues.global.devMode -}}
   resources:
