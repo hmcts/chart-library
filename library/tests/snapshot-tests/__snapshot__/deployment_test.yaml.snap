@@ -53,7 +53,7 @@ manifest should match snapshot:
                 - name: REFORM_TEAM
                   value: cnp
               envFrom:
-                - configMapRef:
+                - configMapRef: null
                   name: release-name-library
                 - secretRef:
                     name: env-secret
