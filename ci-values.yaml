@@ -44,9 +44,10 @@ disableTraefikTls: true
 livenessPath: /health/liveness
 startupPath: /health/liveness
 imagePullPolicy: Always
+volume:
 volumeMounts:
-  - name: hung-pod-script
-    mountPath: /mnt
+    hung-pod-script:
+      mountPath: /mnt
 nodeSelector:
   agentpool: cronjob
 tolerations:
