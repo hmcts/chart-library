@@ -25,7 +25,7 @@
 {{- if $languageValues.volumeMounts }}
 {{- range $name, $info := $languageValues.volumeMounts }}
   - name: {{ .name }}
-    mountPath: {{ .info.mountPath }}
+    mountPath: {{ .mountPath }}
 {{- end }}
 {{- end }}
 {{- end }}
