@@ -46,8 +46,8 @@ startupPath: /health/liveness
 imagePullPolicy: Always
 volume:
 volumeMounts:
-    hung-pod-script:
-      mountPath: /mnt
+  - name: hung-pod-script
+    mountPath: /mnt
 nodeSelector:
   agentpool: cronjob
 tolerations:
