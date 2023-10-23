@@ -23,7 +23,7 @@
 {{- $languageValues = (deepCopy .Values | merge (pluck .Values.language .Values | first) ) -}}
 {{- end -}}
 {{- if $languageValues.volumeMounts }}
-{{- range $name, $info := $languageValues.volumeMounts }}
+{{- range $languageValues.volumeMounts }}
   - name: {{ .name }}
     mountPath: {{ .mountPath }}
 {{- end }}
