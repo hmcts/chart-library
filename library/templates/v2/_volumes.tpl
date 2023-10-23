@@ -8,7 +8,7 @@
 {{- if $languageValues.volumes }}
 {{- range $languageValues.volumes }}
   - name: {{ .name }}
-    {{- with $volume.configMap }}
+    {{- with .configMap }}
     configMap:
       name: {{ .configMap.name }}
       defaultMode: {{ .configMap.defaultMode }}
