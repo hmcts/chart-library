@@ -6,12 +6,12 @@
 {{- $languageValues = (deepCopy .Values | merge (pluck .Values.language .Values | first) ) -}}
 {{- end -}}
 {{- if $languageValues.volumes }}
-{{- range $volume := $languageValues.volumes }}
+{{- range $languageValues.volumes }}
   - name: {{ .name }}
-{{- if has $volumes "configMap" }}
+    {{- with $volume.configMap }}
     configMap:
-      name: {{ $volume.configMap.name }}
-      defaultMode: {{ $volume.configMap.defaultMode }}
+      name: {{ .configMap.name }}
+      defaultMode: {{ .configMap.defaultMode }}
 {{- end }}
 {{- end }}
 {{- end }}
