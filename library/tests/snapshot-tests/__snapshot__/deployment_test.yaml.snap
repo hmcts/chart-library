@@ -97,7 +97,7 @@ manifest should match snapshot:
                 timeoutSeconds: 3
               volumeMounts:
                 - mountPath: /mnt
-                  name: 0
+                  name: hung-pod-script
                 - mountPath: /mnt/secrets/bulk-scan
                   name: vault-bulk-scan
                   readOnly: true
@@ -122,6 +122,10 @@ manifest should match snapshot:
               operator: Equal
               value: jobs
           volumes:
+            - configMap:
+                defaultMode: 511
+                name: delete-hung-pods
+              name: hung-pod-script
             - csi:
                 driver: secrets-store.csi.k8s.io
                 readOnly: true
