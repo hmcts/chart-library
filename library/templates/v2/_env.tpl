@@ -8,13 +8,13 @@
 {{- if $languageValues.env }}
 {{- range $languageValues.env }}
   - name: {{ .name }}
-    {{- with .secretKeyRef }}
+    {{- if .secretKeyRef }}
     valueFrom:
       secretKeyRef:
-        name: {{ .name }}
-        key: {{ .key }}
+        name: {{ .secretKeyRef.name }}
+        key: {{ .secretKeyRef.key }}
     {{- else }}
     value: {{ .value }}
-{{- end }}
+    {{- end }}
 {{- end }}
 {{- end }}
