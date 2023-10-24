@@ -20,6 +20,7 @@
     - name: {{ $languageValues.devApplicationInsightsInstrumentKeyName }}
       value: {{ $languageValues.devApplicationInsightsInstrumentKey | quote }}
     {{- end -}}
+      {{- ( include "hmcts.env.v2" .) | indent 4 }}
       {{- ( include "hmcts.secrets.v2" .) | indent 4 }}
       {{- range $key, $val := $languageValues.environment }}
     - name: {{ $key }}

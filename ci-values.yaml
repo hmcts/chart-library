@@ -44,6 +44,9 @@ disableTraefikTls: true
 livenessPath: /health/liveness
 startupPath: /health/liveness
 imagePullPolicy: Always
+env:
+  - name: DESIRED_VERSION
+    value: "10.2.0"
 volumes:
   - name: hung-pod-script
     configMap:
