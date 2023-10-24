@@ -16,7 +16,6 @@
 {{ toYaml $languageValues.command | indent 4 }}
   {{- end}}
   env:
-    {{- ( include "hmcts.env.v2" .) | indent 4 }}
     {{- if and $languageValues.global.devMode $languageValues.devApplicationInsightsInstrumentKeyName }}
     - name: {{ $languageValues.devApplicationInsightsInstrumentKeyName }}
       value: {{ $languageValues.devApplicationInsightsInstrumentKey | quote }}
