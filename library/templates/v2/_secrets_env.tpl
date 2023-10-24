@@ -17,7 +17,7 @@ Example format:
   {{- if $languageValues.secrets -}}
     {{- range $key, $val := $languageValues.secrets }}
       {{- if and $val (not $val.disabled) }}
-- name: {{ if printf "%d" $key | regexMatch "^[^.-]+$" -}}
+- name: {{ if $key | regexMatch "^[^.-]+$" -}}
           {{- $key }}
         {{- else -}}
             {{- fail (join "Environment variables can not contain '.' or '-' Failed key: " ($key|quote)) -}}
