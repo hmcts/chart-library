@@ -54,7 +54,7 @@ manifest should match snapshot:
                   value: cnp
               envFrom:
                 - configMapRef:
-                   name: release-name-library
+                    name: release-name-library
                 - secretRef:
                     name: env-secret
               image: hmctspublic.azurecr.io/chart-nodejs/testapp
