@@ -53,8 +53,8 @@ manifest should match snapshot:
                 - name: REFORM_TEAM
                   value: cnp
               envFrom:
-                - configMapRef: null
-                  name: release-name-library
+                - configMapRef:
+                    name: release-name-library
                 - secretRef:
                     name: env-secret
               image: hmctspublic.azurecr.io/chart-nodejs/testapp
