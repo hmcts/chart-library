@@ -29,7 +29,7 @@
   envFrom:
   {{- if $languageValues.configmap }}
     - configMapRef:
-      name: {{ template "hmcts.releasename.v2" . }}
+       name: {{ template "hmcts.releasename.v2" . }}
   {{- end }}
   {{- if $languageValues.envFromSecret }}
     - secretRef:
