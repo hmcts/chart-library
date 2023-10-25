@@ -29,13 +29,15 @@
   envFrom:
   {{- if $languageValues.configmap }}
     - configMapRef:
-        name: {{ template "hmcts.releasename.v2" . }}
+      name: {{ template "hmcts.releasename.v2" . }}
   {{- end }}
   {{- if $languageValues.envFromSecret }}
     - secretRef:
         name: {{ $languageValues.envFromSecret }}
   {{- end }}
   {{- end }}
+  volumeMounts:
+  {{- ( include "hmcts.volumeMounts.v2" . ) | indent 2 }}
   {{- ( include "hmcts.secretMounts.v2" . ) | indent 2 }}
   {{if $languageValues.global.devMode -}}
   resources:

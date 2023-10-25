@@ -10,7 +10,6 @@ The bit of templating needed to create the CSI driver keyvault for mounting
 {{- $globals := $languageValues.global }}
 {{- $keyVaults := $languageValues.keyVaults }}
 {{- $root := . }}
-volumes:
 {{- range $vault, $info := $languageValues.keyVaults }}
 {{- if not $info.disabled }}
   - name: vault-{{ $vault }}
@@ -33,7 +32,6 @@ Mount the Key vaults on /mnt/secrets by default or the custom mountPath
 {{- $languageValues = (deepCopy .Values | merge (pluck .Values.language .Values | first) ) -}}
 {{- end -}}
 {{- if and $languageValues.keyVaults $languageValues.global.enableKeyVaults (not $languageValues.disableKeyVaults) }}
-volumeMounts:
 {{- range $vault, $info := $languageValues.keyVaults }}
 {{- if not $info.disabled }}
   - name: vault-{{ $vault }}
