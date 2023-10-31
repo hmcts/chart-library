@@ -68,6 +68,7 @@ configmap:
   VAR_A: VALUE_C
   VAR_B: VALUE_D
 saEnabled: false
+serviceAccountName: test
 keyVaults:
   bulk-scan:
     excludeEnvironmentSuffix: false
