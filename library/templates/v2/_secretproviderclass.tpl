@@ -72,6 +72,7 @@ spec:
 {{- end }}
 {{- end }}
 {{- end }}
+{{- end }}
 {{- end -}}
 
 {{- define "hmcts.secretproviderclass.v5" -}}

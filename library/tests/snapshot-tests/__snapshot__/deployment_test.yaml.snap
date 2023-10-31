@@ -114,7 +114,7 @@ manifest should match snapshot:
           securityContext:
             fsGroup: 1000
             runAsUser: 1000
-          serviceAccountName: NAMESPACE
+          serviceAccountName: test
           terminationGracePeriodSeconds: 30
           tolerations:
             - effect: NoSchedule

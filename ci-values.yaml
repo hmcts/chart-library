@@ -70,6 +70,7 @@ configmap:
   VAR_A: VALUE_A
   VAR_B: VALUE_B
 saEnabled: true
+serviceAccountName: test
 envFromSecret: "env-secret"
 keyVaults:
   bulk-scan:
