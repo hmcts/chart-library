@@ -3,14 +3,14 @@
 {{- if hasKey .Values "language" -}}
 {{- $languageValues = (deepCopy .Values | merge (pluck .Values.language .Values | first) ) -}}
 {{- end -}}
-{{- if and $languageValues.keyVaults $languageValues.global.enableKeyVaults (not $languageValues.disableKeyVaults) -}}
-{{- $globals := $languageValues.global -}}
 {{- $namespace := .Release.Namespace -}}
 {{- $serviceAccountName := $languageValues.serviceAccountName -}}
-{{- if and $languageValues.saEnabled (not $languageValues.serviceAccountName) -}}
 {{- $serviceAccount := (lookup "v1" "ServiceAccount" $namespace $namespace ) }}
-{{- else if and $languageValues.saEnabled $languageValues.serviceAccountName -}}
+{{- if and $languageValues.saEnabled $languageValues.serviceAccountName -}}
 {{- $serviceAccount := (lookup "v1" "ServiceAccount" $namespace $serviceAccountName ) }}
+{{- end }}
+{{- if and $languageValues.keyVaults $languageValues.global.enableKeyVaults (not $languageValues.disableKeyVaults) -}}
+{{- $globals := $languageValues.global -}}
 {{- $root := . -}}
 {{- range $vault, $info := $languageValues.keyVaults }}
 {{- if not $info.disabled }}
@@ -69,7 +69,6 @@ spec:
      {{- end }}
       {{- end }}
     tenantId: {{ $globals.tenantId | quote }}
-{{- end }}
 {{- end }}
 {{- end }}
 {{- end }}
