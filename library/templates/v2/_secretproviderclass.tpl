@@ -4,11 +4,13 @@
 {{- $languageValues = (deepCopy .Values | merge (pluck .Values.language .Values | first) ) -}}
 {{- end -}}
 {{- $namespace := .Release.Namespace -}}
+{{- $serviceAccount := ""}}
 {{- $serviceAccountName := $languageValues.serviceAccountName -}}
-{{- $serviceAccount := (lookup "v1" "ServiceAccount" $namespace $namespace ) }}
 {{- if and $languageValues.saEnabled $languageValues.serviceAccountName -}}
 {{- $serviceAccount := (lookup "v1" "ServiceAccount" $namespace $serviceAccountName ) }}
-{{- end }}
+{{- else if and $languageValues.saEnabled (not $languageValues.serviceAccountName) -}}
+{{- $serviceAccount := (lookup "v1" "ServiceAccount" $namespace $namespace ) }}
+{{- end -}}
 {{- if and $languageValues.keyVaults $languageValues.global.enableKeyVaults (not $languageValues.disableKeyVaults) -}}
 {{- $globals := $languageValues.global -}}
 {{- $root := . -}}
