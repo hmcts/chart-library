@@ -8,7 +8,7 @@
 {{- if and $languageValues.saEnabled (hasKey $languageValues "serviceAccountName") -}}
 {{- $serviceAccountName = $languageValues.serviceAccountName -}}
 {{- else if and $languageValues.saEnabled (not hasKey $languageValues "serviceAccountName") -}}
-{{- $serviceAccountName = $namespace -}}
+{{- $serviceAccountName = .Release.Namespace -}}
 {{- end }}
 {{- $serviceAccount := (lookup "v1" "ServiceAccount" $namespace $serviceAccountName ) }}
 {{- if and $languageValues.keyVaults $languageValues.global.enableKeyVaults (not $languageValues.disableKeyVaults) -}}
