@@ -54,6 +54,8 @@ It includes below templates :
 | `saOverride`              | Flag to override default namespace Service Account for workload identity                                    |
 | `useInterpodAntiAffinity` | Always schedule replicas on different nodes                                                                 |
 | `affinity`                | Pod/Node affinity and anti-affinity set as `yaml`, works only when `useInterpodAntiAffinity` isn't enabled. |
+| `nodeSelector`            | Enables targeting a specific kubernetes node pool e.g. Linux or Windows, x64 or ARM                         |
+
 
 ```
 saEnabled: true
@@ -66,6 +68,23 @@ It includes below templates :
 - [Metadata](#Metadata)
 - [DNS Config](#DNS-Config)
 - [Container](#Container)
+
+
+### Tolerations
+
+| Parameter          | Description                                                                                                                     |
+|--------------------|---------------------------------------------------------------------------------------------------------------------------------|
+| `tolerations`      | Adds taint required to target specific node pool. Used in conjunction with nodeSelector                                         |
+
+```
+nodeSelector:
+  agentpool: cronjob
+tolerations:
+  - key: dedicated
+    effect: NoSchedule
+    operator: Equal
+    value: jobs
+```
 
 ### Metadata
 
