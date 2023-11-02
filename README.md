@@ -51,8 +51,16 @@ It includes below templates :
 | Parameter                 | Description                                                                                                 |
 |---------------------------|-------------------------------------------------------------------------------------------------------------|
 | `saEnabled`               | Flag to Enable Service Account                                                                              |
+| `saOverride`              | Flag to override default namespace Service Account for workload identity                                    |
 | `useInterpodAntiAffinity` | Always schedule replicas on different nodes                                                                 |
 | `affinity`                | Pod/Node affinity and anti-affinity set as `yaml`, works only when `useInterpodAntiAffinity` isn't enabled. |
+
+```
+saEnabled: true
+saOverride:
+  enabled: true
+  serviceAccountName: myServiceAccount
+```
 
 It includes below templates :
 - [Metadata](#Metadata)
@@ -212,6 +220,38 @@ keyVaults:
 - *excludeEnvironmentSuffix*: This is used for the global key vaults where there is not environment suffix ( e.g `-aat` ) required. It defaults to false if it is not there and should only be added if you are using a global key-vault.
 - *disabled*: This is an optional field used to disable a specific key vault, useful when overriding defaults.
 - When not using Jenkins, explicitly set global.enableKeyVaults to `true` .
+
+
+### Extra Volumes
+
+**Currently only supports ConfigMap**
+
+| Parameter          | Description                                                                                                                     |
+|--------------------|---------------------------------------------------------------------------------------------------------------------------------|
+| `volumes`          | Adds a volume based on a configMap resource                                                                                     |
+
+```
+volumes:
+  - name: hung-pod-script
+    configMap:
+      name: delete-hung-pods
+      defaultMode: 0777
+```
+
+
+### Extra VolumeMounts
+
+** Currently only supports ConfigMap**
+
+| Parameter          | Description                                                                                                                     |
+|--------------------|---------------------------------------------------------------------------------------------------------------------------------|
+| `volumeMounts`     | Adds a volume mount at the desired path                                                                                         |
+
+```
+volumeMounts:
+  - mountPath: /mnt
+    name: hung-pod-script
+```
 
 ### Ingress
 
