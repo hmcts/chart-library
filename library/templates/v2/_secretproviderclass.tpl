@@ -5,10 +5,10 @@
 {{- end -}}
 {{- $namespace := .Release.Namespace -}}
 {{- $serviceAccountName := "" -}}
-{{- if and $languageValues.saEnabled (hasKey $languageValues "serviceAccountName") -}}
-{{- $serviceAccountName = $languageValues.serviceAccountName -}}
-{{- else if and $languageValues.saEnabled (not hasKey $languageValues "serviceAccountName") -}}
-{{- $serviceAccountName = .Release.Namespace -}}
+{{- if and $languageValues.saEnabled $languageValues.saOverride.enabled -}}
+{{- $serviceAccountName = $languageValues.saOverride.serviceAccountName -}}
+{{- else if and $languageValues.saEnabled (not $languageValues.saOverride.enabled) -}}
+{{- $serviceAccountName = $namespace -}}
 {{- end }}
 {{- $serviceAccount := (lookup "v1" "ServiceAccount" $namespace $serviceAccountName ) }}
 {{- if and $languageValues.keyVaults $languageValues.global.enableKeyVaults (not $languageValues.disableKeyVaults) -}}

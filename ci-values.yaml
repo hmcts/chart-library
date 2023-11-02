@@ -70,7 +70,9 @@ configmap:
   VAR_A: VALUE_A
   VAR_B: VALUE_B
 saEnabled: true
-serviceAccountName: test
+saOverride:
+  enabled: true
+  serviceAccountName: chart-tests
 envFromSecret: "env-secret"
 keyVaults:
   bulk-scan:
