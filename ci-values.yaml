@@ -71,7 +71,7 @@ configmap:
   VAR_B: VALUE_B
 saEnabled: true
 saOverride:
-  enabled: true
+  enabled: false
   serviceAccountName: chart-tests
 envFromSecret: "env-secret"
 keyVaults:
