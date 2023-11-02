@@ -14,10 +14,10 @@ template:
     {{- end }}
     {{- (include "hmcts.annotations.v2" .) | indent 4 }}
   spec:
-    {{- if and $languageValues.saEnabled (not $languageValues.serviceAccountName) }}
+    {{- if and $languageValues.saEnabled (not $languageValues.saOverride.enabled) }}
     serviceAccountName: {{ .Release.Namespace }}
-    {{ else if and $languageValues.saEnabled $languageValues.serviceAccountName }}
-    serviceAccountName: {{ $languageValues.serviceAccountName }}
+    {{ else if and $languageValues.saEnabled $languageValues.saOverride.enabled }}
+    serviceAccountName: {{ $languageValues.saOverride.serviceAccountName }}
     {{- end }}
     {{- include "hmcts.interpodantiaffinity.v2" . | indent 4 }}
     {{- if not $languageValues.runAsRoot }}
