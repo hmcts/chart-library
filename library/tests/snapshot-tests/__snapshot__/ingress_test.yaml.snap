@@ -3,7 +3,8 @@ manifest should match snapshot:
     apiVersion: networking.k8s.io/v1
     kind: Ingress
     metadata:
-      annotations: null
+      annotations:
+        external-dns.alpha.kubernetes.io/exclude: "true"
       labels:
         app.kubernetes.io/instance: RELEASE-NAME
         app.kubernetes.io/managed-by: Helm

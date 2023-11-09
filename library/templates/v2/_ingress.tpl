@@ -15,6 +15,9 @@ metadata:
     {{- if not (hasKey $globals "disableTraefikTls" | ternary $globals.disableTraefikTls $languageValues.disableTraefikTls) }}
     traefik.ingress.kubernetes.io/router.tls: "true"
     {{- end }}
+    {{- if (hasKey $globals "disableExternalDns" | ternary $globals.disableExternalDns $languageValues.disableExternalDns) }}
+    external-dns.alpha.kubernetes.io/exclude: "true"
+    {{- end }}
 spec:
   ingressClassName: {{ $languageValues.ingressClass }}
   rules:
