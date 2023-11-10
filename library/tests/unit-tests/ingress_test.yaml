@@ -8,5 +8,9 @@ tests:
         traefik.ingress.kubernetes.io/router-tls: "true"
         external-dns.alpha.kubernetes.io/exclude: "true"
     asserts:
-      - isNotNullOrEmpty:
-          path: metadata.annotations
+      - equal:
+          path: metadata.annotations["traefik.ingress.kubernetes.io/router-tls"]
+          value: "true"
+      - equal:
+          path: metadata.annotations["external-dns.alpha.kubernetes.io/exclude"]
+          value: "true"
