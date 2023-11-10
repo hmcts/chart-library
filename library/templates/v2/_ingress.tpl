@@ -16,9 +16,7 @@ metadata:
     traefik.ingress.kubernetes.io/router.tls: "true"
     {{- end }}
     {{- if $languageValues.ingressAnnotations }}
-    {{- range $key, $value := $languageValues.ingressAnnotations }}
-      {{ $key }}: {{ $value | quote }}
-    {{- end }}
+  {{ toYaml $languageValues.ingressAnnotations | indent 4 }}
     {{- end }}
 spec:
   ingressClassName: {{ $languageValues.ingressClass }}
