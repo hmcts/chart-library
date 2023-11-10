@@ -15,8 +15,8 @@ metadata:
     {{- if not (hasKey $globals "disableTraefikTls" | ternary $globals.disableTraefikTls $languageValues.disableTraefikTls) }}
     traefik.ingress.kubernetes.io/router.tls: "true"
     {{- end }}
-    {{- if $languageValues.ingressAnnotations }}
-  {{ toYaml $languageValues.ingressAnnotations | indent 4 }}
+    {{- range $key, $value := $languageValues.ingressAnnotations }}
+      {{ $key }}: {{ $value | quote }}
     {{- end }}
 spec:
   ingressClassName: {{ $languageValues.ingressClass }}
