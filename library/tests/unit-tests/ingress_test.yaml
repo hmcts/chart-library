@@ -4,8 +4,9 @@ templates:
 tests:
   - it: should set annotations if given
     set:
-      ingressAnnotations:
-        external-dns.alpha.kubernetes.io/exclude: "true"
+      ingress:
+        annotations:
+          external-dns.alpha.kubernetes.io/exclude: "true"
     asserts:
       - equal:
           path: metadata.annotations["external-dns.alpha.kubernetes.io/exclude"]
