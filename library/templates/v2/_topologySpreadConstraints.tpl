@@ -17,7 +17,7 @@ topologySpreadConstraints:
       matchLabels:
         app.kubernetes.io/name: {{ template "hmcts.releasename.v2" . }}
         helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version }}
-    {{- if $languageValues.minDomains }}
+    {{- if $languageValues.topologySpreadConstraints.minDomains }}
     minDomains: {{ $languageValues.topologySpreadConstraints.minDomains }}
     {{- end }}
 {{- end }}
