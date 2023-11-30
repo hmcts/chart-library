@@ -35,6 +35,8 @@ global:
     enabled: true
   functionaltestscron:
     enabled: true
+  topologySpreadConstraints:
+    enabled: true
 image: hmctspublic.azurecr.io/chart-java/testapp
 replicas: 1
 useInterpodAntiAffinity: flase

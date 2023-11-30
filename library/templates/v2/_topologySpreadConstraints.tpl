@@ -7,7 +7,7 @@ Setup topologySpreadConstraints
 {{- if hasKey .Values "language" -}}
 {{- $languageValues = (deepCopy .Values | merge (pluck .Values.language .Values | first) ) -}}
 {{- end -}}
-{{- if $languageValues.topologySpreadConstraints }}
+{{- if and $languageValues.topologySpreadConstraints $languageValues.global.topologySpreadConstraints.enabled }}
 topologySpreadConstraints:
   - maxSkew: {{ $languageValues.topologySpreadConstraints.maxSkew }}
     topologyKey: {{ $languageValues.topologySpreadConstraints.topologyKey }}
@@ -16,7 +16,6 @@ topologySpreadConstraints:
     labelSelector:
       matchLabels:
         app.kubernetes.io/name: {{ template "hmcts.releasename.v2" . }}
-        helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version }}
     {{- if $languageValues.topologySpreadConstraints.minDomains }}
     minDomains: {{ $languageValues.topologySpreadConstraints.minDomains }}
     {{- end }}

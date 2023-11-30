@@ -36,6 +36,8 @@ global:
     enabled: true
   functionaltestscron:
     enabled: true
+  topologySpreadConstraints:
+    enabled: true
 image: hmctspublic.azurecr.io/chart-nodejs/testapp
 replicas: 2
 useInterpodAntiAffinity: true
