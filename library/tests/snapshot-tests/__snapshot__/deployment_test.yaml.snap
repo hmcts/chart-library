@@ -125,7 +125,6 @@ manifest should match snapshot:
             - labelSelector:
                 matchLabels:
                   app.kubernetes.io/name: release-name-library
-                  helm.sh/chart: library-0.1.0
               maxSkew: 1
               nodeTaintsPolicy: Honor
               topologyKey: agentpool
