@@ -59,6 +59,9 @@ volumes:
       defaultMode: 0777
 nodeSelector:
   agentpool: cronjob
+topologySpreadConstraints:
+  maxSkew: 1
+  topologyKey: agentpool
 tolerations:
   - effect: NoSchedule
     key: dedicated

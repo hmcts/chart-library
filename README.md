@@ -344,6 +344,13 @@ Adds a Kubernetes service based on the pod's properties.
 As library charts are not installable, you can use [this script](tests/test-templates.sh) to generate templates and validate your changes.
 
 ### Changing existing templates
+
+- You will need to install the UnitTest plugin for Helm:
+
+```shell
+helm plugin install https://github.com/helm-unittest/helm-unittest.git
+```
+
 - Add the change you want to see in the code and run [the tests](tests/test-templates.sh)
 - The snapshot tests will fail and tell you that there are differences. 
 - Make sure language specific cases are covered in the tests [see](ci-values-lang.yaml)

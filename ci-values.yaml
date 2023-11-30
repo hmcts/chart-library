@@ -57,6 +57,9 @@ volumeMounts:
     mountPath: /mnt
 nodeSelector:
   agentpool: cronjob
+topologySpreadConstraints:
+  maxSkew: 1
+  topologyKey: agentpool
 tolerations:
   - effect: NoSchedule
     key: dedicated

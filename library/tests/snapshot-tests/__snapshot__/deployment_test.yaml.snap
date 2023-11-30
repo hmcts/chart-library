@@ -121,6 +121,15 @@ manifest should match snapshot:
               key: dedicated
               operator: Equal
               value: jobs
+          topologySpreadConstraints:
+            - labelSelector:
+                matchLabels:
+                  app.kubernetes.io/name: release-name-library
+                  helm.sh/chart: library-0.1.0
+              maxSkew: 1
+              nodeTaintsPolicy: Honor
+              topologyKey: agentpool
+              whenUnsatisfiable: DoNotSchedule
           volumes:
             - configMap:
                 defaultMode: 511
