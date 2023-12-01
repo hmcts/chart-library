@@ -16,8 +16,19 @@ topologySpreadConstraints:
     labelSelector:
       matchLabels:
         app.kubernetes.io/name: {{ template "hmcts.releasename.v2" . }}
+    matchLabelKeys:
+      - pod-template-hash
     {{- if $languageValues.topologySpreadConstraints.minDomains }}
     minDomains: {{ $languageValues.topologySpreadConstraints.minDomains }}
     {{- end }}
+  - maxSkew: 2
+    topologyKey: topology.kubernetes.io/zone
+    whenUnsatisfiable: ScheduleAnyway
+    nodeTaintsPolicy: Honor
+    labelSelector:
+      matchLabels:
+        app.kubernetes.io/name: {{ template "hmcts.releasename.v2" . }}
+    matchLabelKeys:
+      - pod-template-hash
 {{- end }}
 {{- end }}
