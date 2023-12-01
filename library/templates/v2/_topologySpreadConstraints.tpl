@@ -21,7 +21,7 @@ topologySpreadConstraints:
     {{- if $languageValues.topologySpreadConstraints.minDomains }}
     minDomains: {{ $languageValues.topologySpreadConstraints.minDomains }}
     {{- end }}
-  - maxSkew: 2
+  - maxSkew: 1
     topologyKey: topology.kubernetes.io/zone
     whenUnsatisfiable: ScheduleAnyway
     nodeTaintsPolicy: Honor

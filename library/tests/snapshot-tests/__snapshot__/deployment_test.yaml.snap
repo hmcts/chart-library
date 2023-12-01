@@ -125,10 +125,21 @@ manifest should match snapshot:
             - labelSelector:
                 matchLabels:
                   app.kubernetes.io/name: release-name-library
+              matchLabelKeys:
+                - pod-template-hash
               maxSkew: 1
               nodeTaintsPolicy: Honor
               topologyKey: agentpool
               whenUnsatisfiable: DoNotSchedule
+            - labelSelector:
+                matchLabels:
+                  app.kubernetes.io/name: release-name-library
+              matchLabelKeys:
+                - pod-template-hash
+              maxSkew: 1
+              nodeTaintsPolicy: Honor
+              topologyKey: topology.kubernetes.io/zone
+              whenUnsatisfiable: ScheduleAnyway
           volumes:
             - configMap:
                 defaultMode: 511
