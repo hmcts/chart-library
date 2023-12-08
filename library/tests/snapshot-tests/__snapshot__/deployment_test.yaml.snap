@@ -157,7 +157,7 @@ manifest should match snapshot:
               maxSkew: 1
               nodeAffinityPolicy: Honor
               nodeTaintsPolicy: Honor
-              topologyKey: role
+              topologyKey: kubernetes.azure.com/role
               whenUnsatisfiable: DoNotSchedule
             - labelSelector:
                 matchLabels:
