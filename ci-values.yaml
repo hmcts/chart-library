@@ -57,7 +57,8 @@ volumeMounts:
 nodeSelector:
   agentpool: cronjob
 useInterpodAntiAffinity: true
-spotInstances: true
+spotInstances: 
+  enabled: true
 tolerations:
   - effect: NoSchedule
     key: dedicated

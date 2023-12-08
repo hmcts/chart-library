@@ -7,7 +7,7 @@ Setup pod affinity rules
 {{- if hasKey .Values "language" -}}
 {{- $languageValues = (deepCopy .Values | merge (pluck .Values.language .Values | first) ) -}}
 {{- end -}}
-{{- if or ($languageValues.useInterpodAntiAffinity) ($languageValues.spotInstances) ($languageValues.affinity) }}
+{{- if or ($languageValues.useInterpodAntiAffinity) ($languageValues.spotInstances.enabled) ($languageValues.affinity) }}
 affinity:
 {{- if $languageValues.useInterpodAntiAffinity }}
   podAntiAffinity:
@@ -20,7 +20,7 @@ affinity:
               - {{ template "hmcts.releasename.v2" . }}
         topologyKey: "kubernetes.io/hostname"
 {{- end -}}
-{{- if $languageValues.spotInstances }}
+{{- if $languageValues.spotInstances.enabled }}
   nodeAffinity:
     requiredDuringSchedulingIgnoredDuringExecution:
       nodeSelectorTerms:

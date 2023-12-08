@@ -5,7 +5,7 @@
 {{- if hasKey .Values "language" -}}
 {{- $languageValues = (deepCopy .Values | merge (pluck .Values.language .Values | first) ) -}}
 {{- end -}}
-{{- if or ($languageValues.tolerations) ($languageValues.spotInstances)}}
+{{- if or ($languageValues.tolerations) ($languageValues.spotInstances.enabled) }}
 tolerations:
 {{- if $languageValues.tolerations }}
 {{- range $languageValues.tolerations }}
@@ -15,7 +15,7 @@ tolerations:
     value: {{ .value }}
 {{- end -}}
 {{- end -}}
-{{- if $languageValues.spotInstances }}
+{{- if $languageValues.spotInstances.enabled }}
   - key: kubernetes.azure.com/scalesetpriority
     effect: NoSchedule
     operator: Equal
