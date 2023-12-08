@@ -1,6 +1,6 @@
 ---
 {{/*
-Setup inter pod anti affinity
+Setup pod affinity rules
 */}}
 {{- define "hmcts.affinity.v2" }}
 {{- $languageValues := deepCopy .Values -}}
