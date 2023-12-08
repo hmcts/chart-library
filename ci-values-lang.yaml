@@ -35,11 +35,8 @@ global:
     enabled: true
   functionaltestscron:
     enabled: true
-  topologySpreadConstraints:
-    enabled: true
 image: hmctspublic.azurecr.io/chart-java/testapp
 replicas: 1
-useInterpodAntiAffinity: flase
 ingressHost: "{{.Release.Name}}.service.core-compute-prod.internal"
 disableTraefikTls: true
 livenessPath: /health/livenezz
@@ -61,9 +58,9 @@ volumes:
       defaultMode: 0777
 nodeSelector:
   agentpool: cronjob
+useInterpodAntiAffinity: true
 topologySpreadConstraints:
-  maxSkew: 1
-  topologyKey: agentpool
+    enabled: true
 tolerations:
   - effect: NoSchedule
     key: dedicated

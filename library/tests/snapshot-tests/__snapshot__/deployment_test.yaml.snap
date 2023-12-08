@@ -27,6 +27,29 @@ manifest should match snapshot:
             helm.sh/chart: library-0.1.0
         spec:
           affinity:
+            nodeAffinity:
+              preferredDuringSchedulingIgnoredDuringExecution:
+                - preference:
+                    matchExpressions:
+                      - key: kubernetes.azure.com/scalesetpriority
+                        operator: In
+                        values:
+                          - spot
+                  weight: 50
+                - preference:
+                    matchExpressions:
+                      - key: kubernetes.azure.com/scalesetpriority
+                        operator: DoesNotExist
+                  weight: 1
+              requiredDuringSchedulingIgnoredDuringExecution:
+                nodeSelectorTerms:
+                  - matchExpressions:
+                      - key: kubernetes.azure.com/scalesetpriority
+                        operator: In
+                        values:
+                          - spot
+                      - key: kubernetes.azure.com/scalesetpriority
+                        operator: DoesNotExist
             podAntiAffinity:
               requiredDuringSchedulingIgnoredDuringExecution:
                 - labelSelector:
@@ -121,6 +144,10 @@ manifest should match snapshot:
               key: dedicated
               operator: Equal
               value: jobs
+            - effect: NoSchedule
+              key: kubernetes.azure.com/scalesetpriority
+              operator: Equal
+              value: spot
           topologySpreadConstraints:
             - labelSelector:
                 matchLabels:
@@ -128,8 +155,9 @@ manifest should match snapshot:
               matchLabelKeys:
                 - pod-template-hash
               maxSkew: 1
+              nodeAffinityPolicy: Honor
               nodeTaintsPolicy: Honor
-              topologyKey: agentpool
+              topologyKey: role
               whenUnsatisfiable: DoNotSchedule
             - labelSelector:
                 matchLabels:
@@ -137,6 +165,7 @@ manifest should match snapshot:
               matchLabelKeys:
                 - pod-template-hash
               maxSkew: 1
+              nodeAffinityPolicy: Honor
               nodeTaintsPolicy: Honor
               topologyKey: topology.kubernetes.io/zone
               whenUnsatisfiable: ScheduleAnyway

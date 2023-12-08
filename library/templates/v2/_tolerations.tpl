@@ -5,13 +5,21 @@
 {{- if hasKey .Values "language" -}}
 {{- $languageValues = (deepCopy .Values | merge (pluck .Values.language .Values | first) ) -}}
 {{- end -}}
-{{- if $languageValues.tolerations }}
+{{- if or ($languageValues.tolerations) ($languageValues.topologySpreadConstraints.enabled)}}
 tolerations:
+{{- if $languageValues.tolerations }}
 {{- range $languageValues.tolerations }}
   - key: {{ .key }}
     effect: {{ .effect }}
     operator: {{ .operator }}
     value: {{ .value }}
-{{- end }}
+{{- end -}}
+{{- end -}}
+{{- if $languageValues.topologySpreadConstraints.enabled }}
+  - key: kubernetes.azure.com/scalesetpriority
+    effect: NoSchedule
+    operator: Equal
+    value: spot
+{{- end -}}
 {{- end }}
 {{- end }}

@@ -17,7 +17,7 @@ template:
     {{- if $languageValues.saEnabled }}
     serviceAccountName: {{ .Release.Namespace }}
     {{- end }}
-    {{- include "hmcts.interpodantiaffinity.v2" . | indent 4 }}
+    {{- include "hmcts.affinity.v2" . | indent 4 }}
     {{- if not $languageValues.runAsRoot }}
     securityContext:
       runAsUser: 1000
