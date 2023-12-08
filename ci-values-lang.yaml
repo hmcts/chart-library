@@ -59,8 +59,7 @@ volumes:
 nodeSelector:
   agentpool: cronjob
 useInterpodAntiAffinity: true
-topologySpreadConstraints:
-    enabled: true
+spotInstances: true
 tolerations:
   - effect: NoSchedule
     key: dedicated

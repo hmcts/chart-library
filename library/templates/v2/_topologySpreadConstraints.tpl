@@ -7,7 +7,7 @@ Setup topologySpreadConstraints
 {{- if hasKey .Values "language" -}}
 {{- $languageValues = (deepCopy .Values | merge (pluck .Values.language .Values | first) ) -}}
 {{- end -}}
-{{- if and $languageValues.topologySpreadConstraints.enabled }}
+{{- if and $languageValues.spotInstances }}
 topologySpreadConstraints:
   - maxSkew: 1
     topologyKey: role
