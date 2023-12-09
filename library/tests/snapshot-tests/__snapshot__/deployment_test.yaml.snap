@@ -32,9 +32,7 @@ manifest should match snapshot:
                 - preference:
                     matchExpressions:
                       - key: kubernetes.azure.com/scalesetpriority
-                        operator: In
-                        values:
-                          - spot
+                        operator: Exists
                   weight: 50
                 - preference:
                     matchExpressions:
@@ -44,12 +42,10 @@ manifest should match snapshot:
               requiredDuringSchedulingIgnoredDuringExecution:
                 nodeSelectorTerms:
                   - matchExpressions:
-                      - key: kubernetes.azure.com/scalesetpriority
-                        operator: In
+                      - key: kubernetes.azure.com/mode
+                        operator: NotIn
                         values:
-                          - spot
-                      - key: kubernetes.azure.com/scalesetpriority
-                        operator: DoesNotExist
+                          - system
             podAntiAffinity:
               requiredDuringSchedulingIgnoredDuringExecution:
                 - labelSelector:
@@ -157,7 +153,7 @@ manifest should match snapshot:
               maxSkew: 1
               nodeAffinityPolicy: Honor
               nodeTaintsPolicy: Honor
-              topologyKey: kubernetes.azure.com/role
+              topologyKey: kubernetes.azure.com/agentpool
               whenUnsatisfiable: DoNotSchedule
             - labelSelector:
                 matchLabels:

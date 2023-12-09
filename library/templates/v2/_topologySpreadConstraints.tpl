@@ -10,7 +10,7 @@ Setup topologySpreadConstraints
 {{- if and $languageValues.spotInstances.enabled }}
 topologySpreadConstraints:
   - maxSkew: 1
-    topologyKey: kubernetes.azure.com/role
+    topologyKey: kubernetes.azure.com/agentpool
     whenUnsatisfiable: DoNotSchedule
     nodeAffinityPolicy: Honor
     nodeTaintsPolicy: Honor

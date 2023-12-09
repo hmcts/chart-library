@@ -25,12 +25,10 @@ affinity:
     requiredDuringSchedulingIgnoredDuringExecution:
       nodeSelectorTerms:
         - matchExpressions:
-            - key: kubernetes.azure.com/scalesetpriority
-              operator: In
+            - key: kubernetes.azure.com/mode
+              operator: NotIn
               values:
-                - spot
-            - key: kubernetes.azure.com/scalesetpriority
-              operator: DoesNotExist
+                - system
     preferredDuringSchedulingIgnoredDuringExecution:
       - weight: 50
         preference:
@@ -38,7 +36,7 @@ affinity:
             - key: kubernetes.azure.com/scalesetpriority
               operator: In
               values:
-                - spot
+              - spot
       - weight: 1
         preference:
           matchExpressions:
