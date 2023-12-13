@@ -48,15 +48,6 @@ manifest should match snapshot:
                         operator: NotIn
                         values:
                           - system
-            podAntiAffinity:
-              requiredDuringSchedulingIgnoredDuringExecution:
-                - labelSelector:
-                    matchExpressions:
-                      - key: app.kubernetes.io/name
-                        operator: In
-                        values:
-                          - release-name-library
-                  topologyKey: kubernetes.io/hostname
           containers:
             - args:
                 - this
@@ -156,6 +147,16 @@ manifest should match snapshot:
               nodeAffinityPolicy: Honor
               nodeTaintsPolicy: Honor
               topologyKey: kubernetes.azure.com/agentpool
+              whenUnsatisfiable: DoNotSchedule
+            - labelSelector:
+                matchLabels:
+                  app.kubernetes.io/name: release-name-library
+              matchLabelKeys:
+                - pod-template-hash
+              maxSkew: 2
+              nodeAffinityPolicy: Honor
+              nodeTaintsPolicy: Honor
+              topologyKey: kubernetes.io/hostname
               whenUnsatisfiable: DoNotSchedule
             - labelSelector:
                 matchLabels:

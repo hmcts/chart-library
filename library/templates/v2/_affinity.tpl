@@ -2,25 +2,15 @@
 {{/*
 Setup pod affinity rules
 */}}
-{{- define "hmcts.affinity.v2" }}
+{{- define "hmcts.affinity.v1" }}
 {{- $languageValues := deepCopy .Values -}}
 {{- if hasKey .Values "language" -}}
 {{- $languageValues = (deepCopy .Values | merge (pluck .Values.language .Values | first) ) -}}
 {{- end -}}
-{{- if or ($languageValues.useInterpodAntiAffinity) ($languageValues.spotInstances.enabled) ($languageValues.affinity) }}
+{{ if $languageValues.affinity }}
+{{ toYaml $languageValues.affinity | indent 2 }}
+{{- else }}
 affinity:
-{{- if $languageValues.useInterpodAntiAffinity }}
-  podAntiAffinity:
-    requiredDuringSchedulingIgnoredDuringExecution:
-      - labelSelector:
-          matchExpressions:
-            - key: app.kubernetes.io/name
-              operator: In
-              values:
-              - {{ template "hmcts.releasename.v2" . }}
-        topologyKey: "kubernetes.io/hostname"
-{{- end -}}
-{{- if $languageValues.spotInstances.enabled }}
   nodeAffinity:
     requiredDuringSchedulingIgnoredDuringExecution:
       nodeSelectorTerms:
@@ -29,6 +19,7 @@ affinity:
               operator: NotIn
               values:
                 - system
+{{- if $languageValues.spotInstances.enabled }}
     preferredDuringSchedulingIgnoredDuringExecution:
       - weight: 50
         preference:
@@ -42,9 +33,6 @@ affinity:
           matchExpressions:
             - key: kubernetes.azure.com/scalesetpriority
               operator: DoesNotExist
-{{- end -}}
-{{ if $languageValues.affinity }}
-{{ toYaml $languageValues.affinity| indent 2 }}
 {{- end -}}
 {{- end }}
 {{- end }}
