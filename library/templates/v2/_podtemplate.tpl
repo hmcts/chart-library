@@ -17,7 +17,7 @@ template:
     {{- if $languageValues.saEnabled }}
     serviceAccountName: {{ .Release.Namespace }}
     {{- end }}
-    {{- include "hmcts.affinity.v2" . | indent 4 }}
+    {{- include "hmcts.affinity.v1" . | indent 4 }}
     {{- if not $languageValues.runAsRoot }}
     securityContext:
       runAsUser: 1000
@@ -27,8 +27,8 @@ template:
     nodeSelector:
   {{ toYaml $languageValues.nodeSelector | indent 4 }}
     {{- end }}
-    {{- ( include "hmcts.tolerations.v2" . ) | indent 4 }}
-    {{- ( include "hmcts.topologySpreadConstraints.v2" . ) | indent 4 }}
+    {{- ( include "hmcts.tolerations.v3" . ) | indent 4 }}
+    {{- ( include "hmcts.topologySpreadConstraints.v1" . ) | indent 4 }}
     {{- ( include "hmcts.dnsConfig.v2" . ) | indent 4 }}
     volumes:
     {{- ( include "hmcts.volumes.v2" . ) | indent 4 }}

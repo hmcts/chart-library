@@ -51,8 +51,7 @@ It includes below templates :
 | Parameter                 | Description                                                                                                 |
 |---------------------------|-------------------------------------------------------------------------------------------------------------|
 | `saEnabled`               | Flag to Enable Service Account                                                                              |
-| `useInterpodAntiAffinity` | Always schedule replicas on different nodes                                                                 |
-| `affinity`                | Pod/Node affinity and anti-affinity set as `yaml`, works only when `useInterpodAntiAffinity` isn't enabled. |
+| `affinity`                | Pod/Node affinity and anti-affinity set as `yaml` |
 
 It includes below templates :
 - [Metadata](#Metadata)

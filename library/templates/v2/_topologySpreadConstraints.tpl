@@ -2,15 +2,20 @@
 {{/*
 Setup topologySpreadConstraints
 */}}
-{{- define "hmcts.topologySpreadConstraints.v2" }}
-{{- $languageValues := deepCopy .Values -}}
-{{- if hasKey .Values "language" -}}
-{{- $languageValues = (deepCopy .Values | merge (pluck .Values.language .Values | first) ) -}}
-{{- end -}}
-{{- if and $languageValues.spotInstances.enabled }}
+{{- define "hmcts.topologySpreadConstraints.v1" }}
 topologySpreadConstraints:
   - maxSkew: 1
     topologyKey: kubernetes.azure.com/agentpool
+    whenUnsatisfiable: DoNotSchedule
+    nodeAffinityPolicy: Honor
+    nodeTaintsPolicy: Honor
+    labelSelector:
+      matchLabels:
+        app.kubernetes.io/name: {{ template "hmcts.releasename.v2" . }}
+    matchLabelKeys:
+      - pod-template-hash
+  - maxSkew: 2
+    topologyKey: kubernetes.io/hostname
     whenUnsatisfiable: DoNotSchedule
     nodeAffinityPolicy: Honor
     nodeTaintsPolicy: Honor
@@ -29,5 +34,4 @@ topologySpreadConstraints:
         app.kubernetes.io/name: {{ template "hmcts.releasename.v2" . }}
     matchLabelKeys:
       - pod-template-hash
-{{- end }}
 {{- end }}
