@@ -1,4 +1,4 @@
-{{- define "hmcts.deployment.v4.tpl" -}}
+{{- define "hmcts.deployment.v5.tpl" -}}
 apiVersion: apps/v1
 kind: Deployment
 {{ template "hmcts.metadata.v2" . }}
@@ -12,9 +12,9 @@ spec:
   selector:
     matchLabels:
       app.kubernetes.io/name: {{ template "hmcts.releasename.v2" . }}
-{{ include "hmcts.podtemplate.v4.tpl" . | indent 2 -}}
+{{ include "hmcts.podtemplate.v5.tpl" . | indent 2 -}}
 {{- end -}}
 
-{{- define "hmcts.deployment.v4" -}}
-{{- template "hmcts.util.merge.v2" (append . "hmcts.deployment.v4.tpl") -}}
+{{- define "hmcts.deployment.v5" -}}
+{{- template "hmcts.util.merge.v2" (append . "hmcts.deployment.v5.tpl") -}}
 {{- end -}}
