@@ -6,7 +6,7 @@ trigger:
 pr:
   branches:
     include:
-      - master
+      - '*'
 resources:
   repositories:
     - repository: cnp-azuredevops-libraries
@@ -30,8 +30,11 @@ jobs:
         inputs:
           helmVersionToInstall: 3.12.0
       - script: helm plugin install https://github.com/helm-unittest/helm-unittest.git
+        displayName: 'Install Helm Unit Test Plugin'
       - script: sudo snap install yq
+        displayName: 'Install yq'
       - script: ./tests/test-templates.sh
+        displayName: 'Run unit tests'
   - job: Release
     # Make sure we have a tag to run this job
     condition: >

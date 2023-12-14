@@ -38,7 +38,6 @@ global:
     enabled: true
 image: hmctspublic.azurecr.io/chart-nodejs/testapp
 replicas: 2
-useInterpodAntiAffinity: true
 ingressHost: "{{.Release.Name}}.service.core-compute-preview.internal"
 disableTraefikTls: true
 livenessPath: /health/liveness
@@ -57,6 +56,8 @@ volumeMounts:
     mountPath: /mnt
 nodeSelector:
   agentpool: cronjob
+spotInstances:
+  enabled: true
 tolerations:
   - effect: NoSchedule
     key: dedicated
