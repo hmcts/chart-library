@@ -30,7 +30,7 @@ template:
     {{- ( include "hmcts.tolerations.v3" . ) | indent 4 }}
     {{- ( include "hmcts.topologySpreadConstraints.v1" . ) | indent 4 }}
     {{- ( include "hmcts.dnsConfig.v2" . ) | indent 4 }}
-    {{- if or $languageValues.volumeMounts (and $languageValues.keyVaults $languageValues.global.enableKeyVaults (not $languageValues.disableKeyVaults)) }}
+    {{- if or $languageValues.volumes (and $languageValues.keyVaults $languageValues.global.enableKeyVaults (not $languageValues.disableKeyVaults)) }}
     volumes:
     {{- ( include "hmcts.volumes.v2" . ) | indent 4 }}
     {{- ( include "hmcts.secretCSIVolumes.v2" . ) | indent 4 }}
