@@ -36,9 +36,11 @@
         name: {{ $languageValues.envFromSecret }}
   {{- end }}
   {{- end }}
+  {{- if or $languageValues.volumeMounts (and $languageValues.keyVaults $languageValues.global.enableKeyVaults (not $languageValues.disableKeyVaults)) }}
   volumeMounts:
   {{- ( include "hmcts.volumeMounts.v2" . ) | indent 2 }}
   {{- ( include "hmcts.secretMounts.v2" . ) | indent 2 }}
+  {{- end }}
   {{if $languageValues.global.devMode -}}
   resources:
     requests:
