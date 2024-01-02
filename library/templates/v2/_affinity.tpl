@@ -8,6 +8,7 @@ Setup pod affinity rules
 {{- $languageValues = (deepCopy .Values | merge (pluck .Values.language .Values | first) ) -}}
 {{- end -}}
 {{ if $languageValues.affinity }}
+affinity:
 {{ toYaml $languageValues.affinity | indent 2 }}
 {{- else }}
 affinity:
