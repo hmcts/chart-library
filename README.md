@@ -288,7 +288,7 @@ Example Config:
 autoscaling:        
   enabled: true     # Default is false
   maxReplicas: 5    # Optional setting, will use the value of replicas + 2 if not set
-  maxReplicas: 2    # Optional setting, will use the value of replicas if not set
+  minReplicas: 2    # Optional setting, will use the value of replicas if not set
   cpu:
     averageUtilization: 80 # Default is 80% Average CPU utilization 
   memory:
