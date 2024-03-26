@@ -274,7 +274,8 @@ To adjust the number of pods in a deployment depending on CPU utilization AKS su
 |-----------------------------------------|--------------------------------------------------------------------------|---------|
 | `autoscaling.enabled`                   | Enable horizontal pod autoscaling.                                       | `false` |
 | `autoscaling.enabledForDevMode`         | Additional flag needed to enable horizontal pod autoscaling in Dev mode. | `false` |
-| `autoscaling.maxReplicas`               | Max replica count. Required if autoscaling.enabled is true               | ``      |
+| `autoscaling.maxReplicas`               | Max replica count. Optional, will use value of `replicas` + 2 if not set | ``      |
+| `autoscaling.minReplicas`               | Min replica count. Optional, will use value of `replicas` if not set     | ``      |
 | `autoscaling.cpu.enabled`               | Enable CPU based Autoscaling                                             | `true`  |
 | `autoscaling.cpu.averageUtilization`    | Average CPU utilization                                                  | `80`    |
 | `autoscaling.memory.enabled`            | Enable Memory based Autoscaling                                          | `true`  |
@@ -286,7 +287,8 @@ Example Config:
 ```yaml
 autoscaling:        
   enabled: true     # Default is false
-  maxReplicas: 5    # Required setting
+  maxReplicas: 5    # Optional setting, will use the value of replicas + 2 if not set
+  minReplicas: 2    # Optional setting, will use the value of replicas if not set
   cpu:
     averageUtilization: 80 # Default is 80% Average CPU utilization 
   memory:
