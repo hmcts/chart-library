@@ -12,7 +12,7 @@ spec:
     env:
       - name: SERVICE_NAME
         value: {{ template "hmcts.releasename.v2" . }}
-    command: ["sh", "-c", "httpstatuscode=$(wget -S http://$SERVICE_NAME/health 2>&1 | grep HTTP/ | awk 'END{print $2}') && [ \"$httpstatuscode\" = \"200\" ]"]
+    command: ["sh", "-c", "httpstatuscode=$(wget -S http://$SERVICE_NAME/health/liveness 2>&1 | grep HTTP/ | awk 'END{print $2}') && [ \"$httpstatuscode\" = \"200\" ]"]
     resources:
       limits:
         cpu: 500m
