@@ -1,7 +1,7 @@
 {{/*
 The bit of templating needed to create the CSI driver keyvault for mounting
 */}}
-{{- define "hmcts.secretCSIVolumes.v2" }}
+{{- define "hmcts.secretCSIVolumes.v3" }}
 {{- $languageValues := deepCopy .Values -}}
 {{- if hasKey .Values "language" -}}
 {{- $languageValues = (deepCopy .Values | merge (pluck .Values.language .Values | first) ) -}}
