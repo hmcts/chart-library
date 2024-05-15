@@ -38,7 +38,7 @@
   {{- end }}
   volumeMounts:
   {{- ( include "hmcts.volumeMounts.v2" . ) | indent 2 }}
-  {{- ( include "hmcts.secretMounts.v2" . ) | indent 2 }}
+  {{- ( include "hmcts.secretMounts.v3" . ) | indent 2 }}
   {{if $languageValues.global.devMode -}}
   resources:
     requests:
