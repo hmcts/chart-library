@@ -1,7 +1,7 @@
 {{/*
 Create pod template spec.
 */}}
-{{- define "hmcts.podtemplate.v5.tpl" -}}
+{{- define "hmcts.podtemplate.v6.tpl" -}}
 {{- $languageValues := deepCopy .Values -}}
 {{- if hasKey .Values "language" -}}
 {{- $languageValues = (deepCopy .Values | merge (pluck .Values.language .Values | first) ) -}}
@@ -14,9 +14,13 @@ template:
     {{- end }}
     {{- (include "hmcts.annotations.v2" .) | indent 4 }}
   spec:
-    {{- if $languageValues.saEnabled }}
+    
+    {{- if $languageValues.saEnabled}}
     serviceAccountName: {{ .Release.Namespace }}
+    {{ else if and (not $languageValues.saEnabled) ($languageValues.customServiceAccountName)  }}
+    serviceAccountName: {{ $languageValues.customServiceAccountName }}
     {{- end }}
+
     {{- include "hmcts.affinity.v1" . | indent 4 }}
     {{- if not $languageValues.runAsRoot }}
     securityContext:
