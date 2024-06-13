@@ -69,6 +69,7 @@ configmap:
   VAR_A: VALUE_C
   VAR_B: VALUE_D
 saEnabled: false
+customServiceAccountName: customServiceAccount
 keyVaults:
   bulk-scan:
     excludeEnvironmentSuffix: false
@@ -198,7 +199,8 @@ java:
   configmap:
     VAR_A: VALUE_A
     VAR_B: VALUE_B
-  saEnabled: true
+  saEnabled: false
+  customServiceAccountName: customServiceAccount  
   keyVaults:
     bulk-scan:
       excludeEnvironmentSuffix: false
