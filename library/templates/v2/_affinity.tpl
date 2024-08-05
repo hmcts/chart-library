@@ -26,7 +26,7 @@ affinity:
         preference:
           matchExpressions:
             - key: kubernetes.azure.com/scalesetpriority
-              operator: NotIn
+              operator: In
               values:
               - spot
       - weight: 1
