@@ -27,6 +27,7 @@ def bump_version(file_path, new_version):
     if current_version == str(new_version):
         print(f"Version in {file_path} is already .v{new_version}")
     else:
+        os.environ["VERSION_BUMPED"] = "true"
         # Define the regex pattern to find the version strings
         pattern = re.compile(rf'\.v{current_version}\b')
 
@@ -37,7 +38,7 @@ def bump_version(file_path, new_version):
         with open(file_path, 'w') as file:
             file.write(updated_content)
 
-        print(f"Bumped version from v{current_version} to v{new_version} in {file_path}")
+        # print(f"Bumped version from v{current_version} to v{new_version} in {file_path}")
 
 if __name__ == "__main__":
     # Define the file path pattern and new version
@@ -56,3 +57,6 @@ if __name__ == "__main__":
     # Update the version in each yaml file
     for file_path in yaml_files:
         bump_version(file_path, new_version)
+
+if os.environ.get("VERSION_BUMPED") == "true":
+    print(f"version_updated")
