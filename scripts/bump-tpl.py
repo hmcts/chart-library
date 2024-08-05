@@ -34,7 +34,6 @@ def bump_version(file_path, new_version):
 if __name__ == "__main__":
     # Define the file path pattern and new version
     tpl_file_path_pattern = 'library/templates/v2/*.tpl'
-    test_file_path_pattern = 'library/templates/v2/tests/*.tpl'
     yaml_file_path_pattern = 'library/templates/v2/*.yaml'
     new_version = os.environ["NEW_VERSION"]
 
@@ -45,10 +44,6 @@ if __name__ == "__main__":
 
     # Update the version in each tpl file
     for file_path in tpl_files:
-        bump_version(file_path, new_version)
-
-    # Update the version in each test file
-    for file_path in test_files:
         bump_version(file_path, new_version)
 
     # Update the version in each yaml file
