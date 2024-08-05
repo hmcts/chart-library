@@ -21,7 +21,7 @@ def extract_version(file_path):
 
             # Remove the .tpl suffix if present
             cleaned_text = re.sub(r'\.tpl$', '', extracted_text)
-            print(cleaned_text)
+            # print(cleaned_text)
 
             # Bump the version number by one
             bumped_text = re.sub(r'v(\d+)', lambda m: f"v{int(m.group(1)) + 1}", cleaned_text)
