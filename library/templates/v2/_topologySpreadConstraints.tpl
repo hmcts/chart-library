@@ -2,7 +2,7 @@
 {{/*
 Setup topologySpreadConstraints
 */}}
-{{- define "hmcts.topologySpreadConstraints.v1" }}
+{{- define "hmcts.topologySpreadConstraints.v2.2.3" }}
 topologySpreadConstraints:
   - maxSkew: 1
     topologyKey: kubernetes.azure.com/agentpool

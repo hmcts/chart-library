@@ -21,7 +21,7 @@ template:
     serviceAccountName: {{ $languageValues.customServiceAccountName }}
     {{- end }}
 
-    {{- include "hmcts.affinity.v1" . | indent 4 }}
+    {{- include "hmcts.affinity.v2.2.3" . | indent 4 }}
     {{- if not $languageValues.runAsRoot }}
     securityContext:
       runAsUser: 1000
@@ -32,7 +32,7 @@ template:
   {{ toYaml $languageValues.nodeSelector | indent 4 }}
     {{- end }}
     {{- ( include "hmcts.tolerations.v2.2.3" . ) | indent 4 }}
-    {{- ( include "hmcts.topologySpreadConstraints.v1" . ) | indent 4 }}
+    {{- ( include "hmcts.topologySpreadConstraints.v2.2.3" . ) | indent 4 }}
     {{- ( include "hmcts.dnsConfig.v2.2.3" . ) | indent 4 }}
     volumes:
     {{- ( include "hmcts.volumes.v2.2.3" . ) | indent 4 }}
