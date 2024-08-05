@@ -67,7 +67,7 @@ spec:
 {{- end}}
 {{- end }}
 
-{{- define "hmcts.ingress.v2" -}}
+{{- define "hmcts.ingress.v3" -}}
 {{- template "hmcts.util.merge.v2" (append . "hmcts.ingress.v2.tpl") -}}
 {{- end -}}
 

@@ -12,7 +12,7 @@ spec:
   selector:
     matchLabels:
       app.kubernetes.io/name: {{ template "hmcts.releasename.v2" . }}
-{{ include "hmcts.podtemplate.v3.2.3.tpl" . | indent 2 -}}
+{{ include "hmcts.podtemplate.v6.tpl" . | indent 2 -}}
 {{- end -}}
 
 {{- define "hmcts.deployment.v5" -}}
