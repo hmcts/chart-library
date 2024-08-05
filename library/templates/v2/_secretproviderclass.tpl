@@ -1,4 +1,4 @@
-{{- define "hmcts.secretproviderclass.v2.2.3.tpl" -}}
+{{- define "hmcts.secretproviderclass.v5.tpl" -}}
 {{- $languageValues := deepCopy .Values -}}
 {{- if hasKey .Values "language" -}}
 {{- $languageValues = (deepCopy .Values | merge (pluck .Values.language .Values | first) ) -}}
@@ -6,7 +6,7 @@
 {{- if and $languageValues.keyVaults $languageValues.global.enableKeyVaults (not $languageValues.disableKeyVaults) -}}
 {{- $globals := $languageValues.global -}}
 {{- $namespace := .Release.Namespace -}}
-{{- $serviceAccount := (lookup "v2" "ServiceAccount" $namespace $namespace ) }}
+{{- $serviceAccount := (lookup "v1" "ServiceAccount" $namespace $namespace ) }}
 {{- $root := . -}}
 {{- range $vault, $info := $languageValues.keyVaults }}
 {{- if not $info.disabled }}
@@ -14,7 +14,7 @@
 apiVersion: secrets-store.csi.x-k8s.io/v1
 kind: SecretProviderClass
 metadata:
-  name: {{ template "hmcts.releasename.v2.2.3" $root }}-{{ $vault }}
+  name: {{ template "hmcts.releasename.v2" $root }}-{{ $vault }}
 spec:
   provider: azure
   parameters:
@@ -70,6 +70,6 @@ spec:
 {{- end }}
 {{- end -}}
 
-{{- define "hmcts.secretproviderclass.v2.2.3" -}}
-{{- template "hmcts.util.merge.v2.2.3" (append . "hmcts.secretproviderclass.v2.2.3.tpl") -}}
+{{- define "hmcts.secretproviderclass.v5" -}}
+{{- template "hmcts.util.merge.v2" (append . "hmcts.secretproviderclass.v5.tpl") -}}
 {{- end -}}

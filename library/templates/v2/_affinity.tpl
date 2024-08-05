@@ -2,7 +2,7 @@
 {{/*
 Setup pod affinity rules
 */}}
-{{- define "hmcts.affinity.v2.2.3" }}
+{{- define "hmcts.affinity.v1" }}
 {{- $languageValues := deepCopy .Values -}}
 {{- if hasKey .Values "language" -}}
 {{- $languageValues = (deepCopy .Values | merge (pluck .Values.language .Values | first) ) -}}

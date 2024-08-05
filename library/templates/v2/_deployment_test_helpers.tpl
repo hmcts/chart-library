@@ -1,17 +1,17 @@
-{{- define "hmcts.tests.meta.v2.2.3" -}}
+{{- define "hmcts.tests.meta.v2" -}}
 metadata:
   name: {{ .Release.Name }}-{{ .Values.task }}{{ .Values.type }}-job
   labels:
     app.kubernetes.io/managed-by: {{ .Release.Service }}
     app.kubernetes.io/instance: {{ .Release.Name }}
     helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version }}
-    app.kubernetes.io/name: {{ template "hmcts.releasename.v2.2.3" . }}-{{ .Values.task }}{{ .Values.type }}
+    app.kubernetes.io/name: {{ template "hmcts.releasename.v2" . }}-{{ .Values.task }}{{ .Values.type }}
 {{- end -}}
 
-{{- define "hmcts.tests.header.v2.2.3" -}}
+{{- define "hmcts.tests.header.v2" -}}
 apiVersion: v1
 kind: Pod
-{{ template "hmcts.tests.meta.v2.2.3" . }}
+{{ template "hmcts.tests.meta.v2" . }}
     {{- if and .Values.aadIdentityName (not .Values.useWorkloadIdentity) }}
     aadpodidbinding: {{ .Values.aadIdentityName }}
     {{- end }}
@@ -20,10 +20,10 @@ kind: Pod
     "helm.sh/hook-delete-policy": before-hook-creation 
 {{- end -}}
 
-{{- define "hmcts.testscron.header.v2.2.3" -}}
+{{- define "hmcts.testscron.header.v2" -}}
 apiVersion: batch/v1beta1
 kind: CronJob
-{{ template "hmcts.tests.meta.v2.2.3" . }}
+{{ template "hmcts.tests.meta.v2" . }}
 spec:
   schedule: "{{ .Values.schedule }}"
   jobTemplate:
@@ -32,14 +32,14 @@ spec:
       template:
         metadata:
           labels:
-            app.kubernetes.io/name: {{ template "hmcts.releasename.v2.2.3" . }}-{{ .Values.task }}testscron
+            app.kubernetes.io/name: {{ template "hmcts.releasename.v2" . }}-{{ .Values.task }}testscron
             {{- if and .Values.aadIdentityName (not .Values.useWorkloadIdentity) }}
             aadpodidbinding: {{ .Values.aadIdentityName }}
             {{- end }}
         spec:
 {{- end -}}
 
-{{- define "hmcts.tests.spec.v2.2.3" -}}
+{{- define "hmcts.tests.spec.v2" -}}
 {{- if and .Values.testsConfig.keyVaults .Values.global.enableKeyVaults }}
 {{- $root := . }}
 volumes:
@@ -51,7 +51,7 @@ volumes:
     driver: "secrets-store.csi.k8s.io"
     readOnly: true
     volumeAttributes:
-      secretProviderClass: {{ template "hmcts.releasename.v2.2.3" $root }}-tests-{{ $key }}
+      secretProviderClass: {{ template "hmcts.releasename.v2" $root }}-tests-{{ $key }}
 {{- end }}
 {{- end }}
 securityContext:
