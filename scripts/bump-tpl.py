@@ -17,11 +17,6 @@ def bump_version(file_path, new_version):
 
     # Extract the current version
     current_version = extract_version(content)
-    if current_version is None:
-        print(f"Could not find a version in {file_path}")
-        return
-    else:
-        print(f"Found version {current_version}")
 
     # Compare the current version with the new version
     if current_version == str(new_version):
@@ -37,8 +32,6 @@ def bump_version(file_path, new_version):
         # Write the updated content back to the file
         with open(file_path, 'w') as file:
             file.write(updated_content)
-
-        # print(f"Bumped version from v{current_version} to v{new_version} in {file_path}")
 
 if __name__ == "__main__":
     # Define the file path pattern and new version
