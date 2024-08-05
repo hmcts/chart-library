@@ -4,7 +4,7 @@ import os
 from git import Repo
 
 def extract_version(file_path):
-    # Define the regex pattern to find the version string
+    # Define the regex pattern to find the template
     pattern = re.compile(r'define\s+"([^"]+)"')
 
     # Read the content of the file
@@ -17,11 +17,9 @@ def extract_version(file_path):
         if match:
             # Extract the text between the quotes
             extracted_text = match.group(1)
-            # print(extracted_text)
 
             # Remove the .tpl suffix if present
             cleaned_text = re.sub(r'\.tpl$', '', extracted_text)
-            # print(cleaned_text)
 
             # Bump the version number by one
             bumped_text = re.sub(r'v(\d+)', lambda m: f"v{int(m.group(1)) + 1}", cleaned_text)
@@ -66,7 +64,6 @@ def get_changed_files(repo_path):
     
     return changed_files
 
-# Example usage
 if __name__ == "__main__":
     repo_path = "."
     changed_files = get_changed_files(repo_path)
