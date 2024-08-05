@@ -6,7 +6,7 @@
 {{- if and $languageValues.keyVaults $languageValues.global.enableKeyVaults (not $languageValues.disableKeyVaults) -}}
 {{- $globals := $languageValues.global -}}
 {{- $namespace := .Release.Namespace -}}
-{{- $serviceAccount := (lookup "v2.2.3" "ServiceAccount" $namespace $namespace ) }}
+{{- $serviceAccount := (lookup "v2" "ServiceAccount" $namespace $namespace ) }}
 {{- $root := . -}}
 {{- range $vault, $info := $languageValues.keyVaults }}
 {{- if not $info.disabled }}
