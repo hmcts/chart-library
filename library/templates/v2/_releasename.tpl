@@ -10,9 +10,9 @@ Parameters:
 - .Values.releaseNameSuffix: Suffix
 - .Values.global.releaseNameSuffix: Global suffix
 The applied order is: "global prefix + prefix + name + suffix + global suffix"
-Usage: 'name: "{{- template "hmcts.releasename.v2" . -}}"'
+Usage: 'name: "{{- template "hmcts.releasename.v2.2.3" . -}}"'
 */ -}}
-{{- define "hmcts.releasename.v2" }}
+{{- define "hmcts.releasename.v2.2.3" }}
 {{- $languageValues := deepCopy .Values -}}
 {{- if hasKey .Values "language" -}}
 {{- $languageValues = (deepCopy .Values | merge (pluck .Values.language .Values | first) ) -}}

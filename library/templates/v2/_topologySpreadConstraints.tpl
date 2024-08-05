@@ -11,7 +11,7 @@ topologySpreadConstraints:
     nodeTaintsPolicy: Honor
     labelSelector:
       matchLabels:
-        app.kubernetes.io/name: {{ template "hmcts.releasename.v2" . }}
+        app.kubernetes.io/name: {{ template "hmcts.releasename.v2.2.3" . }}
     matchLabelKeys:
       - pod-template-hash
   - maxSkew: 2
@@ -21,7 +21,7 @@ topologySpreadConstraints:
     nodeTaintsPolicy: Honor
     labelSelector:
       matchLabels:
-        app.kubernetes.io/name: {{ template "hmcts.releasename.v2" . }}
+        app.kubernetes.io/name: {{ template "hmcts.releasename.v2.2.3" . }}
     matchLabelKeys:
       - pod-template-hash
   - maxSkew: 1
@@ -31,7 +31,7 @@ topologySpreadConstraints:
     nodeTaintsPolicy: Honor
     labelSelector:
       matchLabels:
-        app.kubernetes.io/name: {{ template "hmcts.releasename.v2" . }}
+        app.kubernetes.io/name: {{ template "hmcts.releasename.v2.2.3" . }}
     matchLabelKeys:
       - pod-template-hash
 {{- end }}

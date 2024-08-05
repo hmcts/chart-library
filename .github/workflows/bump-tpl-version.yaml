@@ -1,0 +1,48 @@
+name: Bump tpl version
+
+on:
+  pull_request:
+    paths:
+      - 'library/**'
+
+jobs:
+  bump_version:
+    if: github.actor != 'hmcts-platform-operations'
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: '0'
+          ref: ${{ github.head_ref }}
+
+      - name: Get latest release tag
+        run: |
+          git fetch --tags
+          latest_tag=$(git describe --tags `git rev-list --tags --max-count=1`)
+          version_parts=(${latest_tag//./ })
+          major=${version_parts[0]}
+          minor=${version_parts[1]}
+          patch=${version_parts[2]}
+          new_patch=$((patch + 1))
+          new_version="$major.$minor.$new_patch"
+          echo "NEW_VERSION=$new_version" >> $GITHUB_ENV
+
+      - name: Install packages
+        run: |
+          pip install astor
+
+      - name: Run bump-version script
+        run: |
+          echo SCRIPT_OUTPUT=$(python ./scripts/bump-version.py) >> $GITHUB_ENV
+          echo $SCRIPT_OUTPUT
+
+      - name: Commit changes
+        if: env.SCRIPT_OUTPUT == 'version_updated'
+        run: |
+          git config user.name hmcts-platform-operations
+          git config user.email github-platform-operations@hmcts.net
+          git add .
+          git commit -m bump-version
+          git push

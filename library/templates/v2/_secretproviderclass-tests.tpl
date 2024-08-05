@@ -1,4 +1,4 @@
-{{- define "hmcts.secretproviderclass-tests.v3.tpl" -}}
+{{- define "hmcts.secretproviderclass-tests.v2.2.3.tpl" -}}
 {{- $languageValues := deepCopy .Values -}}
 {{- if hasKey .Values "language" -}}
 {{- $languageValues = (deepCopy .Values | merge (pluck .Values.language .Values | first) ) -}}
@@ -13,7 +13,7 @@
 apiVersion: secrets-store.csi.x-k8s.io/v1
 kind: SecretProviderClass
 metadata:
-  name: {{ template "hmcts.releasename.v2" $root }}-tests-{{ $vault }}
+  name: {{ template "hmcts.releasename.v2.2.3" $root }}-tests-{{ $vault }}
 spec:
   provider: azure
   parameters:
@@ -63,6 +63,6 @@ spec:
 {{- end }}
 {{- end -}}
 
-{{- define "hmcts.secretproviderclass-tests.v2" -}}
-{{- template "hmcts.util.merge.v2" (append . "hmcts.secretproviderclass-tests.v2.tpl") -}}
+{{- define "hmcts.secretproviderclass-tests.v2.2.3" -}}
+{{- template "hmcts.util.merge.v2.2.3" (append . "hmcts.secretproviderclass-tests.v2.2.3.tpl") -}}
 {{- end -}}
