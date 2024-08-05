@@ -1,4 +1,4 @@
-{{- define "hmcts.testservice.v2.2.3.tpl" -}}
+{{- define "hmcts.testservice.v2-2-3.tpl" -}}
 apiVersion: v1
 kind: Pod
 metadata:
@@ -24,5 +24,5 @@ spec:
 {{- end -}}
 
 {{- define "hmcts.testservice.v2.2.3" -}}
-{{- template "hmcts.util.merge.v2.2.3" (append . "hmcts.testservice.v2.2.3.tpl") -}}
+{{- template "hmcts.util.merge.v2.2.3" (append . "hmcts.testservice.v2-2-3.tpl") -}}
 {{- end -}}
