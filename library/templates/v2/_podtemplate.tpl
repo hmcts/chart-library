@@ -21,7 +21,7 @@ template:
     serviceAccountName: {{ $languageValues.customServiceAccountName }}
     {{- end }}
 
-    {{- include "hmcts.affinity.v2" . | indent 4 }}
+    {{- include "hmcts.affinity.v1" . | indent 4 }}
     {{- if not $languageValues.runAsRoot }}
     securityContext:
       runAsUser: 1000
