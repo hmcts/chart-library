@@ -19,9 +19,7 @@ def bump_version(file_path, new_version):
     current_version = extract_version(content)
 
     # Compare the current version with the new version
-    if current_version == str(new_version):
-        print(f"Version in {file_path} is already .v{new_version}")
-    else:
+    if current_version != str(new_version):
         os.environ["VERSION_BUMPED"] = "true"
         # Define the regex pattern to find the version strings
         pattern = re.compile(rf'\.v{current_version}\b')
