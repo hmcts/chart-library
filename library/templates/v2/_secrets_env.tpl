@@ -9,7 +9,7 @@ Example format:
     disabled: false
 "
 */}}
-{{- define "hmcts.secrets.v2.2.3" -}}
+{{- define "hmcts.secrets.v2.2.2" -}}
 {{- $languageValues := deepCopy .Values -}}
 {{- if hasKey .Values "language" -}}
 {{- $languageValues = (deepCopy .Values | merge (pluck .Values.language .Values | first) ) -}}

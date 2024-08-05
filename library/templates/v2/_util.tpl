@@ -5,7 +5,7 @@ This takes an array of three values:
 - the template name of the overrides (destination)
 - the template name of the base (source)
 */ -}}
-{{- define "hmcts.util.merge.v2.2.3" -}}
+{{- define "hmcts.util.merge.v2.2.2" -}}
 {{- $top := first . -}}
 {{- $overrides := fromYaml (include (index . 1) $top) | default (dict ) -}}
 {{- $tpl := fromYaml (include (index . 2) $top) | default (dict ) -}}

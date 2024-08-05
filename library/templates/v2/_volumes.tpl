@@ -1,6 +1,6 @@
 {{/*
 */}}
-{{- define "hmcts.volumes.v2.2.3" -}}
+{{- define "hmcts.volumes.v2.2.2" -}}
 {{- $languageValues := deepCopy .Values -}}
 {{- if hasKey .Values "language" -}}
 {{- $languageValues = (deepCopy .Values | merge (pluck .Values.language .Values | first) ) -}}
@@ -19,7 +19,7 @@
 
 {{/*
 */}}
-{{- define "hmcts.volumeMounts.v2.2.3" -}}
+{{- define "hmcts.volumeMounts.v2.2.2" -}}
 {{- $languageValues := deepCopy .Values -}}
 {{- if hasKey .Values "language" -}}
 {{- $languageValues = (deepCopy .Values | merge (pluck .Values.language .Values | first) ) -}}

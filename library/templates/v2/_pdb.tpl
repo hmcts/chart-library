@@ -1,4 +1,4 @@
-{{- define "hmcts.pdb.v2.2.3.tpl" -}}
+{{- define "hmcts.pdb.v2.2.2.tpl" -}}
 {{- $languageValues := deepCopy .Values -}}
 {{- if hasKey .Values "language" -}}
 {{- $languageValues = (deepCopy .Values | merge (pluck .Values.language .Values | first) ) -}}
@@ -8,8 +8,8 @@
 apiVersion: policy/v1
 kind: PodDisruptionBudget
 metadata:
-  name:  {{ template "hmcts.releasename.v2.2.3" . }}-pdb
-  {{- ( include "hmcts.labels.v2.2.3" . ) | indent 2 }}
+  name:  {{ template "hmcts.releasename.v2.2.2" . }}-pdb
+  {{- ( include "hmcts.labels.v2.2.2" . ) | indent 2 }}
 spec:
   {{ if $languageValues.pdb.minAvailable }}
   minAvailable: {{ $languageValues.pdb.minAvailable }}
@@ -18,10 +18,10 @@ spec:
   {{- end }}
   selector:
     matchLabels:
-      app.kubernetes.io/name: {{ template "hmcts.releasename.v2.2.3" . }}
+      app.kubernetes.io/name: {{ template "hmcts.releasename.v2.2.2" . }}
 {{- end }}
 {{- end }}
 
-{{- define "hmcts.pdb.v2.2.3" -}}
-{{- template "hmcts.util.merge.v2.2.3" (append . "hmcts.pdb.v2.2.3.tpl") -}}
+{{- define "hmcts.pdb.v2.2.2" -}}
+{{- template "hmcts.util.merge.v2.2.2" (append . "hmcts.pdb.v2.2.2.tpl") -}}
 {{- end -}}

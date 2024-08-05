@@ -2,7 +2,7 @@
 {{- /*
 All the common labels needed for the labels sections of the definitions.
 */ -}}
-{{- define "hmcts.labels.v2.2.3" }}
+{{- define "hmcts.labels.v2.2.2" }}
 {{- $languageValues := deepCopy .Values }}
 {{- if hasKey .Values "language" -}}
 {{- $languageValues = (deepCopy .Values | merge (pluck .Values.language .Values | first) ) }}
@@ -11,7 +11,7 @@ All the common labels needed for the labels sections of the definitions.
  {{ fail "`labels` is no longer supported." }}
 {{- end }}
 labels:
-  app.kubernetes.io/name: {{ template "hmcts.releasename.v2.2.3" . }}
+  app.kubernetes.io/name: {{ template "hmcts.releasename.v2.2.2" . }}
   helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version }}
   app.kubernetes.io/managed-by: {{ .Release.Service }}
   app.kubernetes.io/instance: {{ .Release.Name }}

@@ -1,4 +1,4 @@
-{{- define "hmcts.hpa.v2.2.3.tpl" -}}
+{{- define "hmcts.hpa.v2.2.2.tpl" -}}
 {{- $languageValues := deepCopy .Values -}}
 {{- if hasKey .Values "language" -}}
 {{- $languageValues = (deepCopy .Values | merge (pluck .Values.language .Values | first) ) -}}
@@ -7,14 +7,14 @@
 {{- if or (not $languageValues.global.devMode) $languageValues.autoscaling.enabledForDevMode}}
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
-{{ template "hmcts.metadata.v2.2.3" . }}
+{{ template "hmcts.metadata.v2.2.2" . }}
 spec:
   maxReplicas: {{ $languageValues.autoscaling.maxReplicas | default (add $languageValues.replicas 2) }}
   minReplicas: {{ $languageValues.autoscaling.minReplicas | default $languageValues.replicas }}
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: {{ template "hmcts.releasename.v2.2.3" . }}
+    name: {{ template "hmcts.releasename.v2.2.2" . }}
   metrics:
   {{- if $languageValues.autoscaling.cpu.enabled }}
   {{/* type: Resource is rendered at the bottom of the resource block in the template.*/}}
