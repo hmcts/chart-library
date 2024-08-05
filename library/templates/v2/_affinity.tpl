@@ -17,7 +17,7 @@ affinity:
       nodeSelectorTerms:
         - matchExpressions:
             - key: kubernetes.azure.com/mode
-              operator: NotIn
+              operator: In
               values:
                 - system
 {{- if $languageValues.spotInstances.enabled }}
