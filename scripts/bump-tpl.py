@@ -1,54 +1,67 @@
 import re
 import glob
 import os
+from git import Repo
 
-def extract_version(content):
+def extract_version(file_path):
     # Define the regex pattern to find the version string
-    pattern = re.compile(r'v(\d+\.\d+\.\d+)\b')
-    match = pattern.search(content)
-    if match:
-        return match.group(1)
-    return None
+    pattern = re.compile(r'define\s+"([^"]+)"')
 
-def bump_version(file_path, new_version):
     # Read the content of the file
     with open(file_path, 'r') as file:
-        content = file.read()
+        content = file.readlines()
 
-    # Extract the current version
-    current_version = extract_version(content)
+    # Iterate through each line and check for a match
+    for i, line in enumerate(content):
+        match = pattern.search(line)
+        if match:
+            # Extract the text between the quotes
+            extracted_text = match.group(1)
+            # print(extracted_text)
 
-    # Compare the current version with the new version
-    if current_version != str(new_version):
-        os.environ["VERSION_BUMPED"] = "true"
-        # Define the regex pattern to find the version strings
-        pattern = re.compile(rf'\.v{current_version}\b')
+            # Remove the .tpl suffix if present
+            cleaned_text = re.sub(r'\.tpl$', '', extracted_text)
+            print(cleaned_text)
 
-        # Replace the old version with the new version
-        updated_content = pattern.sub(f'.v{new_version}', content)
+            # Bump the version number by one
+            bumped_text = re.sub(r'v(\d+)', lambda m: f"v{int(m.group(1)) + 1}", cleaned_text)
 
-        # Write the updated content back to the file
-        with open(file_path, 'w') as file:
-            file.write(updated_content)
+            # Replace the original line with the updated version
+            content[i] = line.replace(cleaned_text, bumped_text)
+            
+            bump_version(cleaned_text, bumped_text)
 
+def bump_version(search_text, replace_text):
+    # Get a list of all files in the repository
+    all_files = [os.path.join(dp, f) for dp, dn, filenames in os.walk('./library') for f in filenames]
+    # Iterate through each file and perform the search and replace
+    for file_path in all_files:
+        try:
+            with open(file_path, 'r', encoding='utf-8', errors='ignore') as file:
+                content = file.read()
+        except UnicodeDecodeError as e:
+            print(f"Error reading {file_path}: {e}")
+            continue
+        # Replace the search_text with replace_text
+        updated_content = content.replace(search_text, replace_text)
+        # Write the updated content back to the file if changes were made
+        if content != updated_content:
+            with open(file_path, 'w') as file:
+                file.write(updated_content)
+            print(f"Replaced '{search_text}' with '{replace_text}' in {file_path}")
+
+def get_changed_files(repo_path):
+    # Initialize the repository
+    repo = Repo(repo_path)
+    
+    # Get the list of changed files
+    changed_files = [item.a_path for item in repo.index.diff(None)]
+    
+    return changed_files
+
+# Example usage
 if __name__ == "__main__":
-    # Define the file path pattern and new version
-    tpl_file_path_pattern = 'library/templates/v2/*.tpl'
-    yaml_file_path_pattern = 'library/templates/v2/*.yaml'
-    new_version = os.environ["NEW_VERSION"]
-
-    # Find all files matching the pattern
-    tpl_files = glob.glob(tpl_file_path_pattern)
-    test_files = glob.glob(test_file_path_pattern)
-    yaml_files = glob.glob(yaml_file_path_pattern)
-
-    # Update the version in each tpl file
-    for file_path in tpl_files:
-        bump_version(file_path, new_version)
-
-    # Update the version in each yaml file
-    for file_path in yaml_files:
-        bump_version(file_path, new_version)
-
-if os.environ.get("VERSION_BUMPED") == "true":
-    print(f"version_updated")
+    repo_path = "."
+    changed_files = get_changed_files(repo_path)
+    for file in changed_files:
+        extract_version(file)
