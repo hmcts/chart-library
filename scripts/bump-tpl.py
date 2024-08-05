@@ -53,9 +53,16 @@ def bump_version(search_text, replace_text):
 def get_changed_files(repo_path):
     # Initialize the repository
     repo = Repo(repo_path)
+
+    # Get the list of staged files
+    staged_files = [item.a_path for item in repo.index.diff(None)]
     
-    # Get the list of changed files
-    changed_files = [item.a_path for item in repo.index.diff(None)]
+    # Get the list of files changed in the last commit
+    last_commit = repo.head.commit
+    committed_files = [item.a_path for item in last_commit.diff('HEAD~1')]
+
+    # Combine both lists and remove duplicates
+    changed_files = list(set(staged_files + committed_files))
     
     return changed_files
 
