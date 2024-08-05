@@ -2,7 +2,7 @@
 {{/*
 Setup pod affinity rules
 */}}
-{{- define "hmcts.affinity.v2" }}
+{{- define "hmcts.affinity.v1" }}
 {{- $languageValues := deepCopy .Values -}}
 {{- if hasKey .Values "language" -}}
 {{- $languageValues = (deepCopy .Values | merge (pluck .Values.language .Values | first) ) -}}
@@ -26,7 +26,7 @@ affinity:
         preference:
           matchExpressions:
             - key: kubernetes.azure.com/scalesetpriority
-              operator: NotIn
+              operator: In
               values:
               - spot
       - weight: 1
