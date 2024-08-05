@@ -1,18 +1,18 @@
 {{/*
 Create pod template spec.
 */}}
-{{- define "hmcts.podtemplate.v2.2.2.tpl" -}}
+{{- define "hmcts.podtemplate.v2.2.3.tpl" -}}
 {{- $languageValues := deepCopy .Values -}}
 {{- if hasKey .Values "language" -}}
 {{- $languageValues = (deepCopy .Values | merge (pluck .Values.language .Values | first) ) -}}
 {{- end -}}
 template:
   metadata:
-    {{- (include "hmcts.labels.v2.2.2" .) | indent 4 }}
+    {{- (include "hmcts.labels.v2.2.3" .) | indent 4 }}
     {{- if $languageValues.useWorkloadIdentity }}
       azure.workload.identity/use: "true"
     {{- end }}
-    {{- (include "hmcts.annotations.v2.2.2" .) | indent 4 }}
+    {{- (include "hmcts.annotations.v2.2.3" .) | indent 4 }}
   spec:
     
     {{- if $languageValues.saEnabled}}
@@ -31,15 +31,15 @@ template:
     nodeSelector:
   {{ toYaml $languageValues.nodeSelector | indent 4 }}
     {{- end }}
-    {{- ( include "hmcts.tolerations.v2.2.2" . ) | indent 4 }}
+    {{- ( include "hmcts.tolerations.v2.2.3" . ) | indent 4 }}
     {{- ( include "hmcts.topologySpreadConstraints.v1" . ) | indent 4 }}
-    {{- ( include "hmcts.dnsConfig.v2.2.2" . ) | indent 4 }}
+    {{- ( include "hmcts.dnsConfig.v2.2.3" . ) | indent 4 }}
     volumes:
-    {{- ( include "hmcts.volumes.v2.2.2" . ) | indent 4 }}
-    {{- ( include "hmcts.secretCSIVolumes.v2.2.2" . ) | indent 4 }}
+    {{- ( include "hmcts.volumes.v2.2.3" . ) | indent 4 }}
+    {{- ( include "hmcts.secretCSIVolumes.v2.2.3" . ) | indent 4 }}
     restartPolicy: {{ $languageValues.restartPolicy | default "Always" | quote }}
     terminationGracePeriodSeconds: {{ $languageValues.terminationGracePeriodSeconds | default 30 }}
     containers:
-{{ include "hmcts.container.v2.2.2.tpl" . | indent 6 -}}
+{{ include "hmcts.container.v2.2.3.tpl" . | indent 6 -}}
 
 {{- end -}}

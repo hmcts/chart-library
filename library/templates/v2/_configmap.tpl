@@ -1,4 +1,4 @@
-{{- define "hmcts.configmap.v2.2.2.tpl" -}}
+{{- define "hmcts.configmap.v2.2.3.tpl" -}}
 {{- $languageValues := deepCopy .Values -}}
 {{- if hasKey .Values "language" -}}
 {{- $languageValues = (deepCopy .Values | merge (pluck .Values.language .Values | first) ) -}}
@@ -8,8 +8,8 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ template "hmcts.releasename.v2.2.2" . }}
-  {{- ( include "hmcts.labels.v2.2.2" . ) | indent 2 }}
+  name: {{ template "hmcts.releasename.v2.2.3" . }}
+  {{- ( include "hmcts.labels.v2.2.3" . ) | indent 2 }}
 data:
   {{- range $key, $val := $languageValues.configmap }}
   {{ $key }}: {{ $val | quote }}
@@ -17,6 +17,6 @@ data:
 {{- end}}
 {{- end -}}
 
-{{- define "hmcts.configmap.v2.2.2" -}}
-{{- template "hmcts.util.merge.v2.2.2" (append . "hmcts.configmap.v2.2.2.tpl") -}}
+{{- define "hmcts.configmap.v2.2.3" -}}
+{{- template "hmcts.util.merge.v2.2.3" (append . "hmcts.configmap.v2.2.3.tpl") -}}
 {{- end -}}
