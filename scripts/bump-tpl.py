@@ -48,7 +48,7 @@ def bump_version(search_text, replace_text):
         if content != updated_content:
             with open(file_path, 'w') as file:
                 file.write(updated_content)
-            print(f"Replaced '{search_text}' with '{replace_text}' in {file_path}")
+            os.environ["VERSION_BUMPED"] = "true"
 
 def get_changed_files(repo_path):
     # Initialize the repository
@@ -65,3 +65,6 @@ if __name__ == "__main__":
     changed_files = get_changed_files(repo_path)
     for file in changed_files:
         extract_version(file)
+
+if os.environ.get("VERSION_BUMPED") == "true":
+    print(f"version_updated")
