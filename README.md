@@ -398,3 +398,17 @@ This is needed because if there is an app with dependencies and those dependenci
 This means we can't be sure which code we are using from which dependency if they were each published in different chart-library versions but under the same template name.
 
 Making sure we bump the template version when editing it helps avoid this problem.
+
+For consuming charts, the pipelines should fail if the library dependency is updated without updating any of the downstream templates which rely on it.
+
+For example, in chart-java:
+
+```
+{{- template "hmcts.configmap.v2.tpl" . -}}
+```
+
+This version should match the version in chart-library. If the version in chart-library is updated and the library version in chart-java is updated, the pipeline for chart-java will fail because the version of configmap needs to be updated to v3:
+
+```
+{{- template "hmcts.configmap.v3.tpl" . -}}
+```
