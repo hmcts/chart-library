@@ -31,7 +31,7 @@ jobs:
 
       - name: Install packages
         run: |
-          pip install astor
+          pip install astor gitpython
 
       - name: Run bump-version script
         run: |
