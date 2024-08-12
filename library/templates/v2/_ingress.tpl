@@ -13,7 +13,7 @@ metadata:
   {{- ( include "hmcts.labels.v2" . ) | indent 2 }}
   annotations:
     {{- if not (hasKey $globals "disableTraefikTls" | ternary $globals.disableTraefikTls $languageValues.disableTraefikTls) }}
-    traefik.ingress.kubernetes.io/router.tls: "false"
+    traefik.ingress.kubernetes.io/router.tls: "true"
     {{- end }}
     {{- if ($languageValues.ingressAnnotations) }}
     {{- range $key, $value := $languageValues.ingressAnnotations }}
