@@ -3,6 +3,8 @@ import glob
 import os
 from git import Repo
 
+repo_path = "."
+
 def extract_version(file_path):
     # Define the regex pattern to find the template
     pattern = re.compile(r'define\s+"([^"]+)"')
@@ -88,7 +90,6 @@ def get_changed_files(repo_path):
     return changed_files
 
 if __name__ == "__main__":
-    repo_path = "."
     changed_files = get_changed_files(repo_path)
     for file in changed_files:
         extract_version(file)
