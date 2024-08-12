@@ -30,6 +30,7 @@ def extract_version(file_path):
             if cleaned_text == master_version:
                 # If the versions are different, don't bump the version
                 bumped_text = cleaned_text
+                print(f"Version already bumped for {cleaned_text}")
             else:
                 # If the versions are the same, bump the version
                 bumped_text = re.sub(r'v(\d+)', lambda m: f"v{int(m.group(1)) + 1}", cleaned_text)
