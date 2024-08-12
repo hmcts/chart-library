@@ -34,6 +34,7 @@ def extract_version(file_path):
             else:
                 # If the versions are the same, bump the version
                 bumped_text = re.sub(r'v(\d+)', lambda m: f"v{int(m.group(1)) + 1}", cleaned_text)
+                print(f"Version not bumped for {cleaned_text}")
 
             # Replace the original line with the updated version
             content[i] = line.replace(cleaned_text, bumped_text)
