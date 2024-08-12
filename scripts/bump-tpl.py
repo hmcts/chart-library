@@ -11,38 +11,40 @@ def extract_version(file_path):
 
     # Read the content of the file
     with open(file_path, 'r') as file:
-        content = file.readlines()
+        content = file.read()
 
-    # Iterate through each line and check for a match
-    for i, line in enumerate(content):
-        match = pattern.search(line)
-        if match:
-            current_branch = Repo(repo_path).active_branch
+    # Find all matches in the content
+    matches = pattern.findall(content)
 
-            # Switch to the master branch
-            Repo(repo_path).git.checkout('master')
+    # Iterate through each match and process it
+    for match in matches:
+        current_branch = Repo(repo_path).active_branch
 
-            # Extract the text between the quotes
-            extracted_text = match.group(1)
+        # Switch to the master branch
+        Repo(repo_path).git.checkout('master')
 
-            # Remove the .tpl suffix if present
-            cleaned_text = re.sub(r'\.tpl$', '', extracted_text)
+        # Remove the .tpl suffix if present
+        cleaned_text = re.sub(r'\.tpl$', '', match)
 
-            # Switch back to the original branch
-            Repo(repo_path).git.checkout(current_branch)
+        # Switch back to the original branch
+        Repo(repo_path).git.checkout(current_branch)
 
-            # Bump the version number by one
-            bumped_text = re.sub(r'v(\d+)', lambda m: f"v{int(m.group(1)) + 1}", cleaned_text)
+        # Bump the version number by one
+        bumped_text = re.sub(r'v(\d+)', lambda m: f"v{int(m.group(1)) + 1}", cleaned_text)
 
-            # Replace the original line with the updated version
-            content[i] = line.replace(cleaned_text, bumped_text)
+        # Replace the original line with the updated version
+        content = content.replace(match, bumped_text)
 
-            # Commit the changes with a message
-            commit_message = "Bump version number for " + cleaned_text
-            Repo(repo_path).git.add(file_path)
-            Repo(repo_path).git.commit('-m', commit_message)
-            
-            bump_version(cleaned_text, bumped_text)
+        # Commit the changes with a message
+        commit_message = "Bump version number for " + cleaned_text
+        Repo(repo_path).git.add(file_path)
+        Repo(repo_path).git.commit('-m', commit_message)
+
+        bump_version(cleaned_text, bumped_text)
+
+    # Write the updated content back to the file if changes were made
+    with open(file_path, 'w') as file:
+        file.write(content)
 
 def bump_version(search_text, replace_text):
     # Get a list of all files in the repository
