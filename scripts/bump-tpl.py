@@ -28,10 +28,10 @@ def extract_version(file_path):
 
             # Check if the current version is the same as the extracted version
             if cleaned_text == master_version:
-                # If the versions are the same, do not bump the version
+                # If the versions are different, don't bump the version
                 bumped_text = cleaned_text
             else:
-                # If the versions are different, bump the version number by one
+                # If the versions are the same, bump the version
                 bumped_text = re.sub(r'v(\d+)', lambda m: f"v{int(m.group(1)) + 1}", cleaned_text)
 
             # Replace the original line with the updated version
