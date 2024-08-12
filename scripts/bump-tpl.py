@@ -17,44 +17,27 @@ def extract_version(file_path):
     for i, line in enumerate(content):
         match = pattern.search(line)
         if match:
+            current_branch = Repo(repo_path).active_branch
+
+            # Switch to the master branch
+            Repo(repo_path).git.checkout('master')
+
             # Extract the text between the quotes
             extracted_text = match.group(1)
 
             # Remove the .tpl suffix if present
             cleaned_text = re.sub(r'\.tpl$', '', extracted_text)
 
-            # Get the current version in the master branch
-            master_version = get_master_version()
+            # Switch back to the original branch
+            Repo(repo_path).git.checkout(current_branch)
 
-            # Check if the current version is the same as the extracted version
-            if cleaned_text == master_version:
-                # If the versions are different, don't bump the version
-                bumped_text = cleaned_text
-                print(f"Version already bumped for {cleaned_text}")
-            else:
-                # If the versions are the same, bump the version
-                bumped_text = re.sub(r'v(\d+)', lambda m: f"v{int(m.group(1)) + 1}", cleaned_text)
-                print(f"Version not bumped for {cleaned_text}")
+            # Bump the version number by one
+            bumped_text = re.sub(r'v(\d+)', lambda m: f"v{int(m.group(1)) + 1}", cleaned_text)
 
             # Replace the original line with the updated version
             content[i] = line.replace(cleaned_text, bumped_text)
             
             bump_version(cleaned_text, bumped_text)
-
-def get_master_version():
-    # Get the current branch
-    current_branch = Repo(repo_path).active_branch
-
-    # Switch to the master branch
-    Repo(repo_path).git.checkout('master')
-
-    # Get the version of cleaned_text in the master branch
-    master_version = extract_version(file_path)
-
-    # Switch back to the original branch
-    Repo(repo_path).git.checkout(current_branch)
-
-    return master_version
 
 def bump_version(search_text, replace_text):
     # Get a list of all files in the repository
