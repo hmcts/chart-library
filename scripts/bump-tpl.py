@@ -36,6 +36,11 @@ def extract_version(file_path):
 
             # Replace the original line with the updated version
             content[i] = line.replace(cleaned_text, bumped_text)
+
+            # Commit the changes with a message
+            commit_message = "Bump version number for " + cleaned_text
+            Repo(repo_path).git.add(file_path)
+            Repo(repo_path).git.commit('-m', commit_message)
             
             bump_version(cleaned_text, bumped_text)
 
