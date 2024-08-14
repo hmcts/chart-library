@@ -1,4 +1,4 @@
-{{- define "hmcts.configmap.v2.tpl" -}}
+{{- define "hmcts.configmap.v3.tpl" -}}
 {{- $languageValues := deepCopy .Values -}}
 {{- if hasKey .Values "language" -}}
 {{- $languageValues = (deepCopy .Values | merge (pluck .Values.language .Values | first) ) -}}
@@ -17,6 +17,6 @@ data:
 {{- end}}
 {{- end -}}
 
-{{- define "hmcts.configmap.v2" -}}
-{{- template "hmcts.util.merge.v2" (append . "hmcts.configmap.v2.tpl") -}}
+{{- define "hmcts.configmap.v3" -}}
+{{- template "hmcts.util.merge.v2" (append . "hmcts.configmap.v3.tpl") -}}
 {{- end -}}
