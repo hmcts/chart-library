@@ -34,7 +34,7 @@ jobs:
 
       - name: Run bump-tpl-version script
         run: |
-          echo SCRIPT_OUTPUT=$(python scripts/bump-tpl-versions.py)
+          echo SCRIPT_OUTPUT=$(python scripts/bump-tpl-versions.py) >> $GITHUB_ENV
         env:
           CHANGED_FILES: ${{ steps.changed-files.outputs.all_changed_files }}
 
