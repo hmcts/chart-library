@@ -35,4 +35,8 @@ all_files = [os.path.join(dp, f) for dp, dn, filenames in os.walk('./library/tem
 
 # Iterate through each file and find and extract the pattern
 for file_path in all_files:
+<<<<<<< HEAD
     find_and_extract_pattern(file_path, pattern)
+=======
+    find_and_extract_pattern(file_path, pattern)
+>>>>>>> master
