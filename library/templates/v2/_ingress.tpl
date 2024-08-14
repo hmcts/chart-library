@@ -1,4 +1,4 @@
-{{- define "hmcts.ingress.v4.tpl" -}}
+{{- define "hmcts.ingress.v3.tpl" -}}
 {{- $languageValues := deepCopy .Values -}}
 {{- if hasKey .Values "language" -}}
 {{- $languageValues = (deepCopy .Values | merge (pluck .Values.language .Values | first) ) -}}
@@ -10,7 +10,7 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: {{ template "hmcts.releasename.v2" . }}
-  {{- ( include "hmcts.labels.v3" . ) | indent 2 }}
+  {{- ( include "hmcts.labels.v2" . ) | indent 2 }}
   annotations:
     {{- if not (hasKey $globals "disableTraefikTls" | ternary $globals.disableTraefikTls $languageValues.disableTraefikTls) }}
     traefik.ingress.kubernetes.io/router.tls: "true"
@@ -27,7 +27,7 @@ spec:
   - host: {{ tpl $languageValues.ingressHost $ | lower }}
     http:
       paths:
-      {{- ( include "hmcts.additionalPathBasedRoutes.v3" .) | indent 4 }}
+      {{- ( include "hmcts.additionalPathBasedRoutes.v2" .) | indent 4 }}
       - path: /
         pathType: Prefix
         backend:
@@ -40,7 +40,7 @@ spec:
   - host: {{ $languageValues.registerAdditionalDns.prefix }}-{{ tpl $languageValues.registerAdditionalDns.primaryIngressHost $ }}
     http:
       paths:
-      {{- ( include "hmcts.additionalPathBasedRoutes.v3" .) | indent 4 }}
+      {{- ( include "hmcts.additionalPathBasedRoutes.v2" .) | indent 4 }}
       - path: /
         pathType: Prefix
         backend:
@@ -54,7 +54,7 @@ spec:
   - host: {{ tpl . $ | lower }}
     http:
       paths:
-      {{- ( include "hmcts.additionalPathBasedRoutes.v3" $ ) | indent 4 }}
+      {{- ( include "hmcts.additionalPathBasedRoutes.v2" $ ) | indent 4 }}
       - path: /
         pathType: Prefix
         backend:
@@ -67,14 +67,14 @@ spec:
 {{- end}}
 {{- end }}
 
-{{- define "hmcts.ingress.v4" -}}
-{{- template "hmcts.util.merge.v2" (append . "hmcts.ingress.v4.tpl") -}}
+{{- define "hmcts.ingress.v3" -}}
+{{- template "hmcts.util.merge.v2" (append . "hmcts.ingress.v3.tpl") -}}
 {{- end -}}
 
 {{/*
 Additional Path based routes
 */}}
-{{- define "hmcts.additionalPathBasedRoutes.v3" }}
+{{- define "hmcts.additionalPathBasedRoutes.v2" }}
 {{- $languageValues := deepCopy .Values -}}
 {{- if hasKey .Values "language" -}}
 {{- $languageValues = (deepCopy .Values | merge (pluck .Values.language .Values | first) ) -}}

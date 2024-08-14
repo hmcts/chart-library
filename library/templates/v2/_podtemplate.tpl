@@ -1,14 +1,14 @@
 {{/*
 Create pod template spec.
 */}}
-{{- define "hmcts.podtemplate.v7.tpl" -}}
+{{- define "hmcts.podtemplate.v6.tpl" -}}
 {{- $languageValues := deepCopy .Values -}}
 {{- if hasKey .Values "language" -}}
 {{- $languageValues = (deepCopy .Values | merge (pluck .Values.language .Values | first) ) -}}
 {{- end -}}
 template:
   metadata:
-    {{- (include "hmcts.labels.v3" .) | indent 4 }}
+    {{- (include "hmcts.labels.v2" .) | indent 4 }}
     {{- if $languageValues.useWorkloadIdentity }}
       azure.workload.identity/use: "true"
     {{- end }}
