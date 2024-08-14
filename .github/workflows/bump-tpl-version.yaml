@@ -11,17 +11,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
 
-      - name: Checkout
+      - name: Checkout master
         uses: actions/checkout@v4
         with:
           fetch-depth: '0'
-          ref: ${{ github.head_ref }}
       
       - name: Run extract-tpl-version script
         run: |
-          echo SCRIPT_OUTPUT=$(python scripts/extract-tpl-versions.py)
+          python scripts/extract-tpl-versions.py
 
-      - name: Checkout
+      - name: Checkout branch
         uses: actions/checkout@v4
         with:
           fetch-depth: '0'
