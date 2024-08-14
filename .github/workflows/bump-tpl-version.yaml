@@ -14,8 +14,7 @@ jobs:
       - name: Checkout master
         uses: actions/checkout@v4
         with:
-          fetch-depth: '0'
-          ref: ${{ github.head_ref }}
+          ref: master
       
       - name: Run extract-tpl-version script
         run: |
@@ -23,6 +22,8 @@ jobs:
 
       - name: Checkout branch
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
 
       - name: Get changed files
         id: changed-files
