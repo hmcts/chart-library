@@ -410,7 +410,7 @@ For example, in chart-java:
 This version should match the version in chart-library. If the version in chart-library is updated and the library version in chart-java is updated, the pipeline for chart-java will fail because the version of configmap needs to be updated to v3:
 
 ```
-{{- template "hmcts.configmap.v2.tpl" . -}}
+{{- template "hmcts.configmap.v3.tpl" . -}}
 ```
 
 **Note** 
