@@ -16,15 +16,26 @@ jobs:
         with:
           fetch-depth: '0'
           ref: ${{ github.head_ref }}
-
-      - name: Install packages
+      
+      - name: Run extract-tpl-version script
         run: |
-          pip install astor gitpython
+          echo SCRIPT_OUTPUT=$(python scripts/extract-tpl-versions.py)
 
-      - name: Run bump-version script
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: '0'
+          ref: ${{ github.head_ref }}
+
+      - name: Get changed files
+        id: changed-files
+        uses: tj-actions/changed-files@v44
+
+      - name: Run bump-tpl-version script
         run: |
-          echo SCRIPT_OUTPUT=$(python scripts/bump-tpl.py) >> $GITHUB_ENV
-          echo $SCRIPT_OUTPUT
+          echo SCRIPT_OUTPUT=$(python scripts/bump-tpl-versions.py)
+        env:
+          CHANGED_FILES: ${{ steps.changed-files.outputs.changed_files }}
 
       - name: Commit changes
         if: env.SCRIPT_OUTPUT == 'version_updated'
