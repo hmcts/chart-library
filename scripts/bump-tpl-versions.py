@@ -47,4 +47,7 @@ with open('/tmp/bumped-tpl-versions.txt', 'r') as bumped_file:
                         # Write the updated version number to the files that contain the template
                         with open(file_path, 'w') as file:
                             file.write(updated_content)
-                            os.environ["VERSION_BUMPED"] = "true"
+                            os.environ["version_bumped"] = "true"
+
+if os.environ.get("version_bumped") == "true":
+    print(f"version_updated")
