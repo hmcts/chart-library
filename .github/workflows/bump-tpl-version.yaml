@@ -33,7 +33,7 @@ jobs:
         run: |
           echo SCRIPT_OUTPUT=$(python scripts/bump-tpl-versions.py)
         env:
-          CHANGED_FILES: ${{ steps.changed-files.outputs.changed_files }}
+          CHANGED_FILES: ${{ steps.changed-files.outputs.all_changed_files }}
 
       - name: Commit changes
         if: env.SCRIPT_OUTPUT == 'version_updated'
