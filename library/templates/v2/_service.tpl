@@ -8,7 +8,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: {{ template "hmcts.releasename.v2" . }}
-  {{- ( include "hmcts.labels.v3" . ) | indent 2 }}
+  {{- ( include "hmcts.labels.v2" . ) | indent 2 }}
   {{- /*
   # WARNING: ingressSessionAffinity is a temporary option.
   # This is subject to removal without notice. Do NOT use for any reason!
