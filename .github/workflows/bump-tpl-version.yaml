@@ -44,5 +44,5 @@ jobs:
           git config user.name hmcts-platform-operations
           git config user.email github-platform-operations@hmcts.net
           git add .
-          git commit -m bump-version
+          git commit -m "Bump helm template versions"
           git push
