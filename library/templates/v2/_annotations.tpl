@@ -1,7 +1,7 @@
 {{/*
 All the common annotations needed for the annotations sections of the definitions.
 */}}
-{{- define "hmcts.annotations.v2" }}
+{{- define "hmcts.annotations.v3" }}
 {{- $languageValues := deepCopy .Values}}
 {{- if hasKey .Values "language" -}}
 {{- $languageValues = (deepCopy .Values | merge (pluck .Values.language .Values | first) )}}
