@@ -5,6 +5,9 @@ on:
     paths:
       - 'library/**'
 
+env:
+  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
 jobs:
   bump_version:
     runs-on: ubuntu-latest

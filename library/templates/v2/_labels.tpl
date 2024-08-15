@@ -8,7 +8,7 @@ All the common labels needed for the labels sections of the definitions.
 {{- $languageValues = (deepCopy .Values | merge (pluck .Values.language .Values | first) ) }}
 {{- end -}}
 {{- if $languageValues.labels }}
- {{ fail "`labels` is no longer supported" }}
+ {{ fail "`labels` is no longer supported. No way" }}
 {{- end }}
 labels:
   app.kubernetes.io/name: {{ template "hmcts.releasename.v2" . }}

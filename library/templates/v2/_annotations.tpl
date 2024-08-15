@@ -1,7 +1,7 @@
 {{/*
 All the common annotations needed for the annotations sections of the definitions.
 */}}
-{{- define "hmcts.annotations.v3" }}
+{{- define "hmcts.annotations.v2" }}
 {{- $languageValues := deepCopy .Values}}
 {{- if hasKey .Values "language" -}}
 {{- $languageValues = (deepCopy .Values | merge (pluck .Values.language .Values | first) )}}
@@ -11,7 +11,7 @@ annotations:
   {{- $applicationPort := .applicationPort -}} 
   {{- with .prometheus }}
   {{- if .enabled }}
-  prometheus.io/scrape: "false"
+  prometheus.io/scrape: "true"
   prometheus.io/path: {{ .path | quote }}
   prometheus.io/port: {{ $applicationPort | quote }}
   {{- end }}
