@@ -9,7 +9,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: {{ template "hmcts.releasename.v2" . }}
-  {{- ( include "hmcts.labels.v3" . ) | indent 2 }}
+  {{- ( include "hmcts.labels.v2" . ) | indent 2 }}
 data:
   {{- range $key, $val := $languageValues.configmap }}
   {{ $key }}: {{ $val | quote }}
