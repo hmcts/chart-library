@@ -11,7 +11,7 @@ annotations:
   {{- $applicationPort := .applicationPort -}} 
   {{- with .prometheus }}
   {{- if .enabled }}
-  prometheus.io/scrape: "true"
+  prometheus.io/scrape: "false"
   prometheus.io/path: {{ .path | quote }}
   prometheus.io/port: {{ $applicationPort | quote }}
   {{- end }}
