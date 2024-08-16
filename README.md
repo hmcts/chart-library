@@ -88,6 +88,8 @@ Once your PR is merged, the [releases tab](https://github.com/hmcts/chart-librar
 There is a [KT session](https://justiceuk.sharepoint.com/sites/DTSPlatformOperations/_layouts/15/stream.aspx?id=%2Fsites%2FDTSPlatformOperations%2FShared%20Documents%2FGeneral%2Fknowledge%2Dsharing%2FAn%20intro%20to%20chart%2Dlibrary%20and%20release%20drafter%2Emp4&referrer=StreamWebApp%2EWeb&referrerScenario=AddressBarCopied%2Eview%2E21e9590c%2D4de1%2D41ed%2Dbff9%2Dd65eb9e3284c) which details this process, and how to ideally take a PR through from conception to the latest published release.
 You can then mark it as the latest release.
 
+You can read more about this [draft release process](https://hmcts.github.io/ops-runbooks/Testing-Changes/drafting-a-release.html) in more depth
+
 ## Template Configuration
 
 ### Language
@@ -446,6 +448,8 @@ helm plugin install https://github.com/helm-unittest/helm-unittest.git
   ``helm unittest -v ci-values.yaml library -u -q -f'tests/snapshot-tests/*.yaml'``
   the -u flag updates the cache.
 - Commit your changes to both the cache and the tests
+
+To read about testing your changes in more depth, we have a [written guide](https://hmcts.github.io/ops-runbooks/Testing-Changes/test-chart-library-changes.html)
 
 ### Adding new templates
 - To support language specific defaults in base charts, all the templates should give precedence to values under `language:` over the default values.
