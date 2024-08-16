@@ -34,8 +34,10 @@ def bump_versions(files):
                                 with open('/tmp/bumped-tpl-versions.txt', 'a') as file:
                                     file.write(new_version + '\n')
 
+# Increment the version number of the templates in files changed in the initial commit
 bump_versions(changed_files_list)
 
+# Keep looping over files while changes are detected, until all references are updated 
 while changes_made:
     changes_made = False
     # Search for each line in /tmp/bumped-tpl-versions.txt in the library/templates/v2 directory
@@ -53,6 +55,7 @@ while changes_made:
                             content = file.read()
                             updated_content = content.replace(line, new_version)
                         
+                        # Append newly changed files to a new list and then bump the versions in those files
                         new_changed_files_list.append(file_path)
                         bump_versions(new_changed_files_list)
 
