@@ -465,3 +465,47 @@ To read about testing your changes in more depth, we have a [written guide](http
 - Generated manifests can be installed on a cluster if you want to see they are working as expected.
 - Make sure language specific cases are covered in the tests [see](ci-values-lang.yaml)
 - Once you release the chart , include the new template in applicable base charts [see](https://github.com/hmcts/chart-java/pull/115)
+
+### Bumping template versions
+
+When you make a change to a template file and push it to GitHub in a pull request, an action will run that will run a python script to automatically bump the version of the template you have edited.
+
+For example, if you make changes to `affinity.tpl` the version of the template will be updated from:
+
+```
+{{- define "hmcts.affinity.v1" }}
+```
+
+to:
+
+```
+{{- define "hmcts.affinity.v2" }}
+```
+
+The [script](./scripts/bump-tpl.py) will also search for references to the edited template in other files and update them accordingly.
+
+This is needed because if there is an app with dependencies and those dependencies are both pulling chart-library on different versions, then the one downloaded last is used as helm has no native versioning system for the template files besides the naming. This causes multiple conflicts and it's tough to resolve. 
+
+This means we can't be sure which code we are using from which dependency if they were each published in different chart-library versions but under the same template name.
+
+Making sure we bump the template version when editing it helps avoid this problem.
+
+For consuming charts, the pipelines should fail if the library dependency is updated without updating any of the downstream templates which rely on it.
+
+For example, in chart-java:
+
+```
+{{- template "hmcts.configmap.v2.tpl" . -}}
+```
+
+This version should match the version in chart-library. If the version in chart-library is updated and the library version in chart-java is updated, the pipeline for chart-java will fail because the version of configmap needs to be updated to v3:
+
+```
+{{- template "hmcts.configmap.v3.tpl" . -}}
+```
+
+**Note** 
+
+The nature of this action can mean there are cascading increments. If you push to your branch in GitHub and changes are detected in the template files, the versions will be incremented in other files which will, in turn, have their references updated in other files. You will need to run `git pull` to pull the latest changes from GitHub to your local branch.
+
+If changes are made by the action, on the next push, there may be further changes that cause increments. This is unlikely but it is something to be aware of.

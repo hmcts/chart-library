@@ -1,0 +1,47 @@
+name: Bump tpl version
+
+on:
+  pull_request:
+    paths:
+      - 'library/**'
+
+jobs:
+  bump_version:
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Checkout master
+        uses: actions/checkout@v4
+        with:
+          ref: master
+      
+      - name: Run extract-tpl-version script
+        run: |
+          python scripts/extract-tpl-versions.py
+
+      - name: Checkout branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+
+      - name: Get changed files
+        id: changed-files
+        uses: tj-actions/changed-files@v44
+        with:
+          files: |
+            library/templates/v2/**
+
+      - name: Run bump-tpl-version script
+        run: |
+          echo SCRIPT_OUTPUT=$(python scripts/bump-tpl-versions.py) >> $GITHUB_ENV
+        env:
+          CHANGED_FILES: ${{ steps.changed-files.outputs.all_changed_files }}
+
+      - name: Commit changes
+        if: env.SCRIPT_OUTPUT == 'version_updated'
+        run: |
+          git config user.name hmcts-platform-operations
+          git config user.email github-platform-operations@hmcts.net
+          git add .
+          git commit -m "Bump helm template versions"
+          git push
