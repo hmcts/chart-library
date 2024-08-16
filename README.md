@@ -1,5 +1,94 @@
 # chart-library
-Library Helm Chart
+
+This repository is the foundation to most other templated application specific helm charts used across the project:
+- [chart-java](https://github.com/hmcts/chart-java)
+- [chart-nodejs](https://github.com/hmcts/chart-nodejs)
+- [chart-job](https://github.com/hmcts/chart-job)
+- [chart-function](https://github.com/hmcts/chart-function)
+- [chart-base](https://github.com/hmcts/chart-base)
+- [chart-blobstorage](https://github.com/hmcts/chart-blobstorage)
+- [chart-postrgesql](https://github.com/hmcts/chart-postgresql)
+- [chart-neuvector](https://github.com/hmcts/chart-neuvector)
+- [chart-servicebus](https://github.com/hmcts/chart-servicebus)
+
+
+The [library chart](https://helm.sh/docs/topics/library_charts/) contains [named helm templates](https://helm.sh/docs/chart_template_guide/named_templates/) that are manipulated through Values files in the application helm charts, to provide structured, reusable and consistent YAML files that are deployed to our AKS clusters holding common Kubernetes resource configurations.
+
+Using a central library chart allows us to roll out changes to resources across the estate in a scalable and efficient way. It is explicitly different to an application chart, and is not installable.
+
+## Making a change to chart-library
+
+Because this is the foundational level of all our templated helm charts, it's critical that changes made to this repo are well tested with feature flagged changes. A breaking change in chart-library will be inherited by all charts that consume it as a dependency. 
+
+**Because renovate is used across the estate, as soon as a new chart-xyz version is released, it will be raised as a Pull Request and potentially automerged by renovate to team application repositories**, this is why feature flagging and testing is so important when making changes to this repo.
+
+When you release a new version of chart-library, it's ideal to ensure all consuming application charts are updated to include the change, with new releases also made for each of them. This ensures we are as up to date as possible with central template changes across the board.
+
+### How is chart-library used by application charts?
+
+It is included as a helm dependency, so all template definitions are made available to any application chart.
+
+```yaml
+dependencies:
+  - name: library
+    version: 2.2.1
+    repository: https://hmctspublic.azurecr.io/helm/v1/repo/
+```
+Each application chart can pick and choose which templates to add by [defining them](https://github.com/hmcts/chart-java/blob/master/java/templates/configmap.yaml).
+
+Application charts can manipulate the template logic by including and manipulating variables in their [values.yaml](https://github.com/hmcts/chart-java/blob/master/java/values.yaml).
+
+### Feature Flagging
+We should avoid making breaking changes to this repository wherever possible. To keep things as compatible as possible, any new functionality or changed functionality should always be behind a feature flag (a variable that gets checked from values.yaml in this case), so teams can toggle features or functionality in their `values.yaml` file.
+
+A good simple example of this is [CPU autoscaling](https://github.com/hmcts/chart-library/blob/48a0176cdb6dc30907e0cdfa4a5c000c13e3cb1c/library/templates/v2/_hpa.tpl#L19-L27)
+```yaml
+  {{- if $languageValues.autoscaling.cpu.enabled }}
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: {{ $languageValues.autoscaling.cpu.averageUtilization }}
+  {{- end }}
+```
+
+If an application chart defines the following their `values.yaml` file, the feature `CPU autoscaling` will be enabled. But we are not forcing people to accept the change.
+```yaml
+autoscaling:
+  cpu:
+    enabled: true
+```
+
+This concept can be extended to any new feature or change in the library, it allows people to consume Library Chart updates, without having to accept every single feature which might not suit their use case.
+
+For situations where we **need** to make a breaking change, a new major version of chart-library should be released with clear documentation in the release notes.
+
+### Release Pattern and Testing Functionality
+chart-library uses semantic versioning via GitHub releases to publish versioned Library Charts. Releases are generally handled by an automated process called [Release Drafter](https://github.com/hmcts/chart-library/blob/master/.github/workflows/release-drafter.yml).
+
+As well as feature flagging, you should be testing your code changes by creating a new alpha or beta release from your PR branch, this adds another layer of detection for potential issues. For example [2.1.3-alpha](https://github.com/hmcts/chart-library/releases/tag/2.1.3-alpha). It's important that you mark this as a pre-release version and not the latest version. This stops the likes of Renovate thinking a new version is available and raising a PR to upgrade it.
+
+<img src="release-drafter.png" alt="image showing what checkbox marks an alpha release as pre-release" width="750" height="750"/>
+
+
+You can then draft a pre-release version of an application chart like chart-java, by raising a PR that bumps the library dependency to the alpha release you created, and test with plum or toffee that the new chart-library works and is deployable to AKS without issues.
+
+
+#### Example of testing 2.1.3-alpha chart-library release: 
+- [PR which points to alpha release](https://github.com/hmcts/chart-java/commit/35234f39c8cea7e22bb0c70b8869dbfb809c3c23)
+- [Alpha pre-release of chart-java](https://github.com/hmcts/chart-java/releases/tag/5.2.1-alpha) - created as a draft release from your PR branch
+- Test this version with plum or toffee works on AKS as expected, expirement with different values.yaml changes
+
+**For particularly complex or potentially breaking changes, you should be toggling features on and off and seeing that things work as expected in the plum/toffee deployment using these alpha pre-release charts**, this allows you to fully test the helm templates on AKS and spot things our other tests may miss.
+
+Only once you've done this and ensured there will be no breaking changes in your chart-library update, you can get your PR reviewed by a member of Platform Operations.
+When a PR has been approved and merged, you also need to publish a new release for consumption by dependent application charts.
+Once your PR is merged, the [releases tab](https://github.com/hmcts/chart-library/releases) will show a new draft release. You should ensure the release description is accurate and detailed, and contains any relevant labels.
+There is a [KT session](https://justiceuk.sharepoint.com/sites/DTSPlatformOperations/_layouts/15/stream.aspx?id=%2Fsites%2FDTSPlatformOperations%2FShared%20Documents%2FGeneral%2Fknowledge%2Dsharing%2FAn%20intro%20to%20chart%2Dlibrary%20and%20release%20drafter%2Emp4&referrer=StreamWebApp%2EWeb&referrerScenario=AddressBarCopied%2Eview%2E21e9590c%2D4de1%2D41ed%2Dbff9%2Dd65eb9e3284c) which details this process, and how to ideally take a PR through from conception to the latest published release.
+You can then mark it as the latest release.
+
+You can read more about this [draft release process](https://hmcts.github.io/ops-runbooks/Testing-Changes/drafting-a-release.html) in more depth
 
 ## Template Configuration
 
@@ -359,6 +448,8 @@ helm plugin install https://github.com/helm-unittest/helm-unittest.git
   ``helm unittest -v ci-values.yaml library -u -q -f'tests/snapshot-tests/*.yaml'``
   the -u flag updates the cache.
 - Commit your changes to both the cache and the tests
+
+To read about testing your changes in more depth, we have a [written guide](https://hmcts.github.io/ops-runbooks/Testing-Changes/test-chart-library-changes.html)
 
 ### Adding new templates
 - To support language specific defaults in base charts, all the templates should give precedence to values under `language:` over the default values.
