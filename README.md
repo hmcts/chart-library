@@ -506,6 +506,6 @@ This version should match the version in chart-library. If the version in chart-
 
 **Note** 
 
-The nature of this action can mean there are cascading increments. If you push to your branch in GitHub and changes are detected in the template files, the versions will be incremented. You will need to run `git pull` to pull the latest changes from GitHub to your local branch.
+The nature of this action can mean there are cascading increments. If you push to your branch in GitHub and changes are detected in the template files, the versions will be incremented in other files which will, in turn, have their references updated in other files. You will need to run `git pull` to pull the latest changes from GitHub to your local branch.
 
 If changes are made by the action, on the next push, there may be further changes that cause increments. This is unlikely but it is something to be aware of.
