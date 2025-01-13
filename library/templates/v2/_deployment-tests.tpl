@@ -14,7 +14,7 @@ spec:
 {{- include "hmcts.tests.spec.v2" $smokedata | indent 2 }}
 {{- end }}
 
-{{ if $languageValues.functionaltests.enabled }}
+{{ if and $languageValues.smoketests ( $languageValues.functionaltests.enabled ) }}
 ---
 {{ $functionaldata := dict "Values" $languageValues "Release" .Release "Chart" .Chart "Template" .Template "Files" .Files }}
 {{ $_ := set $functionaldata.Values "task" "functional" }}
