@@ -25,7 +25,7 @@ spec:
 {{- include "hmcts.tests.spec.v2" $functionaldata | indent 2 }}
 {{- end }}
 
-{{ if and $languageValues.smoketestscron.enabled $languageValues.global.smoketestscron.enabled }}
+{{ if and $languageValues.smoketests ( $languageValues.smoketestscron.enabled ) ( $languageValues.global.smoketestscron.enabled ) }}
 ---
 {{ $smokedatacron := dict "Values" $languageValues "Release" .Release "Chart" .Chart "Template" .Template "Files" .Files }}
 {{ $_ := set $smokedatacron.Values "task" "smoke" }}
@@ -36,7 +36,7 @@ spec:
 {{- include "hmcts.tests.spec.v2" $smokedatacron | indent 10 }}
 {{- end }}
 
-{{ if and $languageValues.functionaltestscron.enabled $languageValues.global.functionaltestscron.enabled }}
+{{ if and $languageValues.smoketests ( $languageValues.functionaltestscron.enabled ) ( $languageValues.global.functionaltestscron.enabled ) }}
 ---
 {{ $functionaldatacron := dict "Values" $languageValues "Release" .Release "Chart" .Chart "Template" .Template "Files" .Files }}
 {{ $_ := set $functionaldatacron.Values "task" "functional" }}
