@@ -3,7 +3,7 @@
 {{- if hasKey .Values "language" -}}
 {{- $languageValues = (deepCopy .Values | merge (pluck .Values.language .Values | first) ) -}}
 {{- end -}}
-{{ if $languageValues.smoketests.enabled }}
+{{ if and $languageValues.smoketests ( $languageValues.smoketests.enabled ) }}
 ---
 {{ $smokedata := dict "Values" $languageValues "Release" .Release "Chart" .Chart "Template" .Template "Files" .Files }}
 {{ $_ := set $smokedata.Values "task" "smoke" }}
