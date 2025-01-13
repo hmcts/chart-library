@@ -1,4 +1,4 @@
-{{- define "hmcts.deploymenttests.v2.tpl" -}}
+{{- define "hmcts.deploymenttests.v3.tpl" -}}
 {{- $languageValues := deepCopy .Values -}}
 {{- if hasKey .Values "language" -}}
 {{- $languageValues = (deepCopy .Values | merge (pluck .Values.language .Values | first) ) -}}
@@ -49,6 +49,6 @@ spec:
 
 {{- end -}}
 
-{{- define "hmcts.deploymenttests.v2" -}}
-{{- template "hmcts.util.merge.v2" (append . "hmcts.deploymenttests.v2.tpl") -}}
+{{- define "hmcts.deploymenttests.v3" -}}
+{{- template "hmcts.util.merge.v2" (append . "hmcts.deploymenttests.v3.tpl") -}}
 {{- end -}}
