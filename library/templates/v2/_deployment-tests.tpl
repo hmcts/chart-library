@@ -49,6 +49,6 @@ spec:
 
 {{- end -}}
 
-{{- define "hmcts.deploymenttests.v3" -}}
-{{- template "hmcts.util.merge.v2" (append . "hmcts.deploymenttests.v3.tpl") -}}
+{{- define "hmcts.deploymenttests.v2" -}}
+{{- template "hmcts.util.merge.v2" (append . "hmcts.deploymenttests.v2.tpl") -}}
 {{- end -}}
