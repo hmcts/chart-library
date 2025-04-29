@@ -1,0 +1,280 @@
+applicationPort: 2000
+memoryRequests: 32Mi
+cpuRequests: 50m
+memoryLimits: 256Mi
+cpuLimits: 250m
+readinessPath: /healthz
+readinessDelay: 50
+readinessTimeout: 30
+readinessPeriod: 150
+livenessDelay: 50
+livenessTimeout: 30
+livenessPeriod: 150
+livenessFailureThreshold: 30
+startupDelay: 5
+startupTimeout: 30
+startupPeriod: 150
+startupFailureThreshold: 30
+envFromSecret: "env-secret"
+dnsConfig:
+  ndots: "2"
+pdb:
+  enabled: true
+  maxUnavailable: 30%
+prometheus:
+  enabled: false
+  path: /metricz
+ingressClass: traefik
+useWorkloadIdentity: true
+global:
+  tenantId: "8d2d8d2d-0ae9-462a-8d2d-bec7c0b42082"
+  environment: prod
+  enableKeyVaults: true
+  devMode: false
+  smoketestscron:
+    enabled: true
+  functionaltestscron:
+    enabled: true
+image: hmctspublic.azurecr.io/chart-java/testapp
+replicas: 1
+ingressHost: "{{.Release.Name}}.service.core-compute-prod.internal"
+disableTraefikTls: true
+livenessPath: /health/livenezz
+imagePullPolicy: Alwayz
+environment:
+  REFORM_TEAM: rpe
+  REFORM_SERVICE_NAME: rhubarb
+  REFORM_ENVIRONMENT: prod
+env:
+  - name: DESIRED_VERSION
+    value: "10.2.0"
+volumeMounts:
+  - name: hung-pod-script
+    mountPath: /mnt
+volumes:
+  - name: hung-pod-script
+    configMap:
+      name: delete-hung-pods
+      defaultMode: 0777
+nodeSelector:
+  agentpool: cronjob
+spotInstances:
+  enabled: true
+tolerations:
+  - effect: NoSchedule
+    key: dedicated
+    operator: Equal
+    value: jobs
+configmap:
+  VAR_A: VALUE_C
+  VAR_B: VALUE_D
+saEnabled: false
+customServiceAccountName: customServiceAccount
+keyVaults:
+  bulk-scan:
+    excludeEnvironmentSuffix: false
+    secrets:
+      - name: idam-client-secret
+        alias: idam.client.secret
+      - name: s2s-secret
+      - name: idam-client-<ENV>-secret
+        alias: idam.client.env.secret
+      - name: s2s-<ENV>-secret
+    certs:
+      - name: idam-client-cert
+        alias: idam.client.cert
+      - name: s2s-cert
+  bulk-scan-v2:
+    mountPath: /run/secrets/bulk-scan-alias
+    excludeEnvironmentSuffix: false
+    secrets:
+      - name: alias-secret
+additionalPathBasedRoutes:
+  "/test": "{{.Release.Name}}"
+secrets:
+  STORAGE_ACCOUNT_NAME:
+    secretRef: storage-secret-example-{{ .Release.Name }}
+    key: storageAccountName
+# WARNING: ingressSessionAffinity is a temporary option.
+# This is subject to removal without notice. Do NOT use for any reason!
+ingressSessionAffinity:
+  enabled: false
+  sessionCookieName: sticky
+
+testsConfig:
+  memoryRequests: "512Mi"
+  cpuRequests: "200m"
+  memoryLimits: "1024Mi"
+  cpuLimits: "2000m"
+  serviceAccountName: tests-account
+  keyVaults:
+      bulk-scan:
+        excludeEnvironmentSuffix: true
+        secrets:
+          - name: idam-client-secret
+            alias: IDAM_CLIENT_SECRET
+          - name: s2s-secret
+          - name: idam-client-<ENV>-secret
+            alias: idam.client.env.secret
+          - name: s2s-<ENV>-secret
+        certs:
+          - name: idam-client-cert
+            alias: IDAM_CLIENT_CERT
+          - name: s2s-cert
+smoketests:
+  image: hmctspublic.azurecr.io/boot/template
+  enabled: false
+functionaltests:
+  image: hmctspublic.azurecr.io/boot/template
+  enabled: false
+smoketestscron:
+  image: hmctspublic.azurecr.io/boot/template
+  enabled: false
+  schedule: "20 0/1 * * *"
+functionaltestscron:
+  image: hmctspublic.azurecr.io/boot/template
+  enabled: true
+  schedule: "30 0/6 * * *"
+
+# HPA
+autoscaling:
+  enabled: false
+  maxReplicas: 4
+  cpu:
+    enabled: true
+    averageUtilization: 80
+  memory:
+    enabled: true
+    averageUtilization: 80
+language: java
+java:
+  applicationPort: 3000
+  registerAdditionalDns:
+    enabled: false
+  memoryRequests: 64Mi
+  cpuRequests: 25m
+  memoryLimits: 512Mi
+  cpuLimits: 500m
+  readinessPath: /health
+  readinessDelay: 5
+  readinessTimeout: 3
+  readinessPeriod: 15
+  livenessDelay: 5
+  livenessTimeout: 3
+  livenessPeriod: 15
+  livenessFailureThreshold: 3
+  startupDelay: 5
+  startupTimeout: 3
+  startupPeriod: 15
+  startupFailureThreshold: 3
+  dnsConfig:
+    ndots: "3"
+  pdb:
+    enabled: true
+    maxUnavailable: 50%
+  prometheus:
+    enabled: false
+    path: /metrics
+  ingressClass: traefik
+  global:
+    tenantId: "531ff96d-0ae9-462a-8d2d-bec7c0b42082"
+    environment: aat
+    enableKeyVaults: true
+    devMode: false
+    smoketestscron:
+      enabled: true
+    functionaltestscron:
+      enabled: true
+  image: hmctspublic.azurecr.io/chart-nodejs/testapp
+  replicas: 2
+  ingressHost: "{{.Release.Name}}.service.core-compute-preview.internal"
+  disableTraefikTls: true
+  livenessPath: /health/liveness
+  startupPath: /health/liveness
+  imagePullPolicy: Always
+  environment:
+    REFORM_TEAM: cnp
+    REFORM_SERVICE_NAME: rhubarb-frontend
+    REFORM_ENVIRONMENT: preview
+  configmap:
+    VAR_A: VALUE_A
+    VAR_B: VALUE_B
+  saEnabled: false
+  customServiceAccountName: customServiceAccount  
+  keyVaults:
+    bulk-scan:
+      excludeEnvironmentSuffix: false
+      secrets:
+        - name: idam-client-secret
+          alias: idam.client.secret
+        - name: s2s-secret
+        - name: idam-client-<ENV>-secret
+          alias: idam.client.env.secret
+        - name: s2s-<ENV>-secret
+      certs:
+        - name: idam-client-cert
+          alias: idam.client.cert
+        - name: s2s-cert
+  additionalPathBasedRoutes:
+    "/test": "{{.Release.Name}}"
+  secrets:
+    STORAGE_ACCOUNT_NAME:
+      secretRef: storage-secret-example-{{ .Release.Name }}
+      key: storageAccountName
+  # WARNING: ingressSessionAffinity is a temporary option.
+  # This is subject to removal without notice. Do NOT use for any reason!
+  ingressSessionAffinity:
+    enabled: false
+    sessionCookieName: sticky
+  
+  testsConfig:
+    memoryRequests: "256Mi"
+    cpuRequests: "100m"
+    memoryLimits: "2048Mi"
+    cpuLimits: "1000m"
+    serviceAccountName: tests-service-account
+    keyVaults:
+      bulk-scan:
+        excludeEnvironmentSuffix: true
+        secrets:
+          - name: idam-client-secret
+            alias: IDAM_CLIENT_SECRET
+          - name: s2s-secret
+          - name: idam-client-<ENV>-secret
+            alias: idam.client.env.secret
+          - name: s2s-<ENV>-secret
+        certs:
+          - name: idam-client-cert
+            alias: IDAM_CLIENT_CERT
+          - name: s2s-cert
+  smoketests:
+    image: hmctspublic.azurecr.io/spring-boot/template
+    enabled: false
+  functionaltests:
+    image: hmctspublic.azurecr.io/spring-boot/template
+    enabled: false
+  smoketestscron:
+    image: hmctspublic.azurecr.io/spring-boot/template
+    enabled: false
+    schedule: "20 0/1 * * *"
+  functionaltestscron:
+    image: hmctspublic.azurecr.io/spring-boot/template
+    enabled: true
+    schedule: "30 0/6 * * *"
+  
+  # HPA
+  autoscaling:
+    enabled: true
+    maxReplicas: 5
+    cpu:
+      enabled: true
+      averageUtilization: 80
+    memory:
+      enabled: true
+      averageUtilization: 80
+
+  args:
+    - this
+    - that
+
+  additionalIngressHosts: ["{{ .Release.Name }}-ci-01.platform.hmcts.net", "ci-02.platform.hmcts.net"]
