@@ -56,6 +56,7 @@ template:
             - "[ -f /var/run/graceful-shutdown/prestop.marker ] && exit 1 || exit 0"
         initialDelaySeconds: 1
         periodSeconds: 1
+    {{- end }}
 
 {{ include "hmcts.container.v4.tpl" . | indent 6 -}}
 
