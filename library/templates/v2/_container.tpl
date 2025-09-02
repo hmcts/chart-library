@@ -39,6 +39,11 @@
   volumeMounts:
   {{- ( include "hmcts.volumeMounts.v2" . ) | indent 2 }}
   {{- ( include "hmcts.secretMounts.v3" . ) | indent 2 }}
+  {{- if $languageValues.gracefulShutdown }}
+  - name: graceful-shutdown
+    mountPath: /var/run/graceful-shutdown
+    readOnly: false
+  {{- end }}
   {{if $languageValues.global.devMode -}}
   resources:
     requests:
@@ -89,6 +94,18 @@
     initialDelaySeconds: {{ $languageValues.readinessDelay }}
     timeoutSeconds: {{ $languageValues.readinessTimeout }}
     periodSeconds: {{ $languageValues.readinessPeriod }}
+  {{- end }}
+  {{- if $languageValues.gracefulShutdown }}
+  lifecycle:
+    preStop:
+      exec:
+        command:
+          - "/bin/sh"
+          - "-c"
+          - |
+            mkdir -p /var/run/graceful-shutdown
+            touch /var/run/graceful-shutdown/prestop.marker
+            sleep 5
   {{- end }}
   imagePullPolicy: {{$languageValues.imagePullPolicy}}
 {{- end -}}

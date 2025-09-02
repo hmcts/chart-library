@@ -15,6 +15,10 @@
 {{- end }}
 {{- end }}
 {{- end }}
+{{- if $languageValues.gracefulShutdown }}
+  - name: graceful-shutdown
+    emptyDir: {}
+{{- end }}
 {{- end }}
 
 {{/*

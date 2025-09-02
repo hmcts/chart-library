@@ -40,6 +40,23 @@ template:
     restartPolicy: {{ $languageValues.restartPolicy | default "Always" | quote }}
     terminationGracePeriodSeconds: {{ $languageValues.terminationGracePeriodSeconds | default 30 }}
     containers:
+    {{- if $languageValues.gracefulShutdown }}
+    - image: alpine:3.22
+      name: graceful-shutdown-sidecar
+      command:
+        - "/bin/sh"
+        - "-c"
+        - |
+          while [ ! -f /var/run/graceful-shutdown/prestop.marker ]; do sleep 2; done;
+      readinessProbe:
+        exec:
+          command:
+            - "bin/sh"
+            - "-c"
+            - "[ -f /var/run/graceful-shutdown/prestop.marker ] && exit 1 || exit 0"
+        initialDelaySeconds: 1
+        periodSeconds: 1
+
 {{ include "hmcts.container.v3.tpl" . | indent 6 -}}
 
 {{- end -}}
