@@ -1,6 +1,6 @@
 {{/*
 */}}
-{{- define "hmcts.volumes.v2" -}}
+{{- define "hmcts.volumes.v3" -}}
 {{- $languageValues := deepCopy .Values -}}
 {{- if hasKey .Values "language" -}}
 {{- $languageValues = (deepCopy .Values | merge (pluck .Values.language .Values | first) ) -}}
@@ -15,11 +15,15 @@
 {{- end }}
 {{- end }}
 {{- end }}
+{{- if $languageValues.gracefulShutdown }}
+  - name: graceful-shutdown
+    emptyDir: {}
+{{- end }}
 {{- end }}
 
 {{/*
 */}}
-{{- define "hmcts.volumeMounts.v2" -}}
+{{- define "hmcts.volumeMounts.v3" -}}
 {{- $languageValues := deepCopy .Values -}}
 {{- if hasKey .Values "language" -}}
 {{- $languageValues = (deepCopy .Values | merge (pluck .Values.language .Values | first) ) -}}

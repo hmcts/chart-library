@@ -1,7 +1,7 @@
 {{/*
 Create pod template spec.
 */}}
-{{- define "hmcts.podtemplate.v6.tpl" -}}
+{{- define "hmcts.podtemplate.v7.tpl" -}}
 {{- $languageValues := deepCopy .Values -}}
 {{- if hasKey .Values "language" -}}
 {{- $languageValues = (deepCopy .Values | merge (pluck .Values.language .Values | first) ) -}}
@@ -35,11 +35,29 @@ template:
     {{- ( include "hmcts.topologySpreadConstraints.v1" . ) | indent 4 }}
     {{- ( include "hmcts.dnsConfig.v2" . ) | indent 4 }}
     volumes:
-    {{- ( include "hmcts.volumes.v2" . ) | indent 4 }}
+    {{- ( include "hmcts.volumes.v3" . ) | indent 4 }}
     {{- ( include "hmcts.secretCSIVolumes.v3" . ) | indent 4 }}
     restartPolicy: {{ $languageValues.restartPolicy | default "Always" | quote }}
     terminationGracePeriodSeconds: {{ $languageValues.terminationGracePeriodSeconds | default 30 }}
     containers:
-{{ include "hmcts.container.v3.tpl" . | indent 6 -}}
+    {{- if $languageValues.gracefulShutdown }}
+    - image: alpine:3.22
+      name: graceful-shutdown-sidecar
+      command:
+        - "/bin/sh"
+        - "-c"
+        - |
+          while [ ! -f /var/run/graceful-shutdown/prestop.marker ]; do sleep 2; done;
+      readinessProbe:
+        exec:
+          command:
+            - "bin/sh"
+            - "-c"
+            - "[ -f /var/run/graceful-shutdown/prestop.marker ] && exit 1 || exit 0"
+        initialDelaySeconds: 1
+        periodSeconds: 1
+    {{- end }}
+
+{{ include "hmcts.container.v4.tpl" . | indent 6 -}}
 
 {{- end -}}
