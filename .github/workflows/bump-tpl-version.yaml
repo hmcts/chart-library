@@ -11,7 +11,7 @@ jobs:
     steps:
 
       - name: Checkout master
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           ref: master
       
@@ -20,7 +20,7 @@ jobs:
           python scripts/extract-tpl-versions.py
 
       - name: Checkout branch
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           ref: ${{ github.head_ref }}
 
