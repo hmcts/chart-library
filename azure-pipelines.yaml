@@ -28,7 +28,7 @@ jobs:
       - task: HelmInstaller@1
         displayName: 'Install Helm'
         inputs:
-          helmVersionToInstall: 3.12.0
+          helmVersionToInstall: 3.18.0
       - script: helm plugin install https://github.com/helm-unittest/helm-unittest.git
         displayName: 'Install Helm Unit Test Plugin'
       - script: sudo snap install yq
