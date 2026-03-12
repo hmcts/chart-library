@@ -1,4 +1,4 @@
-{{- define "hmcts.container.v3.tpl" -}}
+{{- define "hmcts.container.v4.tpl" -}}
 {{- $languageValues := deepCopy .Values -}}
 {{- if hasKey .Values "language" -}}
 {{- $languageValues = (deepCopy .Values | merge (pluck .Values.language .Values | first) ) -}}
@@ -37,8 +37,13 @@
   {{- end }}
   {{- end }}
   volumeMounts:
-  {{- ( include "hmcts.volumeMounts.v2" . ) | indent 2 }}
+  {{- ( include "hmcts.volumeMounts.v3" . ) | indent 2 }}
   {{- ( include "hmcts.secretMounts.v3" . ) | indent 2 }}
+  {{- if $languageValues.gracefulShutdown }}
+  - name: graceful-shutdown
+    mountPath: /var/run/graceful-shutdown
+    readOnly: false
+  {{- end }}
   {{if $languageValues.global.devMode -}}
   resources:
     requests:
@@ -90,11 +95,23 @@
     timeoutSeconds: {{ $languageValues.readinessTimeout }}
     periodSeconds: {{ $languageValues.readinessPeriod }}
   {{- end }}
+  {{- if $languageValues.gracefulShutdown }}
+  lifecycle:
+    preStop:
+      exec:
+        command:
+          - "/bin/sh"
+          - "-c"
+          - |
+            mkdir -p /var/run/graceful-shutdown
+            touch /var/run/graceful-shutdown/prestop.marker
+            sleep 5
+  {{- end }}
   imagePullPolicy: {{$languageValues.imagePullPolicy}}
 {{- end -}}
 
-{{- define "hmcts.container.v2" -}}
+{{- define "hmcts.container.v4" -}}
 {{- /* clear new line so indentation works correctly */ -}}
 {{- println "" -}}
-{{- include "hmcts.util.merge.v2" (append . "hmcts.container.v3.tpl") | indent 6 -}}
+{{- include "hmcts.util.merge.v2" (append . "hmcts.container.v4.tpl") | indent 6 -}}
 {{- end -}}
