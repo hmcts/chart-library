@@ -1,4 +1,4 @@
-{{- define "hmcts.container.v4.tpl" -}}
+{{- define "hmcts.jobcontainer.v1.tpl" -}}
 {{- $languageValues := deepCopy .Values -}}
 {{- if hasKey .Values "language" -}}
 {{- $languageValues = (deepCopy .Values | merge (pluck .Values.language .Values | first) ) -}}
@@ -36,9 +36,6 @@
         name: {{ $languageValues.envFromSecret }}
   {{- end }}
   {{- end }}
-  volumeMounts:
-  {{- ( include "hmcts.volumeMounts.v2" . ) | indent 2 }}
-  {{- ( include "hmcts.secretMounts.v3" . ) | indent 2 }}
   {{if $languageValues.global.devMode -}}
   resources:
     requests:
@@ -96,5 +93,5 @@
 {{- define "hmcts.container.v4" -}}
 {{- /* clear new line so indentation works correctly */ -}}
 {{- println "" -}}
-{{- include "hmcts.util.merge.v2" (append . "hmcts.container.v4.tpl") | indent 6 -}}
+{{- include "hmcts.util.merge.v2" (append . "hmcts.jobcontainer.v1.tpl") | indent 6 -}}
 {{- end -}}
