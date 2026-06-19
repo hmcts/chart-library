@@ -90,7 +90,7 @@
   imagePullPolicy: {{$languageValues.imagePullPolicy}}
 {{- end -}}
 
-{{- define "hmcts.container.v2" -}}
+{{- define "hmcts.container.v4" -}}
 {{- /* clear new line so indentation works correctly */ -}}
 {{- println "" -}}
 {{- include "hmcts.util.merge.v2" (append . "hmcts.jobcontainer.v1.tpl") | indent 6 -}}
