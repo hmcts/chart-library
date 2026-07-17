@@ -11,7 +11,7 @@ resources:
   repositories:
     - repository: cnp-azuredevops-libraries
       type: github
-      ref: refs/heads/master
+      ref: refs/heads/feat/dependency-acr-param
       name: hmcts/cnp-azuredevops-libraries
       endpoint: 'hmcts'
 
@@ -35,6 +35,24 @@ jobs:
         displayName: 'Install yq'
       - script: ./tests/test-templates.sh
         displayName: 'Run unit tests'
+  - job: Release_Sbox
+    condition: >
+      and(
+          succeeded(),
+          startsWith(variables['Build.SourceBranch'], 'refs/tags/')
+        )
+    dependsOn: Validate
+    pool:
+      vmImage: ${{ variables.agentPool }}
+    steps:
+      - template: steps/charts/release.yaml@cnp-azuredevops-libraries
+        parameters:
+          chartName: library
+          chartReleaseName: chart-library
+          chartNamespace: chart-tests
+          acrName: hmctssbox
+          registryServiceConnection: azurerm-sandbox
+
   - job: Release
     # Make sure we have a tag to run this job
     condition: >
