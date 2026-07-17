@@ -11,7 +11,7 @@ resources:
   repositories:
     - repository: cnp-azuredevops-libraries
       type: github
-      ref: refs/heads/feat/dependency-acr-param
+      ref: refs/heads/master
       name: hmcts/cnp-azuredevops-libraries
       endpoint: 'hmcts'
 
