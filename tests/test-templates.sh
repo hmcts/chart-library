@@ -15,7 +15,7 @@ yq eval -i '.type = "application"' library/Chart.yaml
 helm unittest --values library/ci-values.yaml library -q -f 'tests/snapshot-tests/*.yaml'
 helm unittest --values library/ci-values-lang.yaml library -q -f 'tests/snapshot-tests/*.yaml'
 
-# Unit (assertion) tests: verify specific field values and structural rules against
+# Assertion tests: verify specific field values and structural rules against
 # a fully populated values set. ci-values.yaml and ci-values-lang.yaml ensure all
 # optional sections are enabled so every assertion path is exercised.
 helm unittest --values library/ci-values.yaml library -q -f 'tests/unit-tests/*.yaml'

@@ -1,4 +1,4 @@
-# Fed into: helm-unittest conditional assertion tests (tests/unit-tests/conditional/)
+# Fed into: helm-unittest assertion tests (tests/unit-tests/conditional/)
 image: hmctspublic.azurecr.io/test/app:latest # only required field; set: in each test controls all other inputs
 global:
   devMode: false # prevents dev-only resource rendering
