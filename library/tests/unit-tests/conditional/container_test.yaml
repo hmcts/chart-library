@@ -1,0 +1,70 @@
+suite: Container conditional rendering
+templates:
+  - templates/v2/deployment.yaml
+
+tests:
+  - it: should render livenessProbe when livenessPath is set
+    set:
+      applicationPort: 4550
+      livenessPath: /health/liveness
+      livenessDelay: 0
+      livenessTimeout: 3
+      livenessPeriod: 15
+      livenessFailureThreshold: 3
+    asserts:
+      - exists:
+          path: spec.template.spec.containers[0].livenessProbe
+      - equal:
+          path: spec.template.spec.containers[0].livenessProbe.httpGet.path
+          value: /health/liveness
+
+  - it: should not render livenessProbe when livenessPath is not set
+    asserts:
+      - notExists:
+          path: spec.template.spec.containers[0].livenessProbe
+
+  - it: should render readinessProbe when readinessPath is set
+    set:
+      applicationPort: 4550
+      readinessPath: /health/readiness
+      readinessDelay: 0
+      readinessTimeout: 3
+      readinessPeriod: 15
+    asserts:
+      - exists:
+          path: spec.template.spec.containers[0].readinessProbe
+
+  - it: should not render readinessProbe when readinessPath is not set
+    asserts:
+      - notExists:
+          path: spec.template.spec.containers[0].readinessProbe
+
+  - it: should render startupProbe when startupPath is set
+    set:
+      applicationPort: 4550
+      startupPath: /health/liveness
+      startupDelay: 10
+      startupTimeout: 3
+      startupPeriod: 10
+      startupFailureThreshold: 20
+    asserts:
+      - exists:
+          path: spec.template.spec.containers[0].startupProbe
+
+  - it: should not render startupProbe when startupPath is not set
+    asserts:
+      - notExists:
+          path: spec.template.spec.containers[0].startupProbe
+
+  - it: should render container port when applicationPort is set
+    set:
+      applicationPort: 4550
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].ports[0].containerPort
+          value: 4550
+
+  - it: should not render container ports when applicationPort is not set
+    asserts:
+      - notExists:
+          path: spec.template.spec.containers[0].ports
