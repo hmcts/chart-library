@@ -1,7 +1,5 @@
-# Minimal values for chart-library unit tests using set: overrides.
+# Minimal values for chart-library unit tests using assertions.
 # Only image is required (enforced by required() in _container.tpl).
-# global stubs prevent nil-access errors in conditional template blocks.
-# All other values are supplied per-test via set: to test conditional logic.
 image: hmctspublic.azurecr.io/test/app:latest
 global:
   devMode: false
