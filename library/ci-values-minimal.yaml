@@ -1,6 +1,5 @@
-# Minimal values for chart-library unit tests using assertions.
-# Only image is required (enforced by required() in _container.tpl).
-image: hmctspublic.azurecr.io/test/app:latest
+# Fed into: helm-unittest conditional assertion tests (tests/unit-tests/conditional/)
+image: hmctspublic.azurecr.io/test/app:latest # only required field; set: in each test controls all other inputs
 global:
-  devMode: false
-  enableKeyVaults: false
+  devMode: false # prevents dev-only resource rendering
+  enableKeyVaults: false # prevents KeyVault sidecar injection
