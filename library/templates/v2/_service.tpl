@@ -1,4 +1,4 @@
-{{- define "hmcts.service.v2.tpl" -}}
+{{- define "hmcts.service.v3.tpl" -}}
 {{- $languageValues := deepCopy .Values -}}
 {{- if hasKey .Values "language" -}}
 {{- $languageValues = (deepCopy .Values | merge (pluck .Values.language .Values | first) ) -}}
@@ -30,6 +30,6 @@ spec:
     app.kubernetes.io/name: {{ template "hmcts.releasename.v2" . }}
 {{- end }}
 
-{{- define "hmcts.service.v2" -}}
-{{- template "hmcts.util.merge.v2" (append . "hmcts.service.v2.tpl") -}}
+{{- define "hmcts.service.v3" -}}
+{{- template "hmcts.util.merge.v2" (append . "hmcts.service.v3.tpl") -}}
 {{- end -}}

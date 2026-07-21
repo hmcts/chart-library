@@ -1,7 +1,7 @@
 {{/*
 Create pod template spec.
 */}}
-{{- define "hmcts.podtemplate.v6.tpl" -}}
+{{- define "hmcts.podtemplate.v7.tpl" -}}
 {{- $languageValues := deepCopy .Values -}}
 {{- if hasKey .Values "language" -}}
 {{- $languageValues = (deepCopy .Values | merge (pluck .Values.language .Values | first) ) -}}
@@ -21,7 +21,7 @@ template:
     serviceAccountName: {{ $languageValues.customServiceAccountName }}
     {{- end }}
 
-    {{- include "hmcts.affinity.v1" . | indent 4 }}
+    {{- include "hmcts.affinity.v2" . | indent 4 }}
     {{- if not $languageValues.runAsRoot }}
     securityContext:
       runAsUser: 1000
@@ -31,18 +31,18 @@ template:
     nodeSelector:
   {{ toYaml $languageValues.nodeSelector | indent 4 }}
     {{- end }}
-    {{- ( include "hmcts.tolerations.v3" . ) | indent 4 }}
+    {{- ( include "hmcts.tolerations.v4" . ) | indent 4 }}
     {{- ( include "hmcts.topologySpreadConstraints.v1" . ) | indent 4 }}
     {{- ( include "hmcts.dnsConfig.v2" . ) | indent 4 }}
-    {{- $vols := trim (printf "%s%s" (include "hmcts.volumes.v2" .) (include "hmcts.secretCSIVolumes.v3" .)) }}
+    {{- $vols := trim (printf "%s%s" (include "hmcts.volumes.v3" .) (include "hmcts.secretCSIVolumes.v3" .)) }}
     {{- if $vols }}
     volumes:
-    {{- ( include "hmcts.volumes.v2" . ) | indent 4 }}
+    {{- ( include "hmcts.volumes.v3" . ) | indent 4 }}
     {{- ( include "hmcts.secretCSIVolumes.v3" . ) | indent 4 }}
     {{- end }}
     restartPolicy: {{ $languageValues.restartPolicy | default "Always" | quote }}
     terminationGracePeriodSeconds: {{ $languageValues.terminationGracePeriodSeconds | default 30 }}
     containers:
-{{ include "hmcts.container.v3.tpl" . | indent 6 -}}
+{{ include "hmcts.container.v4.tpl" . | indent 6 -}}
 
 {{- end -}}

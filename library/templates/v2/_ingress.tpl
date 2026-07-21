@@ -1,4 +1,4 @@
-{{- define "hmcts.ingress.v3.tpl" -}}
+{{- define "hmcts.ingress.v4.tpl" -}}
 {{- $languageValues := deepCopy .Values -}}
 {{- if hasKey .Values "language" -}}
 {{- $languageValues = (deepCopy .Values | merge (pluck .Values.language .Values | first) ) -}}
@@ -29,7 +29,7 @@ spec:
   - host: {{ tpl $languageValues.ingressHost $ | lower }}
     http:
       paths:
-      {{- ( include "hmcts.additionalPathBasedRoutes.v2" .) | indent 4 }}
+      {{- ( include "hmcts.additionalPathBasedRoutes.v3" .) | indent 4 }}
       - path: /
         pathType: Prefix
         backend:
@@ -42,7 +42,7 @@ spec:
   - host: {{ $languageValues.registerAdditionalDns.prefix }}-{{ tpl $languageValues.registerAdditionalDns.primaryIngressHost $ }}
     http:
       paths:
-      {{- ( include "hmcts.additionalPathBasedRoutes.v2" .) | indent 4 }}
+      {{- ( include "hmcts.additionalPathBasedRoutes.v3" .) | indent 4 }}
       - path: /
         pathType: Prefix
         backend:
@@ -56,7 +56,7 @@ spec:
   - host: {{ tpl . $ | lower }}
     http:
       paths:
-      {{- ( include "hmcts.additionalPathBasedRoutes.v2" $ ) | indent 4 }}
+      {{- ( include "hmcts.additionalPathBasedRoutes.v3" $ ) | indent 4 }}
       - path: /
         pathType: Prefix
         backend:
@@ -69,14 +69,14 @@ spec:
 {{- end}}
 {{- end }}
 
-{{- define "hmcts.ingress.v3" -}}
-{{- template "hmcts.util.merge.v2" (append . "hmcts.ingress.v3.tpl") -}}
+{{- define "hmcts.ingress.v4" -}}
+{{- template "hmcts.util.merge.v2" (append . "hmcts.ingress.v4.tpl") -}}
 {{- end -}}
 
 {{/*
 Additional Path based routes
 */}}
-{{- define "hmcts.additionalPathBasedRoutes.v2" }}
+{{- define "hmcts.additionalPathBasedRoutes.v3" }}
 {{- $languageValues := deepCopy .Values -}}
 {{- if hasKey .Values "language" -}}
 {{- $languageValues = (deepCopy .Values | merge (pluck .Values.language .Values | first) ) -}}

@@ -1,6 +1,6 @@
 {{/*
 */}}
-{{- define "hmcts.tolerations.v3" -}}
+{{- define "hmcts.tolerations.v4" -}}
 {{- $languageValues := deepCopy .Values -}}
 {{- if hasKey .Values "language" -}}
 {{- $languageValues = (deepCopy .Values | merge (pluck .Values.language .Values | first) ) -}}

@@ -1,4 +1,4 @@
-{{- define "hmcts.container.v3.tpl" -}}
+{{- define "hmcts.container.v4.tpl" -}}
 {{- $languageValues := deepCopy .Values -}}
 {{- if hasKey .Values "language" -}}
 {{- $languageValues = (deepCopy .Values | merge (pluck .Values.language .Values | first) ) -}}
@@ -36,10 +36,10 @@
         name: {{ $languageValues.envFromSecret }}
   {{- end }}
   {{- end }}
-  {{- $vMounts := trim (printf "%s%s" (include "hmcts.volumeMounts.v2" .) (include "hmcts.secretMounts.v3" .)) }}
+  {{- $vMounts := trim (printf "%s%s" (include "hmcts.volumeMounts.v3" .) (include "hmcts.secretMounts.v3" .)) }}
   {{- if $vMounts }}
   volumeMounts:
-  {{- ( include "hmcts.volumeMounts.v2" . ) | indent 2 }}
+  {{- ( include "hmcts.volumeMounts.v3" . ) | indent 2 }}
   {{- ( include "hmcts.secretMounts.v3" . ) | indent 2 }}
   {{- end }}
   {{- if or ($languageValues.global.devMode) ($languageValues.memoryRequests) ($languageValues.cpuRequests) ($languageValues.memoryLimits) ($languageValues.cpuLimits) }}
@@ -98,8 +98,8 @@
   imagePullPolicy: {{ $languageValues.imagePullPolicy | default "IfNotPresent" }}
 {{- end -}}
 
-{{- define "hmcts.container.v2" -}}
+{{- define "hmcts.container.v3" -}}
 {{- /* clear new line so indentation works correctly */ -}}
 {{- println "" -}}
-{{- include "hmcts.util.merge.v2" (append . "hmcts.container.v3.tpl") | indent 6 -}}
+{{- include "hmcts.util.merge.v2" (append . "hmcts.container.v4.tpl") | indent 6 -}}
 {{- end -}}
