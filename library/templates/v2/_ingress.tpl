@@ -4,7 +4,7 @@
 {{- $languageValues = (deepCopy .Values | merge (pluck .Values.language .Values | first) ) -}}
 {{- end -}}
 {{- $globals := $languageValues.global | default dict -}}
-{{ if or ($languageValues.ingressHost ) ($languageValues.registerAdditionalDns.enabled) }}
+{{ if or ($languageValues.ingressHost) ((($languageValues.registerAdditionalDns | default dict).enabled)) }}
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
@@ -21,7 +21,9 @@ metadata:
     {{- end }}
     {{- end }}
 spec:
+  {{- if $languageValues.ingressClass }}
   ingressClassName: {{ $languageValues.ingressClass }}
+  {{- end }}
   rules:
   {{- if $languageValues.ingressHost }}
   - host: {{ tpl $languageValues.ingressHost $ | lower }}
@@ -36,7 +38,7 @@ spec:
             port:
               number: 80
   {{- end }}
-  {{- if $languageValues.registerAdditionalDns.enabled }}
+  {{- if (($languageValues.registerAdditionalDns | default dict).enabled) }}
   - host: {{ $languageValues.registerAdditionalDns.prefix }}-{{ tpl $languageValues.registerAdditionalDns.primaryIngressHost $ }}
     http:
       paths:

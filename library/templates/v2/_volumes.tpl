@@ -11,7 +11,9 @@
 {{- if .configMap }}
     configMap:
       name: {{ .configMap.name }}
+      {{- if .configMap.defaultMode }}
       defaultMode: {{ .configMap.defaultMode }}
+      {{- end }}
 {{- end }}
 {{- end }}
 {{- end }}

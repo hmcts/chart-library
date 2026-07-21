@@ -36,18 +36,22 @@
         name: {{ $languageValues.envFromSecret }}
   {{- end }}
   {{- end }}
+  {{- $vMounts := trim (printf "%s%s" (include "hmcts.volumeMounts.v2" .) (include "hmcts.secretMounts.v3" .)) }}
+  {{- if $vMounts }}
   volumeMounts:
   {{- ( include "hmcts.volumeMounts.v2" . ) | indent 2 }}
   {{- ( include "hmcts.secretMounts.v3" . ) | indent 2 }}
-  {{if $languageValues.global.devMode -}}
+  {{- end }}
+  {{- if or ($languageValues.global.devMode) ($languageValues.memoryRequests) ($languageValues.cpuRequests) ($languageValues.memoryLimits) ($languageValues.cpuLimits) }}
+  {{- if $languageValues.global.devMode }}
   resources:
     requests:
       memory: {{ $languageValues.devmemoryRequests | quote }}
-      cpu: {{  $languageValues.devcpuRequests | quote }}
+      cpu: {{ $languageValues.devcpuRequests | quote }}
     limits:
       memory: {{ $languageValues.devmemoryLimits | quote }}
       cpu: {{ $languageValues.devcpuLimits | quote }}
-  {{- else -}}
+  {{- else }}
   resources:
     requests:
       memory: {{ $languageValues.memoryRequests | quote }}
@@ -55,6 +59,7 @@
     limits:
       memory: {{ $languageValues.memoryLimits | quote }}
       cpu: {{ $languageValues.cpuLimits | quote }}
+  {{- end }}
   {{- end }}
   {{- if $languageValues.applicationPort }}
   ports:
@@ -66,31 +71,31 @@
     httpGet:
       path: {{ $languageValues.startupPath }}
       port: {{ $languageValues.applicationPort }}
-    initialDelaySeconds: {{ $languageValues.startupDelay }}
-    timeoutSeconds: {{ $languageValues.startupTimeout }}
-    periodSeconds: {{ $languageValues.startupPeriod }}
-    failureThreshold: {{ $languageValues.startupFailureThreshold }}
+    initialDelaySeconds: {{ $languageValues.startupDelay | default 0 }}
+    timeoutSeconds: {{ $languageValues.startupTimeout | default 3 }}
+    periodSeconds: {{ $languageValues.startupPeriod | default 10 }}
+    failureThreshold: {{ $languageValues.startupFailureThreshold | default 20 }}
   {{- end }}
   {{- if $languageValues.livenessPath }}
   livenessProbe:
     httpGet:
       path: {{ $languageValues.livenessPath }}
       port: {{ $languageValues.applicationPort }}
-    initialDelaySeconds: {{ $languageValues.livenessDelay }}
-    timeoutSeconds: {{ $languageValues.livenessTimeout }}
-    periodSeconds: {{ $languageValues.livenessPeriod }}
-    failureThreshold: {{ $languageValues.livenessFailureThreshold }}
+    initialDelaySeconds: {{ $languageValues.livenessDelay | default 0 }}
+    timeoutSeconds: {{ $languageValues.livenessTimeout | default 3 }}
+    periodSeconds: {{ $languageValues.livenessPeriod | default 15 }}
+    failureThreshold: {{ $languageValues.livenessFailureThreshold | default 3 }}
   {{- end }}
   {{- if $languageValues.readinessPath }}
   readinessProbe:
     httpGet:
       path: {{ $languageValues.readinessPath }}
       port: {{ $languageValues.applicationPort }}
-    initialDelaySeconds: {{ $languageValues.readinessDelay }}
-    timeoutSeconds: {{ $languageValues.readinessTimeout }}
-    periodSeconds: {{ $languageValues.readinessPeriod }}
+    initialDelaySeconds: {{ $languageValues.readinessDelay | default 0 }}
+    timeoutSeconds: {{ $languageValues.readinessTimeout | default 3 }}
+    periodSeconds: {{ $languageValues.readinessPeriod | default 15 }}
   {{- end }}
-  imagePullPolicy: {{$languageValues.imagePullPolicy}}
+  imagePullPolicy: {{ $languageValues.imagePullPolicy | default "IfNotPresent" }}
 {{- end -}}
 
 {{- define "hmcts.container.v2" -}}

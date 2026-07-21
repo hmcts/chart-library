@@ -1,12 +1,98 @@
-suite: Unit tests
+suite: Ingress tests
 templates:
   - templates/v2/ingress.yaml
 tests:
-  - it: should set annotations if given
+  - it: should not render Ingress when ingressHost is not set and registerAdditionalDns is disabled
     set:
+      registerAdditionalDns.enabled: false
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: should render Ingress when ingressHost is set
+    set:
+      ingressHost: myapp.example.com
+    asserts:
+      - isKind:
+          of: Ingress
+
+  - it: should render Ingress when registerAdditionalDns.enabled is true
+    set:
+      registerAdditionalDns.enabled: true
+      registerAdditionalDns.prefix: myapp
+      registerAdditionalDns.primaryIngressHost: example.com
+    asserts:
+      - isKind:
+          of: Ingress
+
+  - it: should render TLS annotation when disableTraefikTls is false
+    set:
+      ingressHost: myapp.example.com
+      disableTraefikTls: false
+    asserts:
+      - equal:
+          path: metadata.annotations["traefik.ingress.kubernetes.io/router.tls"]
+          value: "true"
+
+  - it: should not render TLS annotation when disableTraefikTls is true
+    set:
+      ingressHost: myapp.example.com
+      disableTraefikTls: true
+    asserts:
+      - notExists:
+          path: metadata.annotations["traefik.ingress.kubernetes.io/router.tls"]
+
+  - it: should set custom ingressAnnotations when provided
+    set:
+      ingressHost: myapp.example.com
       ingressAnnotations:
         external-dns.alpha.kubernetes.io/exclude: "true"
     asserts:
       - equal:
           path: metadata.annotations["external-dns.alpha.kubernetes.io/exclude"]
           value: "true"
+
+  - it: should render an additional rule for each additionalIngressHost
+    set:
+      ingressHost: myapp.example.com
+      additionalIngressHosts:
+        - extra.example.com
+    asserts:
+      - isKind:
+          of: Ingress
+      - equal:
+          path: spec.rules[1].host
+          value: extra.example.com
+
+  - it: should render path-based routing entries when additionalPathBasedRoutes is set
+    set:
+      ingressHost: myapp.example.com
+      additionalPathBasedRoutes:
+        /api: api-service
+    asserts:
+      - contains:
+          path: spec.rules[0].http.paths
+          content:
+            path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: api-service
+                port:
+                  number: 80
+
+  - it: should not render ingressClassName when ingressClass is not set
+    set:
+      ingressHost: myapp.example.com
+    asserts:
+      - notExists:
+          path: spec.ingressClassName
+
+  - it: should render ingressClassName when ingressClass is set
+    set:
+      ingressHost: myapp.example.com
+      ingressClass: nginx
+    asserts:
+      - equal:
+          path: spec.ingressClassName
+          value: nginx

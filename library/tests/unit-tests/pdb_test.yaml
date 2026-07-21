@@ -1,0 +1,54 @@
+suite: PodDisruptionBudget tests
+templates:
+  - templates/v2/pdb.yaml
+tests:
+  - it: should not render PDB when pdb.enabled is false
+    set:
+      pdb.enabled: false
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: should not render PDB when pdb is not configured
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: should render PDB when pdb.enabled is true
+    set:
+      pdb.enabled: true
+      pdb.maxUnavailable: "50%"
+    asserts:
+      - isKind:
+          of: PodDisruptionBudget
+
+  - it: should set minAvailable when pdb.minAvailable is provided
+    set:
+      pdb.enabled: true
+      pdb.minAvailable: 1
+    asserts:
+      - equal:
+          path: spec.minAvailable
+          value: 1
+      - notExists:
+          path: spec.maxUnavailable
+
+  - it: should set maxUnavailable when pdb.minAvailable is not set and pdb.maxUnavailable is set
+    set:
+      pdb.enabled: true
+      pdb.maxUnavailable: "50%"
+    asserts:
+      - equal:
+          path: spec.maxUnavailable
+          value: "50%"
+      - notExists:
+          path: spec.minAvailable
+
+  - it: should not render null maxUnavailable when neither pdb.maxUnavailable nor pdb.minAvailable is set
+    set:
+      pdb.enabled: true
+    asserts:
+      - notExists:
+          path: spec.maxUnavailable
+      - notExists:
+          path: spec.minAvailable

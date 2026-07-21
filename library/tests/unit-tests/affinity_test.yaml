@@ -1,0 +1,48 @@
+suite: Affinity tests
+templates:
+  - templates/v2/deployment.yaml
+tests:
+  - it: should always render default nodeAffinity excluding system nodes
+    asserts:
+      - isNotNull:
+          path: spec.template.spec.affinity.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution
+      - equal:
+          path: spec.template.spec.affinity.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution.nodeSelectorTerms[0].matchExpressions[0].key
+          value: kubernetes.azure.com/mode
+      - equal:
+          path: spec.template.spec.affinity.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution.nodeSelectorTerms[0].matchExpressions[0].operator
+          value: NotIn
+
+  - it: should not render preferred spot affinity when spotInstances is not enabled
+    asserts:
+      - notExists:
+          path: spec.template.spec.affinity.nodeAffinity.preferredDuringSchedulingIgnoredDuringExecution
+
+  - it: should render preferred spot affinity when spotInstances.enabled is true
+    set:
+      spotInstances.enabled: true
+    asserts:
+      - isNotNull:
+          path: spec.template.spec.affinity.nodeAffinity.preferredDuringSchedulingIgnoredDuringExecution
+      - equal:
+          path: spec.template.spec.affinity.nodeAffinity.preferredDuringSchedulingIgnoredDuringExecution[0].preference.matchExpressions[0].key
+          value: kubernetes.azure.com/scalesetpriority
+      - equal:
+          path: spec.template.spec.affinity.nodeAffinity.preferredDuringSchedulingIgnoredDuringExecution[0].weight
+          value: 50
+
+  - it: should use custom affinity when affinity is explicitly set
+    set:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: custom-key
+                    operator: In
+                    values:
+                      - custom-value
+    asserts:
+      - equal:
+          path: spec.template.spec.affinity.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution.nodeSelectorTerms[0].matchExpressions[0].key
+          value: custom-key

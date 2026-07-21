@@ -1,63 +1,180 @@
-suite: Unit tests
+suite: HPA tests
 templates:
   - templates/v2/hpa.yaml
 tests:
-  - it: should create parameters for CPU autoscaling when CPU autoscaling is enabled.
+  - it: should not render HPA when autoscaling.enabled is false
     set:
-      autoscaling.cpu.enabled: true
+      autoscaling.enabled: false
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: should not render HPA when autoscaling is not configured
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: should render HPA when autoscaling.enabled is true
+    set:
+      autoscaling.enabled: true
+      replicas: 1
     asserts:
       - isKind:
           of: HorizontalPodAutoscaler
+
+  - it: should default minReplicas to replicas value when autoscaling.minReplicas is not set
+    set:
+      autoscaling.enabled: true
+      replicas: 3
+    asserts:
+      - equal:
+          path: spec.minReplicas
+          value: 3
+
+  - it: should set minReplicas to the explicit autoscaling.minReplicas value when provided
+    set:
+      autoscaling.enabled: true
+      replicas: 3
+      autoscaling.minReplicas: 2
+    asserts:
+      - equal:
+          path: spec.minReplicas
+          value: 2
+
+  - it: should set maxReplicas to autoscaling.maxReplicas when provided
+    set:
+      autoscaling.enabled: true
+      replicas: 2
+      autoscaling.maxReplicas: 7
+    asserts:
+      - equal:
+          path: spec.maxReplicas
+          value: 7
+
+  - it: should default maxReplicas to replicas plus 2 when autoscaling.maxReplicas is not set
+    set:
+      autoscaling.enabled: true
+      replicas: 3
+    asserts:
+      - equal:
+          path: spec.maxReplicas
+          value: 5
+
+  - it: should include CPU metric when autoscaling.cpu.enabled is true
+    set:
+      autoscaling.enabled: true
+      autoscaling.cpu.enabled: true
+      autoscaling.cpu.averageUtilization: 70
+      replicas: 1
+    asserts:
       - contains:
           path: spec.metrics
           content:
-           resource:
-                name: cpu
-                target:
-                  averageUtilization: 80
-                  type: Utilization
-           type: Resource
-
-  - it: should not create parameters for CPU autoscaling when CPU autoscaling is disabled.
-    set:
-      autoscaling.cpu.enabled: false
-    asserts:
-      - isKind:
-          of: HorizontalPodAutoscaler
-      - notContains:
-          path: spec.metrics
-          content:
-            maxReplicas: 5
+            type: Resource
             resource:
               name: cpu
-            type: Resource
+              target:
+                type: Utilization
+                averageUtilization: 70
 
-  - it: should create parameters for memory autoscaling when memory autoscaling is enabled.
+  - it: should not include CPU metric when autoscaling.cpu.enabled is false
     set:
+      autoscaling.enabled: true
+      autoscaling.cpu.enabled: false
       autoscaling.memory.enabled: true
+      autoscaling.memory.averageUtilization: 80
+      replicas: 1
     asserts:
-      - isKind:
-          of: HorizontalPodAutoscaler
-      - contains:
-          path: spec.metrics
-          content:
-             resource:
-                name: memory
-                target:
-                  averageUtilization: 80
-                  type: Utilization
-             type: Resource
-
-  - it: should not create parameters for memory scaling when memory autoscaling is disabled
-    set:
-      autoscaling.memory.enabled: false
-    asserts:
-      - isKind:
-          of: HorizontalPodAutoscaler
       - notContains:
           path: spec.metrics
           content:
-            maxReplicas: 5
+            type: Resource
+            resource:
+              name: cpu
+
+  - it: should include memory metric when autoscaling.memory.enabled is true
+    set:
+      autoscaling.enabled: true
+      autoscaling.memory.enabled: true
+      autoscaling.memory.averageUtilization: 80
+      replicas: 1
+    asserts:
+      - contains:
+          path: spec.metrics
+          content:
+            type: Resource
             resource:
               name: memory
+              target:
+                type: Utilization
+                averageUtilization: 80
+
+  - it: should not include memory metric when autoscaling.memory.enabled is false
+    set:
+      autoscaling.enabled: true
+      autoscaling.cpu.enabled: true
+      autoscaling.cpu.averageUtilization: 70
+      autoscaling.memory.enabled: false
+      replicas: 1
+    asserts:
+      - notContains:
+          path: spec.metrics
+          content:
             type: Resource
+            resource:
+              name: memory
+
+  - it: should not render HPA when global.devMode is true and autoscaling.enabledForDevMode is not set
+    set:
+      autoscaling.enabled: true
+      global.devMode: true
+      replicas: 1
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: should render HPA when global.devMode is true and autoscaling.enabledForDevMode is also true
+    set:
+      autoscaling.enabled: true
+      autoscaling.enabledForDevMode: true
+      global.devMode: true
+      replicas: 1
+    asserts:
+      - isKind:
+          of: HorizontalPodAutoscaler
+
+  - it: should default cpu averageUtilization to 80 when not explicitly set
+    set:
+      autoscaling.enabled: true
+      autoscaling.cpu.enabled: true
+      replicas: 1
+    asserts:
+      - equal:
+          path: spec.metrics[0].resource.target.averageUtilization
+          value: 80
+
+  - it: should default memory averageUtilization to 80 when not explicitly set
+    set:
+      autoscaling.enabled: true
+      autoscaling.memory.enabled: true
+      replicas: 1
+    asserts:
+      - equal:
+          path: spec.metrics[0].resource.target.averageUtilization
+          value: 80
+
+  - it: should default minReplicas to 1 when both replicas and autoscaling.minReplicas are unset
+    set:
+      autoscaling.enabled: true
+    asserts:
+      - equal:
+          path: spec.minReplicas
+          value: 1
+
+  - it: should default maxReplicas to 2 when both replicas and autoscaling.maxReplicas are unset
+    set:
+      autoscaling.enabled: true
+    asserts:
+      - equal:
+          path: spec.maxReplicas
+          value: 2

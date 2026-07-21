@@ -1,0 +1,71 @@
+suite: TopologySpreadConstraints tests
+templates:
+  - templates/v2/deployment.yaml
+tests:
+  - it: should always render topologySpreadConstraints
+    asserts:
+      - isNotNull:
+          path: spec.template.spec.topologySpreadConstraints
+
+  - it: should render agentpool constraint with maxSkew 1 and DoNotSchedule
+    asserts:
+      - equal:
+          path: spec.template.spec.topologySpreadConstraints[0].topologyKey
+          value: kubernetes.azure.com/agentpool
+      - equal:
+          path: spec.template.spec.topologySpreadConstraints[0].maxSkew
+          value: 1
+      - equal:
+          path: spec.template.spec.topologySpreadConstraints[0].whenUnsatisfiable
+          value: DoNotSchedule
+      - equal:
+          path: spec.template.spec.topologySpreadConstraints[0].nodeAffinityPolicy
+          value: Honor
+      - equal:
+          path: spec.template.spec.topologySpreadConstraints[0].nodeTaintsPolicy
+          value: Honor
+      - contains:
+          path: spec.template.spec.topologySpreadConstraints[0].matchLabelKeys
+          content: pod-template-hash
+
+  - it: should render hostname constraint with maxSkew 2 and DoNotSchedule
+    asserts:
+      - equal:
+          path: spec.template.spec.topologySpreadConstraints[1].topologyKey
+          value: kubernetes.io/hostname
+      - equal:
+          path: spec.template.spec.topologySpreadConstraints[1].maxSkew
+          value: 2
+      - equal:
+          path: spec.template.spec.topologySpreadConstraints[1].whenUnsatisfiable
+          value: DoNotSchedule
+      - equal:
+          path: spec.template.spec.topologySpreadConstraints[1].nodeAffinityPolicy
+          value: Honor
+      - equal:
+          path: spec.template.spec.topologySpreadConstraints[1].nodeTaintsPolicy
+          value: Honor
+      - contains:
+          path: spec.template.spec.topologySpreadConstraints[1].matchLabelKeys
+          content: pod-template-hash
+
+  - it: should render zone constraint with maxSkew 1 and ScheduleAnyway
+    asserts:
+      - equal:
+          path: spec.template.spec.topologySpreadConstraints[2].topologyKey
+          value: topology.kubernetes.io/zone
+      - equal:
+          path: spec.template.spec.topologySpreadConstraints[2].maxSkew
+          value: 1
+      - equal:
+          path: spec.template.spec.topologySpreadConstraints[2].whenUnsatisfiable
+          value: ScheduleAnyway
+      - equal:
+          path: spec.template.spec.topologySpreadConstraints[2].nodeAffinityPolicy
+          value: Honor
+      - equal:
+          path: spec.template.spec.topologySpreadConstraints[2].nodeTaintsPolicy
+          value: Honor
+      - contains:
+          path: spec.template.spec.topologySpreadConstraints[2].matchLabelKeys
+          content: pod-template-hash

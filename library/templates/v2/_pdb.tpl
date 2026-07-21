@@ -3,7 +3,7 @@
 {{- if hasKey .Values "language" -}}
 {{- $languageValues = (deepCopy .Values | merge (pluck .Values.language .Values | first) ) -}}
 {{- end -}}
-{{ if $languageValues.pdb.enabled }}
+{{ if (($languageValues.pdb | default dict).enabled) }}
 ---
 apiVersion: policy/v1
 kind: PodDisruptionBudget
@@ -13,7 +13,7 @@ metadata:
 spec:
   {{ if $languageValues.pdb.minAvailable }}
   minAvailable: {{ $languageValues.pdb.minAvailable }}
-  {{- else -}}
+  {{- else if $languageValues.pdb.maxUnavailable }}
   maxUnavailable: {{ $languageValues.pdb.maxUnavailable }}
   {{- end }}
   selector:

@@ -20,7 +20,7 @@ affinity:
               operator: NotIn
               values:
                 - system
-{{- if $languageValues.spotInstances.enabled }}
+{{- if (($languageValues.spotInstances | default dict).enabled) }}
     preferredDuringSchedulingIgnoredDuringExecution:
       - weight: 50
         preference:

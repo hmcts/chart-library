@@ -8,7 +8,9 @@ kind: Deployment
 {{- end }}
 spec:
   revisionHistoryLimit: 0
-  replicas: {{ $languageValues.replicas }}
+  {{- if not (($languageValues.autoscaling | default dict).enabled) }}
+  replicas: {{ $languageValues.replicas | default 1 }}
+  {{- end }}
   selector:
     matchLabels:
       app.kubernetes.io/name: {{ template "hmcts.releasename.v2" . }}

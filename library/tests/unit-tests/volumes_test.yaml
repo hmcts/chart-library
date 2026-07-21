@@ -1,0 +1,69 @@
+suite: Volumes tests
+templates:
+  - templates/v2/deployment.yaml
+tests:
+  - it: should not render volumes when volumes not set
+    asserts:
+      - notExists:
+          path: spec.template.spec.volumes
+
+  - it: should render volume name when volumes are set
+    set:
+      volumes:
+        - name: config-vol
+          configMap:
+            name: my-config
+            defaultMode: 0777
+    asserts:
+      - equal:
+          path: spec.template.spec.volumes[0].name
+          value: config-vol
+
+  - it: should render configMap block when volume has configMap
+    set:
+      volumes:
+        - name: config-vol
+          configMap:
+            name: my-config
+            defaultMode: 0777
+    asserts:
+      - isNotNull:
+          path: spec.template.spec.volumes[0].configMap
+
+  - it: should render configMap defaultMode when set
+    set:
+      volumes:
+        - name: config-vol
+          configMap:
+            name: my-config
+            defaultMode: 0777
+    asserts:
+      - isNotNull:
+          path: spec.template.spec.volumes[0].configMap.defaultMode
+
+  - it: should not render configMap defaultMode when not set
+    set:
+      volumes:
+        - name: config-vol
+          configMap:
+            name: my-config
+    asserts:
+      - notExists:
+          path: spec.template.spec.volumes[0].configMap.defaultMode
+
+  - it: should not render volumeMounts when volumeMounts not set
+    asserts:
+      - notExists:
+          path: spec.template.spec.containers[0].volumeMounts
+
+  - it: should render volumeMount name and mountPath when volumeMounts set
+    set:
+      volumeMounts:
+        - name: config-vol
+          mountPath: /mnt/config
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].volumeMounts
+          content:
+            name: config-vol
+            mountPath: /mnt/config

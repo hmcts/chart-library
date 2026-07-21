@@ -34,9 +34,12 @@ template:
     {{- ( include "hmcts.tolerations.v3" . ) | indent 4 }}
     {{- ( include "hmcts.topologySpreadConstraints.v1" . ) | indent 4 }}
     {{- ( include "hmcts.dnsConfig.v2" . ) | indent 4 }}
+    {{- $vols := trim (printf "%s%s" (include "hmcts.volumes.v2" .) (include "hmcts.secretCSIVolumes.v3" .)) }}
+    {{- if $vols }}
     volumes:
     {{- ( include "hmcts.volumes.v2" . ) | indent 4 }}
     {{- ( include "hmcts.secretCSIVolumes.v3" . ) | indent 4 }}
+    {{- end }}
     restartPolicy: {{ $languageValues.restartPolicy | default "Always" | quote }}
     terminationGracePeriodSeconds: {{ $languageValues.terminationGracePeriodSeconds | default 30 }}
     containers:

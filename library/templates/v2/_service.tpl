@@ -25,7 +25,7 @@ spec:
     - name: http
       protocol: TCP
       port: 80
-      targetPort: {{ $languageValues.applicationPort }}
+      targetPort: {{ $languageValues.applicationPort | default 80 }}
   selector:
     app.kubernetes.io/name: {{ template "hmcts.releasename.v2" . }}
 {{- end }}
