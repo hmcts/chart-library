@@ -1,7 +1,7 @@
 {{- define "hmcts.deployment.v6.tpl" -}}
 apiVersion: apps/v1
 kind: Deployment
-{{ template "hmcts.metadata.v2" . }}
+{{ template "hmcts.metadata.v3" . }}
 {{- $languageValues := deepCopy .Values }}
 {{- if hasKey .Values "language" -}}
 {{- $languageValues = (deepCopy .Values | merge (pluck .Values.language .Values | first) ) }}
