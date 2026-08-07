@@ -3,11 +3,12 @@
 {{- if hasKey .Values "language" -}}
 {{- $languageValues = (deepCopy .Values | merge (pluck .Values.language .Values | first) ) -}}
 {{- end -}}
-{{- if and $languageValues.testsConfig.keyVaults $languageValues.global.enableKeyVaults (not $languageValues.disableKeyVaults) -}}
-{{- $globals := $languageValues.global -}}
-{{- $keyVaults := $languageValues.testsConfig.keyVaults -}}
+{{- $testsConfig := default dict $languageValues.testsConfig -}}
+{{- $globals := default dict $languageValues.global -}}
+{{- $testsKeyVaults := get $testsConfig "keyVaults" -}}
+{{- if and $testsKeyVaults (get $globals "enableKeyVaults") (not $languageValues.disableKeyVaults) -}}
 {{- $root := . -}}
-{{- range $vault, $info := $languageValues.testsConfig.keyVaults }}
+{{- range $vault, $info := $testsKeyVaults }}
 {{- if not $info.disabled }}
 ---
 apiVersion: secrets-store.csi.x-k8s.io/v1
