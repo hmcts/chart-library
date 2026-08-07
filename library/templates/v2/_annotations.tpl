@@ -6,18 +6,25 @@ All the common annotations needed for the annotations sections of the definition
 {{- if hasKey .Values "language" -}}
 {{- $languageValues = (deepCopy .Values | merge (pluck .Values.language .Values | first) )}}
 {{- end -}}
-{{- with $languageValues }}
+{{- $prometheusEnabled := false -}}
+{{- with $languageValues.prometheus }}
+{{- if .enabled }}
+{{- $prometheusEnabled = true -}}
+{{- end }}
+{{- end }}
+{{- $buildIDEnabled := not (empty $languageValues.buildID) -}}
+{{- if or $prometheusEnabled $buildIDEnabled }}
 annotations:
-  {{- $applicationPort := .applicationPort -}} 
-  {{- with .prometheus }}
+  {{- $applicationPort := $languageValues.applicationPort -}}
+  {{- with $languageValues.prometheus }}
   {{- if .enabled }}
   prometheus.io/scrape: "true"
   prometheus.io/path: {{ .path | quote }}
   prometheus.io/port: {{ $applicationPort | quote }}
   {{- end }}
   {{- end }}
-  {{- if .buildID }}
-  buildID: {{ .buildID }}
+  {{- if $languageValues.buildID }}
+  buildID: {{ $languageValues.buildID }}
   {{- end }}
 {{- end -}}
 {{- end -}}
