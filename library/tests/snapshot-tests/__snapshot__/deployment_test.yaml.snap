@@ -3,7 +3,6 @@ manifest should match snapshot:
     apiVersion: apps/v1
     kind: Deployment
     metadata:
-      annotations: null
       labels:
         app.kubernetes.io/instance: RELEASE-NAME
         app.kubernetes.io/managed-by: Helm
@@ -11,14 +10,12 @@ manifest should match snapshot:
         helm.sh/chart: library-0.1.0
       name: release-name-library
     spec:
-      replicas: 2
       revisionHistoryLimit: 0
       selector:
         matchLabels:
           app.kubernetes.io/name: release-name-library
       template:
         metadata:
-          annotations: null
           labels:
             app.kubernetes.io/instance: RELEASE-NAME
             app.kubernetes.io/managed-by: Helm

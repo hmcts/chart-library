@@ -3,7 +3,6 @@ manifest should match snapshot:
     apiVersion: autoscaling/v2
     kind: HorizontalPodAutoscaler
     metadata:
-      annotations: null
       labels:
         app.kubernetes.io/instance: RELEASE-NAME
         app.kubernetes.io/managed-by: Helm

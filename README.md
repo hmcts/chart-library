@@ -18,7 +18,7 @@ Using a central library chart allows us to roll out changes to resources across 
 
 ## Making a change to chart-library
 
-Because this is the foundational level of all our templated helm charts, it's critical that changes made to this repo are well tested with feature flagged changes. A breaking change in chart-library will be inherited by all charts that consume it as a dependency. 
+Because this is the foundational level of all our templated helm charts, it's critical that changes made to this repo are well tested with feature flagged changes. A breaking change in chart-library will be inherited by all charts that consume it as a dependency.
 
 **Because renovate is used across the estate, as soon as a new chart-xyz version is released, it will be raised as a Pull Request and potentially automerged by renovate to team application repositories**, this is why feature flagging and testing is so important when making changes to this repo.
 
@@ -75,7 +75,7 @@ As well as feature flagging, you should be testing your code changes by creating
 You can then draft a pre-release version of an application chart like chart-java, by raising a PR that bumps the library dependency to the alpha release you created, and test with plum or toffee that the new chart-library works and is deployable to AKS without issues.
 
 
-#### Example of testing 2.1.3-alpha chart-library release: 
+#### Example of testing 2.1.3-alpha chart-library release:
 - [PR which points to alpha release](https://github.com/hmcts/chart-java/commit/35234f39c8cea7e22bb0c70b8869dbfb809c3c23)
 - [Alpha pre-release of chart-java](https://github.com/hmcts/chart-java/releases/tag/5.2.1-alpha) - created as a draft release from your PR branch
 - Test this version with plum or toffee works on AKS as expected, expirement with different values.yaml changes
@@ -96,7 +96,7 @@ You can read more about this [draft release process](https://hmcts.github.io/ops
 
 - Default values can be overridden over normal defaults for a specific language.
 
-  Example:  
+  Example:
     ```yaml
     <new-lang>:
       applicationPort : 5000
@@ -114,7 +114,7 @@ You can read more about this [draft release process](https://hmcts.github.io/ops
 
 Behaviour is applicable for all templates
 
-| Parameter                   | Description                                                                                                                         | 
+| Parameter                   | Description                                                                                                                         |
 |-----------------------------|-------------------------------------------------------------------------------------------------------------------------------------|
 | `releaseNameOverride`       | Will override the default resource name - It supports templating, example:`releaseNameOverride: {{ .Release.Name }}-my-custom-name` |
 | `releaseNamePrefix`         | Prefix for the release name                                                                                                         |
@@ -169,13 +169,13 @@ It includes below templates :
 | `applicationPort`          | The port your app runs on in its container |
 | `image`                    | Full image url | `hmctssandbox.azurecr.io/hmcts/spring-boot-template`<br>(but overridden by pipeline) |
 | `environment`              |  A map containing all environment values you wish to set. <br> **Note**: environment variables (the key in KEY: value) must be uppercase and only contain letters,  "_", or numbers and value can be templated |
-| `configmap`                | A config map, can be used for environment specific config.| 
-| `envFromSecret`            | Maps all key-value pairs in a Secret as container environment variables| 
+| `configmap`                | A config map, can be used for environment specific config.|
+| `envFromSecret`            | Maps all key-value pairs in a Secret as container environment variables|
 | `devmemoryRequests`        | Requests for memory, set when `global.devMode` is set to true |
 | `devcpuRequests`           | Requests for cpu, set when `global.devMode` is set to true |
-| `devmemoryLimits`          | Memory limits, set when `global.devMode` is set to true| 
-| `devcpuLimits`             | CPU limits, set when `global.devMode` is set to true | 
-| `memoryRequests`           | Requests for memory, set when `global.devMode` is set to false | 
+| `devmemoryLimits`          | Memory limits, set when `global.devMode` is set to true|
+| `devcpuLimits`             | CPU limits, set when `global.devMode` is set to true |
+| `memoryRequests`           | Requests for memory, set when `global.devMode` is set to false |
 | `cpuRequests`              | Requests for cpu, set when `global.devMode` is set to false |
 | `memoryLimits`             | Memory limits, set when `global.devMode` is set to false|
 | `cpuLimits`                | CPU limits, set when `global.devMode` is set to false |
@@ -186,12 +186,12 @@ It includes below templates :
 | `livenessPath`             | Path of HTTP liveness probe |
 | `livenessDelay`            | Liveness probe initial delay (seconds)  |
 | `livenessTimeout`          | Liveness probe timeout (seconds) |
-| `livenessPeriod`           | Liveness probe period (seconds) | 
+| `livenessPeriod`           | Liveness probe period (seconds) |
 | `livenessFailureThreshold` | Liveness failure threshold |
 | `startupPath`              | Path of HTTP startup probe |
 | `startupDelay`             | Startup probe initial delay (seconds)  |
 | `startupTimeout`           | Startup probe timeout (seconds) |
-| `startupPeriod`            | Startup probe period (seconds) | 
+| `startupPeriod`            | Startup probe period (seconds) |
 | `startupFailureThreshold`  | Startup failure threshold |
 | `args`                     | Arguments to pass to the container |
 | `command`                  | Commands to pass to the container |
@@ -204,7 +204,7 @@ It includes below templates :
 | Parameter          | Description                                                                                                                     |
 |--------------------|---------------------------------------------------------------------------------------------------------------------------------|
 | `disableKeyVaults` | Disables key vault support, useful in pull requests if you don't need any secrets (usually because you're using an embedded DB) |
-| `keyVaults`        | Mappings of keyvaults to be mounted as CSI Volumes (see Example Configuration)                                                  | 
+| `keyVaults`        | Mappings of keyvaults to be mounted as CSI Volumes (see Example Configuration)                                                  |
 | `aadIdentityName`  | Pod identity binding for accessing the key vaults                                                                               |
 | `mountPath`        | (Optional) Custom path to mount the secrets to the pod. Default: `/mnt/secrets/<VAULT_NAME>`                                    |
 
@@ -294,7 +294,7 @@ keyVaults:
 - *<VAULT_NAME>*: Name of the vault to access without the environment tag i.e. `s2s` or `bulkscan`.
 - *<SECRET_NAME>*: Secret name as it is in the vault. Note this is case and punctuation sensitive. i.e. in s2s there is the `microservicekey-cmcLegalFrontend` secret.
 - *<SECRET_ALIAS>*: Alias name for the secret.
-- *excludeEnvironmentSuffix*: This is used for the global key vaults 
+- *excludeEnvironmentSuffix*: This is used for the global key vaults
 - *<CERT_NAME>*: Certificate name as it is in the vault. Note this is case and punctuation sensitive. i.e. in s2s there is the `microservicekey-cmcLegalFrontend` certificate.
 - *<CERT_ALIAS>*: Alias name for the certificate.
 - *excludeEnvironmentSuffix*: This is used for the global key vaults where there is not environment suffix ( e.g `-aat` ) required. It defaults to false if it is not there and should only be added if you are using a global key-vault.
@@ -329,7 +329,7 @@ keyVaults:
 To map existing kubernetes secrets such as passwords to environment variable in the container. e.g :
 
 ```yaml
-secrets: 
+secrets:
   CONNECTION_STRING:
       secretRef: some-secret-reference
       key: connectionString
@@ -346,14 +346,14 @@ disabled is optional and used to disable setting this environment value. This ca
 
 ### Startup Probes
 
-Startup probes are intended to provide a mechanism for allowing slow starting applications perform the relevant checks to determine the application has fully started before commencement of higher level liveness and readiness probes.  
+Startup probes are intended to provide a mechanism for allowing slow starting applications perform the relevant checks to determine the application has fully started before commencement of higher level liveness and readiness probes.
 
-Prior to the availability of startup probes, such applications have liveness probes configured with a relatively long (more than 60s) livenessDelay as a means of allowing sufficient time to startup before probes become active.  
+Prior to the availability of startup probes, such applications have liveness probes configured with a relatively long (more than 60s) livenessDelay as a means of allowing sufficient time to startup before probes become active.
 
 Whilst this achieves intended effect, it also means timely detection of deadlocks does not occur during the period the container successfully starts up much faster than the specified initialDelaySeconds.
 
-To use startup probes, refer to instructions for the relevant dependant charts below:   
-- [chart-java](https://github.com/hmcts/chart-java/tree/master#startup-probes)    
+To use startup probes, refer to instructions for the relevant dependant charts below:
+- [chart-java](https://github.com/hmcts/chart-java/tree/master#startup-probes)
 - [chart-nodejs](https://github.com/hmcts/chart-nodejs/tree/master#startup-probes)
 
 ### HPA Horizontal Pod Auto scaler
@@ -374,14 +374,14 @@ To adjust the number of pods in a deployment depending on CPU utilization AKS su
 Example Config:
 
 ```yaml
-autoscaling:        
+autoscaling:
   enabled: true     # Default is false
   maxReplicas: 5    # Optional setting, will use the value of replicas + 2 if not set
   minReplicas: 2    # Optional setting, will use the value of replicas if not set
   cpu:
-    averageUtilization: 80 # Default is 80% Average CPU utilization 
+    averageUtilization: 80 # Default is 80% Average CPU utilization
   memory:
-    averageUtilization: 80 # Default is 80% Average memory utilization  
+    averageUtilization: 80 # Default is 80% Average memory utilization
 ```
 
 ### Smoke and functional tests
@@ -396,14 +396,14 @@ autoscaling:
 | `testsConfig.cpuLimits`              | Tests CPU limits. Applies to all test pods. Can be overridden by single test pods                                                 | `1000m`                                       |
 | `smoketests.enabled`                 | Enable smoke tests single run after deployment.                                                                                   | `false`                                       |
 | `smoketests.image`                   | Full smoke tests image url.                                                                                                       | `hmctspublic.azurecr.io/spring-boot/template` |
-| `smoketests.environment`             | Smoke tests environment variables. Merged with testsConfig.environment. Overrides duplicates.                                     | `nil`                                         |  
+| `smoketests.environment`             | Smoke tests environment variables. Merged with testsConfig.environment. Overrides duplicates.                                     | `nil`                                         |
 | `smoketests.memoryRequests`          | Smoke tests Requests for memory                                                                                                   | `256Mi`                                       |
 | `smoketests.cpuRequests`             | Smoke tests Requests for cpu                                                                                                      | `100m`                                        |
 | `smoketests.memoryLimits`            | Smoke tests Memory limits                                                                                                         | `1024Mi`                                      |
 | `smoketests.cpuLimits`               | Smoke tests CPU limits                                                                                                            | `1000m`                                       |
 | `functionaltests.enabled`            | Enable functional tests single run after deployment.                                                                              | `false`                                       |
 | `functionaltests.image`              | Full functional tests image url.                                                                                                  | `hmctspublic.azurecr.io/spring-boot/template` |
-| `functionaltests.environment`        | Functional tests environment variables. Merged with testsConfig.environment. Overrides duplicates.                                | `nil`                                         |  
+| `functionaltests.environment`        | Functional tests environment variables. Merged with testsConfig.environment. Overrides duplicates.                                | `nil`                                         |
 | `functionaltests.memoryRequests`     | Functional tests Requests for memory                                                                                              | `256Mi`                                       |
 | `functionaltests.cpuRequests`        | Functional tests Requests for cpu                                                                                                 | `100m`                                        |
 | `functionaltests.memoryLimits`       | Functional tests Memory limits                                                                                                    | `1024Mi`                                      |
@@ -411,7 +411,7 @@ autoscaling:
 | `smoketestscron.enabled`             | Enable smoke tests cron job. Runs tests at scheduled times                                                                        | `false`                                       |
 | `smoketestscron.schedule`            | Cron expression for scheduling smoke tests cron job                                                                               | `20 0/1 * * *`                                |
 | `smoketestscron.image`               | Full cron smoke tests image url.                                                                                                  | `hmctspublic.azurecr.io/spring-boot/template` |
-| `smoketestscron.environment`         | Smoke cron tests environment variables. Merged with testsConfig.environment. Overrides duplicates.                                | `nil`                                         |  
+| `smoketestscron.environment`         | Smoke cron tests environment variables. Merged with testsConfig.environment. Overrides duplicates.                                | `nil`                                         |
 | `smoketestscron.memoryRequests`      | Smoke cron tests Requests for memory                                                                                              | `256Mi`                                       |
 | `smoketestscron.cpuRequests`         | Smoke cron tests Requests for cpu                                                                                                 | `100m`                                        |
 | `smoketestscron.memoryLimits`        | Smoke cron tests Memory limits                                                                                                    | `1024Mi`                                      |
@@ -419,7 +419,7 @@ autoscaling:
 | `functionaltestscron.enabled`        | Enable functional tests cron job. Runs tests at scheduled times                                                                   | `false`                                       |
 | `smoketestscron.schedule`            | Cron expression for scheduling functional tests cron job                                                                          | `30 0/6 * * *`                                |
 | `functionaltestscron.image`          | Full functional tests image url.                                                                                                  | `hmctspublic.azurecr.io/spring-boot/template` |
-| `functionaltestscron.environment`    | Functional cron tests environment variables. Merged with testsConfig.environment. Overrides duplicates.                           | `nil`                                         |  
+| `functionaltestscron.environment`    | Functional cron tests environment variables. Merged with testsConfig.environment. Overrides duplicates.                           | `nil`                                         |
 | `functionaltestscron.memoryRequests` | Functional cron tests Requests for memory                                                                                         | `256Mi`                                       |
 | `functionaltestscron.cpuRequests`    | Functional cron tests Requests for cpu                                                                                            | `100m`                                        |
 | `functionaltestscron.memoryLimits`   | Functional cron tests Memory limits                                                                                               | `1024Mi`                                      |
@@ -442,10 +442,10 @@ helm plugin install https://github.com/helm-unittest/helm-unittest.git
 ```
 
 - Add the change you want to see in the code and run [the tests](tests/test-templates.sh)
-- The snapshot tests will fail and tell you that there are differences. 
+- The snapshot tests will fail and tell you that there are differences.
 - Make sure language specific cases are covered in the tests [see](ci-values-lang.yaml)
 - If you are happy with these changes run:
-  ``helm unittest -v ci-values.yaml library -u -q -f'tests/snapshot-tests/*.yaml'``
+  ``helm unittest -v library/ci-values.yaml library -u -q -f'tests/snapshot-tests/*.yaml'``
   the -u flag updates the cache.
 - Commit your changes to both the cache and the tests
 
@@ -484,7 +484,7 @@ to:
 
 The [script](./scripts/bump-tpl.py) will also search for references to the edited template in other files and update them accordingly.
 
-This is needed because if there is an app with dependencies and those dependencies are both pulling chart-library on different versions, then the one downloaded last is used as helm has no native versioning system for the template files besides the naming. This causes multiple conflicts and it's tough to resolve. 
+This is needed because if there is an app with dependencies and those dependencies are both pulling chart-library on different versions, then the one downloaded last is used as helm has no native versioning system for the template files besides the naming. This causes multiple conflicts and it's tough to resolve.
 
 This means we can't be sure which code we are using from which dependency if they were each published in different chart-library versions but under the same template name.
 
@@ -504,7 +504,7 @@ This version should match the version in chart-library. If the version in chart-
 {{- template "hmcts.configmap.v3.tpl" . -}}
 ```
 
-**Note** 
+**Note**
 
 The nature of this action can mean there are cascading increments. If you push to your branch in GitHub and changes are detected in the template files, the versions will be incremented in other files which will, in turn, have their references updated in other files. You will need to run `git pull` to pull the latest changes from GitHub to your local branch.
 
