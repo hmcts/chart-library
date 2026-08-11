@@ -64,6 +64,6 @@ spec:
 {{- end }}
 {{- end -}}
 
-{{- define "hmcts.secretproviderclass-tests.v3" -}}
-{{- template "hmcts.util.merge.v2" (append . "hmcts.secretproviderclass-tests.v3.tpl") -}}
+{{- define "hmcts.secretproviderclass-tests.v4" -}}
+{{- template "hmcts.util.merge.v2" (append . "hmcts.secretproviderclass-tests.v4.tpl") -}}
 {{- end -}}
