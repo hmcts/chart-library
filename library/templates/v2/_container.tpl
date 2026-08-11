@@ -4,7 +4,7 @@
 {{- $languageValues = (deepCopy .Values | merge (pluck .Values.language .Values | first) ) -}}
 {{- end -}}
 - image: {{ required "An image must be supplied to the chart" $languageValues.image }}
-  name: {{ template "hmcts.releasename.v2" . }}
+  name: {{ template "hmcts.releasename.v3" . }}
   securityContext:
     allowPrivilegeEscalation: false
   {{- if $languageValues.args }}
@@ -20,7 +20,7 @@
     - name: {{ $languageValues.devApplicationInsightsInstrumentKeyName }}
       value: {{ $languageValues.devApplicationInsightsInstrumentKey | quote }}
     {{- end -}}
-      {{- ( include "hmcts.secrets.v2" .) | indent 4 }}
+      {{- ( include "hmcts.secrets.v3" .) | indent 4 }}
       {{- range $key, $val := $languageValues.environment }}
     - name: {{ $key }}
       value: {{ tpl ($val | quote) $ }}
@@ -29,18 +29,18 @@
   envFrom:
   {{- if $languageValues.configmap }}
     - configMapRef:
-       name: {{ template "hmcts.releasename.v2" . }}
+       name: {{ template "hmcts.releasename.v3" . }}
   {{- end }}
   {{- if $languageValues.envFromSecret }}
     - secretRef:
         name: {{ $languageValues.envFromSecret }}
   {{- end }}
   {{- end }}
-  {{- $vMounts := trim (printf "%s%s" (include "hmcts.volumeMounts.v3" .) (include "hmcts.secretMounts.v3" .)) }}
+  {{- $vMounts := trim (printf "%s%s" (include "hmcts.volumeMounts.v3" .) (include "hmcts.secretMounts.v4" .)) }}
   {{- if $vMounts }}
   volumeMounts:
   {{- ( include "hmcts.volumeMounts.v3" . ) | indent 2 }}
-  {{- ( include "hmcts.secretMounts.v3" . ) | indent 2 }}
+  {{- ( include "hmcts.secretMounts.v4" . ) | indent 2 }}
   {{- end }}
   {{- if or ($languageValues.global.devMode) ($languageValues.memoryRequests) ($languageValues.cpuRequests) ($languageValues.memoryLimits) ($languageValues.cpuLimits) }}
   {{- if $languageValues.global.devMode }}

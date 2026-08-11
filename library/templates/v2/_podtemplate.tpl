@@ -8,7 +8,7 @@ Create pod template spec.
 {{- end -}}
 template:
   metadata:
-    {{- (include "hmcts.labels.v2" .) | indent 4 }}
+    {{- (include "hmcts.labels.v3" .) | indent 4 }}
     {{- if $languageValues.useWorkloadIdentity }}
       azure.workload.identity/use: "true"
     {{- end }}
@@ -32,13 +32,13 @@ template:
   {{ toYaml $languageValues.nodeSelector | indent 4 }}
     {{- end }}
     {{- ( include "hmcts.tolerations.v4" . ) | indent 4 }}
-    {{- ( include "hmcts.topologySpreadConstraints.v1" . ) | indent 4 }}
+    {{- ( include "hmcts.topologySpreadConstraints.v2" . ) | indent 4 }}
     {{- ( include "hmcts.dnsConfig.v2" . ) | indent 4 }}
-    {{- $vols := trim (printf "%s%s" (include "hmcts.volumes.v3" .) (include "hmcts.secretCSIVolumes.v3" .)) }}
+    {{- $vols := trim (printf "%s%s" (include "hmcts.volumes.v3" .) (include "hmcts.secretCSIVolumes.v4" .)) }}
     {{- if $vols }}
     volumes:
     {{- ( include "hmcts.volumes.v3" . ) | indent 4 }}
-    {{- ( include "hmcts.secretCSIVolumes.v3" . ) | indent 4 }}
+    {{- ( include "hmcts.secretCSIVolumes.v4" . ) | indent 4 }}
     {{- end }}
     restartPolicy: {{ $languageValues.restartPolicy | default "Always" | quote }}
     terminationGracePeriodSeconds: {{ $languageValues.terminationGracePeriodSeconds | default 30 }}

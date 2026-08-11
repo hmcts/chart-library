@@ -14,7 +14,7 @@ spec:
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: {{ template "hmcts.releasename.v2" . }}
+    name: {{ template "hmcts.releasename.v3" . }}
   metrics:
   {{- if (($languageValues.autoscaling.cpu | default dict).enabled) }}
   {{/* type: Resource is rendered at the bottom of the resource block in the template.*/}}

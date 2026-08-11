@@ -1,7 +1,7 @@
 {{/*
 Fixtures for util_merge_test.yaml. Simulate a consumer chart's override
 templates, since exercising hmcts.util.merge.v2 requires calling a wrapper
-name (e.g. hmcts.configmap.v2) with a real override to merge against - nothing
+name (e.g. hmcts.configmap.v3) with a real override to merge against - nothing
 in this chart's own rendering does that otherwise.
 */}}
 

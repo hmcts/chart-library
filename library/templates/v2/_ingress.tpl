@@ -9,8 +9,8 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: {{ template "hmcts.releasename.v2" . }}
-  {{- ( include "hmcts.labels.v2" . ) | indent 2 }}
+  name: {{ template "hmcts.releasename.v3" . }}
+  {{- ( include "hmcts.labels.v3" . ) | indent 2 }}
   annotations:
     {{- if not (hasKey $globals "disableTraefikTls" | ternary $globals.disableTraefikTls $languageValues.disableTraefikTls) }}
     traefik.ingress.kubernetes.io/router.tls: "true"
@@ -34,7 +34,7 @@ spec:
         pathType: Prefix
         backend:
           service:
-            name: {{ template "hmcts.releasename.v2" . }}
+            name: {{ template "hmcts.releasename.v3" . }}
             port:
               number: 80
   {{- end }}
@@ -47,7 +47,7 @@ spec:
         pathType: Prefix
         backend:
           service:
-            name: {{ template "hmcts.releasename.v2" . }}
+            name: {{ template "hmcts.releasename.v3" . }}
             port:
               number: 80
   {{- end }}
@@ -61,7 +61,7 @@ spec:
         pathType: Prefix
         backend:
           service:
-            name: {{ template "hmcts.releasename.v2" $ }}
+            name: {{ template "hmcts.releasename.v3" $ }}
             port:
               number: 80
   {{- end }}
