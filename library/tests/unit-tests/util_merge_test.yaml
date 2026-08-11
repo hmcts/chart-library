@@ -1,0 +1,47 @@
+# Tests hmcts.util.merge.v2 (_util.tpl), the override-merge mechanism consumer
+# charts use to override a library template's default rendering. No template
+# in this chart calls a wrapper name (e.g. hmcts.configmap.v2) the way a
+# consumer would, so this is the only test that exercises the merge itself.
+suite: Util merge tests
+templates:
+  - templates/v2/tests/util-merge-harness.yaml
+tests:
+  - it: should let a consumer-style override field win
+    set:
+      configmap:
+        SOME_KEY: some_value
+    documentIndex: 0
+    asserts:
+      - equal:
+          path: injectedByConsumerOverride
+          value: "true"
+
+  - it: should still fill in the library's own base fields when the override does not set them
+    set:
+      configmap:
+        SOME_KEY: some_value
+    documentIndex: 0
+    asserts:
+      - equal:
+          path: kind
+          value: ConfigMap
+      - equal:
+          path: data.SOME_KEY
+          value: some_value
+      - isNotNull:
+          path: metadata.name
+
+  - it: should fall back to pure library defaults when the override template renders empty
+    set:
+      configmap:
+        SOME_KEY: some_value
+    documentIndex: 1
+    asserts:
+      - notExists:
+          path: injectedByConsumerOverride
+      - equal:
+          path: data.SOME_KEY
+          value: some_value
+      - equal:
+          path: kind
+          value: ConfigMap

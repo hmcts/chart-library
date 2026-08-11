@@ -17,7 +17,7 @@ Usage: 'name: "{{- template "hmcts.releasename.v2" . -}}"'
 {{- if hasKey .Values "language" -}}
 {{- $languageValues = (deepCopy .Values | merge (pluck .Values.language .Values | first) ) -}}
 {{- end -}}
-  {{- $global := default (dict) $languageValues .global -}}
+  {{- $global := default (dict) $languageValues.global -}}
   {{- $base := printf "%s-%s" .Release.Name .Chart.Name -}}
   {{- if $languageValues.releaseNameOverride -}}
   {{- $base = tpl $languageValues.releaseNameOverride $ -}}  

@@ -20,7 +20,7 @@ Example format:
 - name: {{ if $key | regexMatch "^[^.-]+$" -}}
           {{- $key }}
         {{- else -}}
-            {{- fail (join "Environment variables can not contain '.' or '-' Failed key: " ($key|quote)) -}}
+            {{- fail (printf "Environment variables can not contain '.' or '-' Failed key: %s" ($key|quote)) -}}
         {{- end }}
   valueFrom:
     secretKeyRef:

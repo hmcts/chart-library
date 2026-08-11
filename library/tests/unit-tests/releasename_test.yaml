@@ -1,0 +1,78 @@
+suite: ReleaseName tests
+templates:
+  - templates/v2/deployment.yaml
+tests:
+  - it: should default name to release-chart when no overrides are set
+    asserts:
+      - equal:
+          path: metadata.name
+          value: release-name-library
+
+  - it: should use releaseNameOverride when set, rendered lowercase
+    set:
+      releaseNameOverride: "UPPER-Case-Name"
+    asserts:
+      - equal:
+          path: metadata.name
+          value: upper-case-name
+
+  - it: should prepend releaseNamePrefix to the base name
+    set:
+      releaseNamePrefix: "pre-"
+    asserts:
+      - equal:
+          path: metadata.name
+          value: pre-release-name-library
+
+  - it: should append releaseNameSuffix to the base name
+    set:
+      releaseNameSuffix: "-suf"
+    asserts:
+      - equal:
+          path: metadata.name
+          value: release-name-library-suf
+
+  - it: should prepend global.releaseNamePrefix to the base name
+    set:
+      global.releaseNamePrefix: "gpre-"
+    asserts:
+      - equal:
+          path: metadata.name
+          value: gpre-release-name-library
+
+  - it: should append global.releaseNameSuffix to the base name
+    set:
+      global.releaseNameSuffix: "-gsuf"
+    asserts:
+      - equal:
+          path: metadata.name
+          value: release-name-library-gsuf
+
+  - it: should apply global prefix, prefix, base, suffix, and global suffix in that order
+    set:
+      releaseNamePrefix: "pre-"
+      releaseNameSuffix: "-suf"
+      global.releaseNamePrefix: "gpre-"
+      global.releaseNameSuffix: "-gsuf"
+    asserts:
+      - equal:
+          path: metadata.name
+          value: gpre-pre-release-name-library-suf-gsuf
+
+  - it: should truncate the computed name to 63 characters
+    set:
+      releaseNamePrefix: "this-is-a-very-long-prefix-that-should-push-us-well-past-the-limit-"
+    asserts:
+      - equal:
+          path: metadata.name
+          value: this-is-a-very-long-prefix-that-should-push-us-well-past-the-li
+
+  - it: should use language-specific releaseNameOverride when language key is set
+    set:
+      language: test
+      test:
+        releaseNameOverride: lang-name
+    asserts:
+      - equal:
+          path: metadata.name
+          value: lang-name

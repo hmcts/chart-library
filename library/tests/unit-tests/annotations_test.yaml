@@ -1,0 +1,80 @@
+suite: Annotations tests
+templates:
+  - templates/v2/deployment.yaml
+tests:
+  - it: should not render annotations when neither prometheus nor buildID is set
+    asserts:
+      - notExists:
+          path: metadata.annotations
+
+  - it: should not render annotations when prometheus.enabled is explicitly false and buildID is not set
+    set:
+      prometheus.enabled: false
+    asserts:
+      - notExists:
+          path: metadata.annotations
+
+  - it: should render prometheus annotations when prometheus.enabled is true
+    set:
+      applicationPort: 4550
+      prometheus.enabled: true
+      prometheus.path: /metrics
+    asserts:
+      - equal:
+          path: metadata.annotations["prometheus.io/scrape"]
+          value: "true"
+      - equal:
+          path: metadata.annotations["prometheus.io/path"]
+          value: /metrics
+      - equal:
+          path: metadata.annotations["prometheus.io/port"]
+          value: "4550"
+
+  - it: should not render prometheus annotations when prometheus.enabled is false but buildID is set
+    set:
+      prometheus.enabled: false
+      buildID: "abc123"
+    asserts:
+      - notExists:
+          path: metadata.annotations["prometheus.io/scrape"]
+
+  - it: should render buildID annotation when buildID is set
+    set:
+      buildID: "abc123"
+    asserts:
+      - equal:
+          path: metadata.annotations.buildID
+          value: "abc123"
+
+  - it: should not render buildID annotation when buildID is not set
+    set:
+      prometheus.enabled: true
+      prometheus.path: /metrics
+      applicationPort: 4550
+    asserts:
+      - notExists:
+          path: metadata.annotations.buildID
+
+  - it: should render both prometheus and buildID annotations when both are set
+    set:
+      applicationPort: 4550
+      prometheus.enabled: true
+      prometheus.path: /metrics
+      buildID: "abc123"
+    asserts:
+      - equal:
+          path: metadata.annotations["prometheus.io/scrape"]
+          value: "true"
+      - equal:
+          path: metadata.annotations.buildID
+          value: "abc123"
+
+  - it: should use language-specific buildID override when language key is set
+    set:
+      language: test
+      test:
+        buildID: lang-build-id
+    asserts:
+      - equal:
+          path: metadata.annotations.buildID
+          value: lang-build-id

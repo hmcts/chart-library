@@ -1,0 +1,56 @@
+suite: Labels tests
+templates:
+  - templates/v2/deployment.yaml
+tests:
+  - it: should always render the standard label set
+    asserts:
+      - equal:
+          path: metadata.labels["app.kubernetes.io/name"]
+          value: release-name-library
+      - equal:
+          path: metadata.labels["app.kubernetes.io/managed-by"]
+          value: Helm
+      - equal:
+          path: metadata.labels["app.kubernetes.io/instance"]
+          value: RELEASE-NAME
+      - isNotNull:
+          path: metadata.labels["helm.sh/chart"]
+
+  - it: should not render aadpodidbinding label when aadIdentityName is not set
+    asserts:
+      - notExists:
+          path: metadata.labels.aadpodidbinding
+
+  - it: should render aadpodidbinding label when aadIdentityName is set and useWorkloadIdentity is not set
+    set:
+      aadIdentityName: my-identity
+    asserts:
+      - equal:
+          path: metadata.labels.aadpodidbinding
+          value: my-identity
+
+  - it: should not render aadpodidbinding label when aadIdentityName is set but useWorkloadIdentity is true
+    set:
+      aadIdentityName: my-identity
+      useWorkloadIdentity: true
+    asserts:
+      - notExists:
+          path: metadata.labels.aadpodidbinding
+
+  - it: should fail to render when the legacy top-level labels value is set
+    set:
+      labels:
+        foo: bar
+    asserts:
+      - failedTemplate:
+          errorMessage: "`labels` is no longer supported."
+
+  - it: should use language-specific aadIdentityName override when language key is set
+    set:
+      language: test
+      test:
+        aadIdentityName: lang-identity
+    asserts:
+      - equal:
+          path: metadata.labels.aadpodidbinding
+          value: lang-identity
