@@ -67,3 +67,32 @@ tests:
           content:
             name: config-vol
             mountPath: /mnt/config
+
+  - it: should not render configMap block when volume has no configMap
+    set:
+      volumes:
+        - name: empty-dir-vol
+    asserts:
+      - notExists:
+          path: spec.template.spec.volumes[0].configMap
+
+  - it: should use language-specific volumes and volumeMounts override when language key is set
+    set:
+      language: test
+      test:
+        volumes:
+          - name: lang-vol
+            configMap:
+              name: lang-config
+        volumeMounts:
+          - name: lang-vol
+            mountPath: /mnt/lang
+    asserts:
+      - equal:
+          path: spec.template.spec.volumes[0].name
+          value: lang-vol
+      - contains:
+          path: spec.template.spec.containers[0].volumeMounts
+          content:
+            name: lang-vol
+            mountPath: /mnt/lang

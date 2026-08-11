@@ -178,3 +178,18 @@ tests:
       - equal:
           path: spec.maxReplicas
           value: 2
+
+  - it: should use language-specific autoscaling override when language key is set
+    set:
+      language: test
+      test:
+        autoscaling:
+          enabled: true
+          maxReplicas: 9
+        replicas: 1
+    asserts:
+      - isKind:
+          of: HorizontalPodAutoscaler
+      - equal:
+          path: spec.maxReplicas
+          value: 9

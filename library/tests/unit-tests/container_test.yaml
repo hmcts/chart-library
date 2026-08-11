@@ -208,3 +208,86 @@ tests:
       - equal:
           path: spec.template.spec.containers[0].startupProbe.failureThreshold
           value: 20
+
+  - it: should render command when set
+    set:
+      command: ['/bin/sh', '-c']
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].command
+          value:
+            - '/bin/sh'
+            - '-c'
+
+  - it: should not render command when not set
+    asserts:
+      - notExists:
+          path: spec.template.spec.containers[0].command
+
+  - it: should render environment entries from the environment map
+    set:
+      environment:
+        REFORM_TEAM: cnp
+        REFORM_SERVICE_NAME: my-service
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: REFORM_TEAM
+            value: cnp
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: REFORM_SERVICE_NAME
+            value: my-service
+
+  - it: should render devApplicationInsightsInstrumentKey env var when global.devMode is true and key name is set
+    set:
+      global.devMode: true
+      devApplicationInsightsInstrumentKeyName: APPINSIGHTS_INSTRUMENTATIONKEY
+      devApplicationInsightsInstrumentKey: dev-instrumentation-key
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: APPINSIGHTS_INSTRUMENTATIONKEY
+            value: dev-instrumentation-key
+
+  - it: should not render devApplicationInsightsInstrumentKey env var when global.devMode is false
+    set:
+      global.devMode: false
+      devApplicationInsightsInstrumentKeyName: APPINSIGHTS_INSTRUMENTATIONKEY
+      devApplicationInsightsInstrumentKey: dev-instrumentation-key
+      environment:
+        SOME_VAR: some-value
+    asserts:
+      - notContains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: APPINSIGHTS_INSTRUMENTATIONKEY
+            value: dev-instrumentation-key
+
+  - it: should not render devApplicationInsightsInstrumentKey env var when devApplicationInsightsInstrumentKeyName is not set
+    set:
+      global.devMode: true
+      environment:
+        SOME_VAR: some-value
+    asserts:
+      - notContains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: APPINSIGHTS_INSTRUMENTATIONKEY
+
+  - it: should use language-specific imagePullPolicy and applicationPort override when language key is set
+    set:
+      language: test
+      test:
+        imagePullPolicy: Never
+        applicationPort: 4550
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].imagePullPolicy
+          value: Never
+      - equal:
+          path: spec.template.spec.containers[0].ports[0].containerPort
+          value: 4550

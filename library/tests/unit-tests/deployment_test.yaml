@@ -62,3 +62,25 @@ tests:
     asserts:
       - notExists:
           path: spec.template.spec.tolerations[0].value
+
+  - it: should render toleration value when a value is provided
+    set:
+      tolerations:
+        - key: example.com/dedicated
+          effect: NoSchedule
+          operator: Equal
+          value: jobs
+    asserts:
+      - equal:
+          path: spec.template.spec.tolerations[0].value
+          value: jobs
+
+  - it: should use language-specific replicas override when language key is set
+    set:
+      language: test
+      test:
+        replicas: 6
+    asserts:
+      - equal:
+          path: spec.replicas
+          value: 6

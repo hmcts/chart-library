@@ -96,3 +96,41 @@ tests:
       - equal:
           path: spec.ingressClassName
           value: nginx
+
+  - it: should not render TLS annotation when global.disableTraefikTls is true
+    set:
+      ingressHost: myapp.example.com
+      global.disableTraefikTls: true
+    asserts:
+      - notExists:
+          path: metadata.annotations["traefik.ingress.kubernetes.io/router.tls"]
+
+  - it: should render TLS annotation when global.disableTraefikTls is false, overriding the top-level value
+    set:
+      ingressHost: myapp.example.com
+      disableTraefikTls: true
+      global.disableTraefikTls: false
+    asserts:
+      - equal:
+          path: metadata.annotations["traefik.ingress.kubernetes.io/router.tls"]
+          value: "true"
+
+  - it: should render an additional rule for registerAdditionalDns with the expected host
+    set:
+      registerAdditionalDns.enabled: true
+      registerAdditionalDns.prefix: myapp
+      registerAdditionalDns.primaryIngressHost: example.com
+    asserts:
+      - equal:
+          path: spec.rules[0].host
+          value: myapp-example.com
+
+  - it: should use language-specific ingressHost override when language key is set
+    set:
+      language: test
+      test:
+        ingressHost: lang.example.com
+    asserts:
+      - equal:
+          path: spec.rules[0].host
+          value: lang.example.com

@@ -52,3 +52,29 @@ tests:
           path: spec.maxUnavailable
       - notExists:
           path: spec.minAvailable
+
+  - it: should prefer minAvailable over maxUnavailable when both are set
+    set:
+      pdb.enabled: true
+      pdb.minAvailable: 2
+      pdb.maxUnavailable: "50%"
+    asserts:
+      - equal:
+          path: spec.minAvailable
+          value: 2
+      - notExists:
+          path: spec.maxUnavailable
+
+  - it: should use language-specific pdb override when language key is set
+    set:
+      language: test
+      test:
+        pdb:
+          enabled: true
+          maxUnavailable: "10%"
+    asserts:
+      - isKind:
+          of: PodDisruptionBudget
+      - equal:
+          path: spec.maxUnavailable
+          value: "10%"

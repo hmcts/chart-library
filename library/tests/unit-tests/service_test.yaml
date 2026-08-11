@@ -38,3 +38,13 @@ tests:
     asserts:
       - notExists:
           path: metadata.annotations
+
+  - it: should use language-specific applicationPort override when language key is set
+    set:
+      language: test
+      test:
+        applicationPort: 4550
+    asserts:
+      - equal:
+          path: spec.ports[0].targetPort
+          value: 4550

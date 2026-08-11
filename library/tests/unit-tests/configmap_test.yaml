@@ -27,3 +27,14 @@ tests:
       - equal:
           path: data.VAR_B
           value: VALUE_B
+
+  - it: should render data entries from language-specific configmap override when language key is set
+    set:
+      language: test
+      test:
+        configmap:
+          VAR_A: LANG_VALUE_A
+    asserts:
+      - equal:
+          path: data.VAR_A
+          value: LANG_VALUE_A
