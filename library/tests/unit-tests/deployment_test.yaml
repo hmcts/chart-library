@@ -75,6 +75,16 @@ tests:
           path: spec.template.spec.tolerations[0].value
           value: jobs
 
+  - it: should default toleration operator to Equal when not set
+    set:
+      tolerations:
+        - key: example.com/dedicated
+          effect: NoSchedule
+    asserts:
+      - equal:
+          path: spec.template.spec.tolerations[0].operator
+          value: Equal
+
   - it: should use language-specific replicas override when language key is set
     set:
       language: test

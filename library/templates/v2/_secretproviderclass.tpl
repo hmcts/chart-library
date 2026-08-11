@@ -3,8 +3,8 @@
 {{- if hasKey .Values "language" -}}
 {{- $languageValues = (deepCopy .Values | merge (pluck .Values.language .Values | first) ) -}}
 {{- end -}}
-{{- if and $languageValues.keyVaults $languageValues.global.enableKeyVaults (not $languageValues.disableKeyVaults) -}}
-{{- $globals := $languageValues.global -}}
+{{- $globals := $languageValues.global | default dict -}}
+{{- if and $languageValues.keyVaults $globals.enableKeyVaults (not $languageValues.disableKeyVaults) -}}
 {{- $namespace := .Release.Namespace -}}
 {{- $serviceAccount := (lookup "v1" "ServiceAccount" $namespace $namespace ) }}
 {{- $root := . -}}

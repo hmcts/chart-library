@@ -2,6 +2,13 @@ suite: Container tests
 templates:
   - templates/v2/deployment.yaml
 tests:
+  - it: should not error when global is not set at all
+    set:
+      global: null
+    asserts:
+      - isKind:
+          of: Deployment
+
   - it: should render livenessProbe when livenessPath is set
     set:
       applicationPort: 4550

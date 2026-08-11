@@ -3,6 +3,7 @@
 {{- if hasKey .Values "language" -}}
 {{- $languageValues = (deepCopy .Values | merge (pluck .Values.language .Values | first) ) -}}
 {{- end -}}
+{{- $globals := $languageValues.global | default dict -}}
 - image: {{ required "An image must be supplied to the chart" $languageValues.image }}
   name: {{ template "hmcts.releasename.v3" . }}
   securityContext:
@@ -16,7 +17,7 @@
 {{ toYaml $languageValues.command | indent 4 }}
   {{- end}}
   env:
-    {{- if and $languageValues.global.devMode $languageValues.devApplicationInsightsInstrumentKeyName }}
+    {{- if and $globals.devMode $languageValues.devApplicationInsightsInstrumentKeyName }}
     - name: {{ $languageValues.devApplicationInsightsInstrumentKeyName }}
       value: {{ $languageValues.devApplicationInsightsInstrumentKey | quote }}
     {{- end -}}
@@ -42,8 +43,8 @@
   {{- ( include "hmcts.volumeMounts.v3" . ) | indent 2 }}
   {{- ( include "hmcts.secretMounts.v4" . ) | indent 2 }}
   {{- end }}
-  {{- if or ($languageValues.global.devMode) ($languageValues.memoryRequests) ($languageValues.cpuRequests) ($languageValues.memoryLimits) ($languageValues.cpuLimits) }}
-  {{- if $languageValues.global.devMode }}
+  {{- if or ($globals.devMode) ($languageValues.memoryRequests) ($languageValues.cpuRequests) ($languageValues.memoryLimits) ($languageValues.cpuLimits) }}
+  {{- if $globals.devMode }}
   resources:
     requests:
       memory: {{ $languageValues.devmemoryRequests | quote }}

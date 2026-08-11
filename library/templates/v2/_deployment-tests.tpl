@@ -3,6 +3,7 @@
 {{- if hasKey .Values "language" -}}
 {{- $languageValues = (deepCopy .Values | merge (pluck .Values.language .Values | first) ) -}}
 {{- end -}}
+{{- $globals := $languageValues.global | default dict -}}
 {{ if $languageValues.smoketests.enabled }}
 ---
 {{ $smokedata := dict "Values" $languageValues "Release" .Release "Chart" .Chart "Template" .Template "Files" .Files }}
@@ -25,7 +26,7 @@ spec:
 {{- include "hmcts.tests.spec.v3" $functionaldata | indent 2 }}
 {{- end }}
 
-{{ if and $languageValues.smoketestscron.enabled $languageValues.global.smoketestscron.enabled }}
+{{ if and $languageValues.smoketestscron.enabled (($globals.smoketestscron | default dict).enabled) }}
 ---
 {{ $smokedatacron := dict "Values" $languageValues "Release" .Release "Chart" .Chart "Template" .Template "Files" .Files }}
 {{ $_ := set $smokedatacron.Values "task" "smoke" }}
@@ -36,7 +37,7 @@ spec:
 {{- include "hmcts.tests.spec.v3" $smokedatacron | indent 10 }}
 {{- end }}
 
-{{ if and $languageValues.functionaltestscron.enabled $languageValues.global.functionaltestscron.enabled }}
+{{ if and $languageValues.functionaltestscron.enabled (($globals.functionaltestscron | default dict).enabled) }}
 ---
 {{ $functionaldatacron := dict "Values" $languageValues "Release" .Release "Chart" .Chart "Template" .Template "Files" .Files }}
 {{ $_ := set $functionaldatacron.Values "task" "functional" }}

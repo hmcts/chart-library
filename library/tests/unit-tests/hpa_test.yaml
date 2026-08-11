@@ -179,6 +179,14 @@ tests:
           path: spec.maxReplicas
           value: 2
 
+  - it: should not error when global is not set at all
+    set:
+      global: null
+      autoscaling.enabled: true
+    asserts:
+      - isKind:
+          of: HorizontalPodAutoscaler
+
   - it: should use language-specific autoscaling override when language key is set
     set:
       language: test

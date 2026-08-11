@@ -11,7 +11,7 @@ tolerations:
 {{- range $languageValues.tolerations }}
   - key: {{ .key }}
     effect: {{ .effect }}
-    operator: {{ .operator }}
+    operator: {{ .operator | default "Equal" }}
     {{- if .value }}
     value: {{ .value }}
     {{- end }}
