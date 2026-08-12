@@ -1,0 +1,300 @@
+suite: Container tests
+templates:
+  - templates/v2/deployment.yaml
+tests:
+  - it: should not error when global is not set at all
+    set:
+      global: null
+    asserts:
+      - isKind:
+          of: Deployment
+
+  - it: should render livenessProbe when livenessPath is set
+    set:
+      applicationPort: 4550
+      livenessPath: /health/liveness
+      livenessDelay: 0
+      livenessTimeout: 3
+      livenessPeriod: 15
+      livenessFailureThreshold: 3
+    asserts:
+      - exists:
+          path: spec.template.spec.containers[0].livenessProbe
+      - equal:
+          path: spec.template.spec.containers[0].livenessProbe.httpGet.path
+          value: /health/liveness
+
+  - it: should not render livenessProbe when livenessPath is not set
+    asserts:
+      - notExists:
+          path: spec.template.spec.containers[0].livenessProbe
+
+  - it: should render readinessProbe when readinessPath is set
+    set:
+      applicationPort: 4550
+      readinessPath: /health/readiness
+      readinessDelay: 0
+      readinessTimeout: 3
+      readinessPeriod: 15
+    asserts:
+      - exists:
+          path: spec.template.spec.containers[0].readinessProbe
+
+  - it: should not render readinessProbe when readinessPath is not set
+    asserts:
+      - notExists:
+          path: spec.template.spec.containers[0].readinessProbe
+
+  - it: should render startupProbe when startupPath is set
+    set:
+      applicationPort: 4550
+      startupPath: /health/liveness
+      startupDelay: 10
+      startupTimeout: 3
+      startupPeriod: 10
+      startupFailureThreshold: 20
+    asserts:
+      - exists:
+          path: spec.template.spec.containers[0].startupProbe
+
+  - it: should not render startupProbe when startupPath is not set
+    asserts:
+      - notExists:
+          path: spec.template.spec.containers[0].startupProbe
+
+  - it: should render container port when applicationPort is set
+    set:
+      applicationPort: 4550
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].ports[0].containerPort
+          value: 4550
+
+  - it: should not render container ports when applicationPort is not set
+    asserts:
+      - notExists:
+          path: spec.template.spec.containers[0].ports
+
+  - it: should not render resources block when no resource values are set
+    asserts:
+      - notExists:
+          path: spec.template.spec.containers[0].resources
+
+  - it: should render resources with correct requests and limits when set
+    set:
+      memoryRequests: 128Mi
+      cpuRequests: 50m
+      memoryLimits: 256Mi
+      cpuLimits: 200m
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].resources.requests.memory
+          value: 128Mi
+      - equal:
+          path: spec.template.spec.containers[0].resources.requests.cpu
+          value: 50m
+      - equal:
+          path: spec.template.spec.containers[0].resources.limits.memory
+          value: 256Mi
+      - equal:
+          path: spec.template.spec.containers[0].resources.limits.cpu
+          value: 200m
+
+  - it: should render devMode resources from dev keys when global.devMode is true
+    set:
+      global.devMode: true
+      devmemoryRequests: 256Mi
+      devcpuRequests: 100m
+      devmemoryLimits: 512Mi
+      devcpuLimits: 500m
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].resources.requests.memory
+          value: 256Mi
+      - equal:
+          path: spec.template.spec.containers[0].resources.requests.cpu
+          value: 100m
+      - equal:
+          path: spec.template.spec.containers[0].resources.limits.memory
+          value: 512Mi
+      - equal:
+          path: spec.template.spec.containers[0].resources.limits.cpu
+          value: 500m
+
+  - it: should default imagePullPolicy to IfNotPresent when not configured
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].imagePullPolicy
+          value: IfNotPresent
+
+  - it: should render args when set
+    set:
+      args: ['--flag', '--value']
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].args
+          value:
+            - '--flag'
+            - '--value'
+
+  - it: should not render args when not set
+    asserts:
+      - notExists:
+          path: spec.template.spec.containers[0].args
+
+  - it: should render envFrom with configMapRef when configmap is set
+    set:
+      configmap:
+        VAR_A: VALUE_A
+    asserts:
+      - exists:
+          path: spec.template.spec.containers[0].envFrom[0].configMapRef
+
+  - it: should render envFrom with secretRef when envFromSecret is set
+    set:
+      envFromSecret: my-secret
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].envFrom
+          content:
+            secretRef:
+              name: my-secret
+
+  - it: should not render envFrom when neither configmap nor envFromSecret is set
+    asserts:
+      - notExists:
+          path: spec.template.spec.containers[0].envFrom
+
+  - it: should default liveness probe integers when only livenessPath is set
+    set:
+      applicationPort: 4550
+      livenessPath: /health/liveness
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].livenessProbe.initialDelaySeconds
+          value: 0
+      - equal:
+          path: spec.template.spec.containers[0].livenessProbe.timeoutSeconds
+          value: 3
+      - equal:
+          path: spec.template.spec.containers[0].livenessProbe.periodSeconds
+          value: 15
+      - equal:
+          path: spec.template.spec.containers[0].livenessProbe.failureThreshold
+          value: 3
+
+  - it: should default readiness probe integers when only readinessPath is set
+    set:
+      applicationPort: 4550
+      readinessPath: /health/readiness
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].readinessProbe.initialDelaySeconds
+          value: 0
+      - equal:
+          path: spec.template.spec.containers[0].readinessProbe.timeoutSeconds
+          value: 3
+      - equal:
+          path: spec.template.spec.containers[0].readinessProbe.periodSeconds
+          value: 15
+
+  - it: should default startup probe integers when only startupPath is set
+    set:
+      applicationPort: 4550
+      startupPath: /health/liveness
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].startupProbe.initialDelaySeconds
+          value: 0
+      - equal:
+          path: spec.template.spec.containers[0].startupProbe.timeoutSeconds
+          value: 3
+      - equal:
+          path: spec.template.spec.containers[0].startupProbe.periodSeconds
+          value: 10
+      - equal:
+          path: spec.template.spec.containers[0].startupProbe.failureThreshold
+          value: 20
+
+  - it: should render command when set
+    set:
+      command: ['/bin/sh', '-c']
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].command
+          value:
+            - '/bin/sh'
+            - '-c'
+
+  - it: should not render command when not set
+    asserts:
+      - notExists:
+          path: spec.template.spec.containers[0].command
+
+  - it: should render environment entries from the environment map
+    set:
+      environment:
+        REFORM_TEAM: cnp
+        REFORM_SERVICE_NAME: my-service
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: REFORM_TEAM
+            value: cnp
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: REFORM_SERVICE_NAME
+            value: my-service
+
+  - it: should render devApplicationInsightsInstrumentKey env var when global.devMode is true and key name is set
+    set:
+      global.devMode: true
+      devApplicationInsightsInstrumentKeyName: APPINSIGHTS_INSTRUMENTATIONKEY
+      devApplicationInsightsInstrumentKey: dev-instrumentation-key
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: APPINSIGHTS_INSTRUMENTATIONKEY
+            value: dev-instrumentation-key
+
+  - it: should not render devApplicationInsightsInstrumentKey env var when global.devMode is false
+    set:
+      global.devMode: false
+      devApplicationInsightsInstrumentKeyName: APPINSIGHTS_INSTRUMENTATIONKEY
+      devApplicationInsightsInstrumentKey: dev-instrumentation-key
+      environment:
+        SOME_VAR: some-value
+    asserts:
+      - notContains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: APPINSIGHTS_INSTRUMENTATIONKEY
+            value: dev-instrumentation-key
+
+  - it: should not render devApplicationInsightsInstrumentKey env var when devApplicationInsightsInstrumentKeyName is not set
+    set:
+      global.devMode: true
+      environment:
+        SOME_VAR: some-value
+    asserts:
+      - notContains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: APPINSIGHTS_INSTRUMENTATIONKEY
+
+  - it: should use language-specific imagePullPolicy and applicationPort override when language key is set
+    set:
+      language: test
+      test:
+        imagePullPolicy: Never
+        applicationPort: 4550
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].imagePullPolicy
+          value: Never
+      - equal:
+          path: spec.template.spec.containers[0].ports[0].containerPort
+          value: 4550

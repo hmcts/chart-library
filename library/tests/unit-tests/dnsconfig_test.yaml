@@ -1,0 +1,60 @@
+suite: DnsConfig tests
+templates:
+  - templates/v2/deployment.yaml
+tests:
+  - it: should not render dnsConfig when dnsConfig is not set
+    asserts:
+      - notExists:
+          path: spec.template.spec.dnsConfig
+
+  - it: should not render dnsConfig when dnsConfig.ndots is not set
+    set:
+      dnsConfig:
+        singleRequestTcp: true
+    asserts:
+      - notExists:
+          path: spec.template.spec.dnsConfig
+
+  - it: should render dnsConfig with ndots option when dnsConfig.ndots is set
+    set:
+      dnsConfig.ndots: "3"
+    asserts:
+      - equal:
+          path: spec.template.spec.dnsConfig.options[0].name
+          value: ndots
+      - equal:
+          path: spec.template.spec.dnsConfig.options[0].value
+          value: "3"
+
+  - it: should render singleRequestTcp options when dnsConfig.singleRequestTcp is true
+    set:
+      dnsConfig.ndots: "3"
+      dnsConfig.singleRequestTcp: true
+    asserts:
+      - equal:
+          path: spec.template.spec.dnsConfig.options[1].name
+          value: single-request-reopen
+      - equal:
+          path: spec.template.spec.dnsConfig.options[2].name
+          value: use-vc
+
+  - it: should not render singleRequestTcp options when dnsConfig.singleRequestTcp is not set
+    set:
+      dnsConfig.ndots: "3"
+    asserts:
+      - equal:
+          path: spec.template.spec.dnsConfig.options[0].name
+          value: ndots
+      - notExists:
+          path: spec.template.spec.dnsConfig.options[1]
+
+  - it: should render language-specific dnsConfig override when language key is set
+    set:
+      language: test
+      test:
+        dnsConfig:
+          ndots: "5"
+    asserts:
+      - equal:
+          path: spec.template.spec.dnsConfig.options[0].value
+          value: "5"

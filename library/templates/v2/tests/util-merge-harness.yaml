@@ -1,0 +1,6 @@
+# Test-only render target for util_merge_test.yaml - not a real workload resource.
+# Renders hmcts.configmap.v3 via its wrapper: doc 1 with a real override,
+# doc 2 with an empty one. See _util_merge_harness.tpl for the fixtures.
+{{ include "hmcts.configmap.v3" (list . "hmcts.tests.configmapOverride.v1") }}
+---
+{{ include "hmcts.configmap.v3" (list . "hmcts.tests.emptyOverride.v1") }}

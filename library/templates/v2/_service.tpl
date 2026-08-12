@@ -1,4 +1,4 @@
-{{- define "hmcts.service.v2.tpl" -}}
+{{- define "hmcts.service.v3.tpl" -}}
 {{- $languageValues := deepCopy .Values -}}
 {{- if hasKey .Values "language" -}}
 {{- $languageValues = (deepCopy .Values | merge (pluck .Values.language .Values | first) ) -}}
@@ -7,8 +7,8 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ template "hmcts.releasename.v2" . }}
-  {{- ( include "hmcts.labels.v2" . ) | indent 2 }}
+  name: {{ template "hmcts.releasename.v3" . }}
+  {{- ( include "hmcts.labels.v3" . ) | indent 2 }}
   {{- /*
   # WARNING: ingressSessionAffinity is a temporary option.
   # This is subject to removal without notice. Do NOT use for any reason!
@@ -25,11 +25,11 @@ spec:
     - name: http
       protocol: TCP
       port: 80
-      targetPort: {{ $languageValues.applicationPort }}
+      targetPort: {{ $languageValues.applicationPort | default 80 }}
   selector:
-    app.kubernetes.io/name: {{ template "hmcts.releasename.v2" . }}
+    app.kubernetes.io/name: {{ template "hmcts.releasename.v3" . }}
 {{- end }}
 
-{{- define "hmcts.service.v2" -}}
-{{- template "hmcts.util.merge.v2" (append . "hmcts.service.v2.tpl") -}}
+{{- define "hmcts.service.v3" -}}
+{{- template "hmcts.util.merge.v2" (append . "hmcts.service.v3.tpl") -}}
 {{- end -}}

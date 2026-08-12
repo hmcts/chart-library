@@ -9,7 +9,7 @@ Example format:
     disabled: false
 "
 */}}
-{{- define "hmcts.secrets.v2" -}}
+{{- define "hmcts.secrets.v3" -}}
 {{- $languageValues := deepCopy .Values -}}
 {{- if hasKey .Values "language" -}}
 {{- $languageValues = (deepCopy .Values | merge (pluck .Values.language .Values | first) ) -}}
@@ -20,7 +20,7 @@ Example format:
 - name: {{ if $key | regexMatch "^[^.-]+$" -}}
           {{- $key }}
         {{- else -}}
-            {{- fail (join "Environment variables can not contain '.' or '-' Failed key: " ($key|quote)) -}}
+            {{- fail (printf "Environment variables can not contain '.' or '-' Failed key: %s" ($key|quote)) -}}
         {{- end }}
   valueFrom:
     secretKeyRef:

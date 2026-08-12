@@ -2,6 +2,28 @@ suite: Deployment tests
 templates:
   - templates/v2/deployment.yaml
 tests:
+  - it: should default replicas to 1 when not explicitly set
+    asserts:
+      - equal:
+          path: spec.replicas
+          value: 1
+
+  - it: should use the provided replicas value when set
+    set:
+      replicas: 4
+    asserts:
+      - equal:
+          path: spec.replicas
+          value: 4
+
+  - it: should not render replicas field when autoscaling is enabled
+    set:
+      autoscaling.enabled: true
+      replicas: 2
+    asserts:
+      - notExists:
+          path: spec.replicas
+
   - it: should set command
     set:
       command: ['echo', 'Hello']
@@ -13,3 +35,62 @@ tests:
           value:
            - 'echo'
            - 'Hello'
+
+  - it: should render spot instance toleration when spotInstances.enabled is true
+    set:
+      spotInstances.enabled: true
+    asserts:
+      - contains:
+          path: spec.template.spec.tolerations
+          content:
+            key: kubernetes.azure.com/scalesetpriority
+            effect: NoSchedule
+            operator: Equal
+            value: spot
+
+  - it: should not render tolerations when spotInstances is not enabled and no tolerations set
+    asserts:
+      - notExists:
+          path: spec.template.spec.tolerations
+
+  - it: should not render null value field on toleration when operator is Exists
+    set:
+      tolerations:
+        - key: example.com/dedicated
+          effect: NoSchedule
+          operator: Exists
+    asserts:
+      - notExists:
+          path: spec.template.spec.tolerations[0].value
+
+  - it: should render toleration value when a value is provided
+    set:
+      tolerations:
+        - key: example.com/dedicated
+          effect: NoSchedule
+          operator: Equal
+          value: jobs
+    asserts:
+      - equal:
+          path: spec.template.spec.tolerations[0].value
+          value: jobs
+
+  - it: should default toleration operator to Equal when not set
+    set:
+      tolerations:
+        - key: example.com/dedicated
+          effect: NoSchedule
+    asserts:
+      - equal:
+          path: spec.template.spec.tolerations[0].operator
+          value: Equal
+
+  - it: should use language-specific replicas override when language key is set
+    set:
+      language: test
+      test:
+        replicas: 6
+    asserts:
+      - equal:
+          path: spec.replicas
+          value: 6

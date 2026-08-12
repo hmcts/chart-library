@@ -1,0 +1,50 @@
+suite: Service tests
+templates:
+  - templates/v2/service.yaml
+tests:
+  - it: should set targetPort to applicationPort when provided
+    set:
+      applicationPort: 4550
+    asserts:
+      - equal:
+          path: spec.ports[0].targetPort
+          value: 4550
+
+  - it: should fall back to port 80 as targetPort when applicationPort is not set
+    asserts:
+      - equal:
+          path: spec.ports[0].targetPort
+          value: 80
+
+  - it: should render session affinity annotations when ingressSessionAffinity is enabled
+    set:
+      ingressSessionAffinity.enabled: true
+      ingressSessionAffinity.sessionCookieName: sticky
+    asserts:
+      - exists:
+          path: metadata.annotations["traefik.ingress.kubernetes.io/service.sticky.cookie"]
+      - equal:
+          path: metadata.annotations["traefik.ingress.kubernetes.io/service.sticky.cookie.name"]
+          value: sticky
+
+  - it: should not render session affinity annotations when ingressSessionAffinity is disabled
+    set:
+      ingressSessionAffinity.enabled: false
+    asserts:
+      - notExists:
+          path: metadata.annotations
+
+  - it: should not render session affinity annotations when ingressSessionAffinity is not configured
+    asserts:
+      - notExists:
+          path: metadata.annotations
+
+  - it: should use language-specific applicationPort override when language key is set
+    set:
+      language: test
+      test:
+        applicationPort: 4550
+    asserts:
+      - equal:
+          path: spec.ports[0].targetPort
+          value: 4550
