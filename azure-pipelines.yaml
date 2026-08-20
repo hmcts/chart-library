@@ -15,9 +15,39 @@ resources:
       name: hmcts/cnp-azuredevops-libraries
       endpoint: 'hmcts'
 
+parameters:
+  - name: consumerCharts
+    type: object
+    default:
+      - repository: chart-java
+        chartPath: java
+        runUnitTests: false
+      - repository: chart-nodejs
+        chartPath: nodejs
+        runUnitTests: false
+      - repository: chart-function
+        chartPath: function
+        runUnitTests: true
+      - repository: chart-job
+        chartPath: job
+        runUnitTests: true
+      - repository: chart-servicebus
+        chartPath: servicebus
+        runUnitTests: true
+      - repository: chart-blobstorage
+        chartPath: blobstorage
+        runUnitTests: false
+      - repository: chart-postgresql
+        chartPath: postgresql
+        runUnitTests: false
+
 variables:
   - name: agentPool
     value: ubuntu-latest
+  - name: kubeconformVersion
+    value: v0.6.7
+  - name: helmUnittestVersion
+    value: v0.8.0
 
 
 jobs:
@@ -35,6 +65,90 @@ jobs:
         displayName: 'Install yq'
       - script: ./tests/test-templates.sh
         displayName: 'Run unit tests'
+
+  - job: Validate_Consumer_Compatibility
+    displayName: 'Validate consumer compatibility (PR only)'
+    condition: and(succeeded(), eq(variables['Build.Reason'], 'PullRequest'))
+    dependsOn: Validate
+    pool:
+      vmImage: ${{ variables.agentPool }}
+    steps:
+      - checkout: self
+        clean: true
+      - task: HelmInstaller@1
+        displayName: 'Install Helm'
+        inputs:
+          helmVersionToInstall: 3.18.0
+      - script: |
+          set -euo pipefail
+
+          echo "Installing kubeconform"
+          curl -sSL "https://github.com/yannh/kubeconform/releases/download/$(kubeconformVersion)/kubeconform-linux-amd64.tar.gz" | tar xz -C /tmp/
+
+          echo "Installing helm-unittest plugin"
+          helm plugin install https://github.com/helm-unittest/helm-unittest.git --version "$(helmUnittestVersion)"
+
+          /tmp/kubeconform -v
+          helm plugin list
+        displayName: 'Install validation tooling'
+
+      - script: |
+          set -euo pipefail
+
+          echo "Packaging candidate chart-library"
+          mkdir -p .tmp/library-package .tmp/consumers
+          helm package library/ --destination .tmp/library-package
+          LIBRARY_PACKAGE="$(find .tmp/library-package -maxdepth 1 -type f -name 'library-*.tgz' | head -n 1)"
+          if [ -z "${LIBRARY_PACKAGE}" ]; then
+            echo "No packaged chart-library artifact produced"
+            exit 1
+          fi
+          echo "##vso[task.setvariable variable=libraryPackagePath]${LIBRARY_PACKAGE}"
+        displayName: 'Package candidate library'
+
+      - ${{ each consumer in parameters.consumerCharts }}:
+        - script: |
+            set -euo pipefail
+
+            repo="${{ consumer.repository }}"
+            chart_dir="${{ consumer.chartPath }}"
+            workdir=".tmp/consumers/${repo}"
+
+            echo "---"
+            echo "Validating ${repo} (${chart_dir})"
+
+            git clone --depth 1 --branch master "https://github.com/hmcts/${repo}.git" "${workdir}"
+            mkdir -p "${workdir}/charts"
+            cp "$(libraryPackagePath)" "${workdir}/charts/"
+
+            pushd "${workdir}" > /dev/null
+            helm lint "${chart_dir}"
+            helm template "${chart_dir}" --values "ci-values-minimal.yaml" | /tmp/kubeconform -strict -summary
+            popd > /dev/null
+          displayName: 'Validate ${{ consumer.repository }} lint and kubeconform'
+
+        - ${{ if eq(consumer.runUnitTests, true) }}:
+          - script: |
+              set -euo pipefail
+
+              repo="${{ consumer.repository }}"
+              chart_dir="${{ consumer.chartPath }}"
+              workdir=".tmp/consumers/${repo}"
+
+              pushd "${workdir}" > /dev/null
+
+              if ls tests/unit-tests/*.yaml > /dev/null 2>&1; then
+                unit_test_glob="tests/unit-tests/*.yaml"
+              elif ls "${chart_dir}"/tests/unit-tests/*.yaml > /dev/null 2>&1; then
+                unit_test_glob="${chart_dir}/tests/unit-tests/*.yaml"
+              else
+                echo "No helm-unittest suite found for ${repo}"
+                exit 1
+              fi
+
+              helm unittest --values "ci-values-minimal.yaml" "${chart_dir}" -f ${unit_test_glob}
+              popd > /dev/null
+            displayName: 'Validate ${{ consumer.repository }} helm-unittest'
   - job: Release_Sbox
     condition: >
       and(
