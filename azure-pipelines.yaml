@@ -161,6 +161,7 @@ jobs:
               echo "libraryVersion variable is empty"
               exit 1
             fi
+            export LIBRARY_VERSION
             yq -i '(.dependencies[] | select(.name == "library") | .version) = env(LIBRARY_VERSION)' "${chart_yaml}"
             yq -i '(.dependencies[] | select(.name == "library") | .repository) = "file://charts/library"' "${chart_yaml}"
 
