@@ -144,6 +144,7 @@ jobs:
 
             echo "---"
             echo "Validating ${repo} (${chart_dir})"
+            echo "Running checkout and dependency preparation..."
 
             # Clone consumer and place candidate library in chart dependency folder.
             git clone --depth 1 --branch master "https://github.com/hmcts/${repo}.git" "${workdir}"
@@ -153,6 +154,7 @@ jobs:
             pushd "${workdir}" > /dev/null
 
             # Unpack library and pin dependency to local candidate.
+            echo "Injecting candidate chart-library into consumer dependencies..."
             tar -xzf "${chart_dir}/charts/${library_archive_name}" -C "${chart_dir}/charts"
 
             chart_yaml="${chart_dir}/Chart.yaml"
@@ -166,14 +168,23 @@ jobs:
             yq -i '(.dependencies[] | select(.name == "library") | .repository) = "file://charts/library"' "${chart_yaml}"
 
             rm -f "${chart_dir}/Chart.lock"
+            echo "Running helm dependency build..."
             helm dependency build "${chart_dir}"
 
             # Core compatibility checks for all consumers.
+            echo "Running helm lint..."
             helm lint "${chart_dir}"
-            helm template "${chart_dir}" --values "ci-values-minimal.yaml" | /tmp/kubeconform -strict -summary
+            echo "Running kubeconform now..."
+            helm template "${chart_dir}" --values "ci-values-minimal.yaml" \
+              | /tmp/kubeconform \
+                -strict \
+                -summary \
+                -schema-location default \
+                -schema-location 'https://raw.githubusercontent.com/datreeio/CRDs-catalog/main/{{.Group}}/{{.ResourceKind}}_{{.ResourceAPIVersion}}.json'
 
             # Optional consumer-owned unit test suites.
             if [ "${run_unit_tests}" = "true" ]; then
+              echo "Running helm-unittest..."
               if ls tests/unit-tests/*.yaml > /dev/null 2>&1; then
                 unit_test_glob="tests/unit-tests/*.yaml"
               elif ls "${chart_dir}"/tests/unit-tests/*.yaml > /dev/null 2>&1; then
