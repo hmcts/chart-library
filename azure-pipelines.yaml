@@ -22,24 +22,31 @@ parameters:
       - repository: chart-java
         chartPath: java
         runUnitTests: false
+        valuesFile: ci-values-minimal.yaml
       - repository: chart-nodejs
         chartPath: nodejs
         runUnitTests: false
+        valuesFile: ci-values-minimal.yaml
       - repository: chart-function
         chartPath: function
         runUnitTests: true
+        valuesFile: ci-values-servicebus.yaml
       - repository: chart-job
         chartPath: job
         runUnitTests: true
+        valuesFile: ci-values-minimal.yaml
       - repository: chart-servicebus
         chartPath: servicebus
         runUnitTests: true
+        valuesFile: ci-values-minimal.yaml
       - repository: chart-blobstorage
         chartPath: blobstorage
         runUnitTests: false
+        valuesFile: ci-values-minimal.yaml
       - repository: chart-postgresql
         chartPath: postgresql
         runUnitTests: false
+        valuesFile: ci-values-minimal.yaml
 
 variables:
   - name: agentPool
@@ -118,6 +125,7 @@ jobs:
             chart_dir="${{ consumer.chartPath }}"
             workdir=".tmp/consumers/${repo}"
             run_unit_tests="${{ consumer.runUnitTests }}"
+            values_file="${{ consumer.valuesFile }}"
             library_package="$(libraryPackagePath)"
             library_archive_name="$(basename "${library_package}")"
 
@@ -141,10 +149,20 @@ jobs:
             rm -f "${chart_dir}/Chart.lock"
 
             # Core compatibility checks for all consumers.
+            if [ -z "${values_file}" ] || [ ! -f "${values_file}" ]; then
+              if [ -f "ci-values-minimal.yaml" ]; then
+                echo "Values file ${values_file:-<empty>} not found for ${repo}; falling back to ci-values-minimal.yaml"
+                values_file="ci-values-minimal.yaml"
+              else
+                echo "No compatible values file found for ${repo}"
+                exit 1
+              fi
+            fi
+
             echo "Running helm lint..."
             helm lint "${chart_dir}"
             echo "Running kubeconform now..."
-            helm template "${chart_dir}" --values "ci-values-minimal.yaml" \
+            helm template "${chart_dir}" --values "${values_file}" \
               | /tmp/kubeconform \
                 -strict \
                 -summary \
@@ -163,7 +181,7 @@ jobs:
                 exit 1
               fi
 
-              helm unittest --values "ci-values-minimal.yaml" "${chart_dir}" -f ${unit_test_glob}
+              helm unittest --values "${values_file}" "${chart_dir}" -f ${unit_test_glob}
             fi
 
             popd > /dev/null
