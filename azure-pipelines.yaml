@@ -38,7 +38,7 @@ parameters:
       - repository: chart-servicebus
         chartPath: servicebus
         runUnitTests: true
-        valuesFile: ci-values-minimal.yaml
+        valuesFile: ci-values.yaml
       - repository: chart-blobstorage
         chartPath: blobstorage
         runUnitTests: false
@@ -150,13 +150,17 @@ jobs:
 
             # Core compatibility checks for all consumers.
             if [ -z "${values_file}" ] || [ ! -f "${values_file}" ]; then
-              if [ -f "ci-values-minimal.yaml" ]; then
-                echo "Values file ${values_file:-<empty>} not found for ${repo}; falling back to ci-values-minimal.yaml"
-                values_file="ci-values-minimal.yaml"
-              else
-                echo "No compatible values file found for ${repo}"
-                exit 1
-              fi
+              for candidate in "ci-values-minimal.yaml" "ci-values.yaml" "${chart_dir}/ci-values-minimal.yaml" "${chart_dir}/ci-values.yaml"; do
+                if [ -f "${candidate}" ]; then
+                  echo "Values file ${values_file:-<empty>} not found for ${repo}; using ${candidate}"
+                  values_file="${candidate}"
+                  break
+                fi
+              done
+            fi
+            if [ -z "${values_file}" ] || [ ! -f "${values_file}" ]; then
+              echo "No compatible values file found for ${repo}"
+              exit 1
             fi
 
             echo "Running helm lint..."
