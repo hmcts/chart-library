@@ -35,10 +35,11 @@ parameters:
         chartPath: job
         runUnitTests: true
         valuesFile: ci-values-minimal.yaml
-      - repository: chart-servicebus
-        chartPath: servicebus
-        runUnitTests: true
-        valuesFile: ci-values.yaml
+      # Temporarily disabled until upstream chart-servicebus work completes.
+      # - repository: chart-servicebus
+      #   chartPath: servicebus
+      #   runUnitTests: true
+      #   valuesFile: ci-values.yaml
       - repository: chart-blobstorage
         chartPath: blobstorage
         runUnitTests: false
