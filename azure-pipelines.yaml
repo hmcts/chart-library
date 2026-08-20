@@ -85,10 +85,14 @@ jobs:
           echo "Installing kubeconform"
           curl -sSL "https://github.com/yannh/kubeconform/releases/download/$(kubeconformVersion)/kubeconform-linux-amd64.tar.gz" | tar xz -C /tmp/
 
+          echo "Installing yq"
+          sudo snap install yq
+
           echo "Installing helm-unittest plugin"
           helm plugin install https://github.com/helm-unittest/helm-unittest.git --version "$(helmUnittestVersion)"
 
           /tmp/kubeconform -v
+          yq --version
           helm plugin list
         displayName: 'Install validation tooling'
 
@@ -131,6 +135,10 @@ jobs:
             # Unpack library and pin dependency to local candidate.
             echo "Injecting candidate chart-library into consumer dependencies..."
             tar -xzf "${chart_dir}/charts/${library_archive_name}" -C "${chart_dir}/charts"
+
+            echo "Limiting dependencies to chart-library for compatibility run..."
+            yq -i '.dependencies = [(.dependencies[] | select(.name == "library"))]' "${chart_dir}/Chart.yaml"
+            rm -f "${chart_dir}/Chart.lock"
 
             # Core compatibility checks for all consumers.
             echo "Running helm lint..."
