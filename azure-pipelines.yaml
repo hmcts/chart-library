@@ -287,15 +287,18 @@ jobs:
             exit 0
           fi
 
+          git config user.name hmcts-platform-operations
+          git config user.email github-platform-operations@hmcts.net
+          git add .
+          git commit -m "Bump helm template versions"
+
           repo_name="$(Build.Repository.Name)"
-          echo "Dry run mode enabled: commit and push disabled"
-          echo "Would commit changes with message: Bump helm template versions"
-          echo "Would push to: https://github.com/${repo_name}.git"
-          echo "Would push branch: $(sourceBranch)"
-          echo "Changed files:"
-          git diff --name-only
-        displayName: 'Log bumped template changes (dry run)'
+          git remote set-url origin "https://x-access-token:${GITHUB_TOKEN}@github.com/${repo_name}.git"
+          git push origin "HEAD:$(sourceBranch)"
+        displayName: 'Commit and push bumped template versions'
         condition: and(succeeded(), eq(variables['templateVersionUpdated'], 'true'))
+        env:
+          GITHUB_TOKEN: $(github-api-token)
 
   - job: Release_Sbox
     condition: >
