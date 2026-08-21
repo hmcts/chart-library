@@ -56,6 +56,8 @@ variables:
     value: v0.6.7
   - name: helmUnittestVersion
     value: v0.8.0
+  - name: kvConnectedServiceName
+    value: azurerm-sandbox
 
 
 jobs:
@@ -191,6 +193,110 @@ jobs:
 
             popd > /dev/null
           displayName: 'Validate ${{ consumer.repository }} compatibility'
+
+  - job: Bump_Template_Versions
+    displayName: 'Bump template versions (PR only)'
+    dependsOn: Validate_Consumer_Compatibility
+    condition: and(succeeded(), eq(variables['Build.Reason'], 'PullRequest'))
+    pool:
+      vmImage: ${{ variables.agentPool }}
+    steps:
+      - checkout: self
+        clean: true
+
+      - task: AzureKeyVault@2
+        displayName: 'Get GitHub API token from Keyvault'
+        inputs:
+          runAsPreJob: false
+          ConnectedServiceName: $(kvConnectedServiceName)
+          keyVaultName: 'infra-vault-nonprod'
+          secretsFilter: 'github-api-token'
+
+      - script: |
+          set -euo pipefail
+
+          source_branch="${SYSTEM_PULLREQUEST_SOURCEBRANCH#refs/heads/}"
+          target_branch="${SYSTEM_PULLREQUEST_TARGETBRANCH#refs/heads/}"
+
+          if [ -z "${source_branch}" ] || [ -z "${target_branch}" ]; then
+            echo "PR source or target branch not available; skipping template bump"
+            echo "##vso[task.setvariable variable=shouldRunTemplateBump]false"
+            exit 0
+          fi
+
+          echo "##vso[task.setvariable variable=sourceBranch]${source_branch}"
+          echo "##vso[task.setvariable variable=targetBranch]${target_branch}"
+          echo "##vso[task.setvariable variable=shouldRunTemplateBump]true"
+
+          git fetch origin "${source_branch}" "${target_branch}"
+          git checkout -B "${source_branch}" "origin/${source_branch}"
+        displayName: 'Resolve and fetch PR branches'
+        env:
+          SYSTEM_PULLREQUEST_SOURCEBRANCH: $(System.PullRequest.SourceBranch)
+          SYSTEM_PULLREQUEST_TARGETBRANCH: $(System.PullRequest.TargetBranch)
+
+      - script: |
+          set -euo pipefail
+
+          changed_files="$(git diff --name-only "origin/$(targetBranch)...HEAD" -- 'library/templates/v2/**' | paste -sd ' ' -)"
+          if [ -z "${changed_files}" ]; then
+            echo "No template changes detected in library/templates/v2; skipping bump"
+            echo "##vso[task.setvariable variable=hasTemplateChanges]false"
+            exit 0
+          fi
+
+          echo "Template files changed: ${changed_files}"
+          echo "##vso[task.setvariable variable=changedTemplateFiles]${changed_files}"
+          echo "##vso[task.setvariable variable=hasTemplateChanges]true"
+
+          rm -f /tmp/master-tpl-versions.txt /tmp/bumped-tpl-versions.txt
+
+          master_workdir=".tmp/master-baseline"
+          rm -rf "${master_workdir}"
+          git worktree add "${master_workdir}" "origin/$(targetBranch)"
+
+          (
+            cd "${master_workdir}"
+            python scripts/extract-tpl-versions.py
+          )
+
+          git worktree remove "${master_workdir}" --force
+        displayName: 'Detect template changes and extract baseline'
+        condition: and(succeeded(), eq(variables['shouldRunTemplateBump'], 'true'))
+
+      - script: |
+          set -euo pipefail
+          script_output="$(python scripts/bump-tpl-versions.py || true)"
+          echo "Bump script output: ${script_output:-<empty>}"
+
+          if [ "${script_output}" = "version_updated" ]; then
+            echo "##vso[task.setvariable variable=templateVersionUpdated]true"
+          else
+            echo "##vso[task.setvariable variable=templateVersionUpdated]false"
+          fi
+        displayName: 'Run template bump script'
+        condition: and(succeeded(), eq(variables['hasTemplateChanges'], 'true'))
+        env:
+          CHANGED_FILES: $(changedTemplateFiles)
+
+      - script: |
+          set -euo pipefail
+
+          if git diff --quiet; then
+            echo "No git diff after bump script; skipping commit and push"
+            exit 0
+          fi
+
+          repo_name="$(Build.Repository.Name)"
+          echo "Dry run mode enabled: commit and push disabled"
+          echo "Would commit changes with message: Bump helm template versions"
+          echo "Would push to: https://github.com/${repo_name}.git"
+          echo "Would push branch: $(sourceBranch)"
+          echo "Changed files:"
+          git diff --name-only
+        displayName: 'Log bumped template changes (dry run)'
+        condition: and(succeeded(), eq(variables['templateVersionUpdated'], 'true'))
+
   - job: Release_Sbox
     condition: >
       and(
