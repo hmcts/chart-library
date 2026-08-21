@@ -287,18 +287,45 @@ jobs:
             exit 0
           fi
 
+          source_repo_uri="${SYSTEM_PULLREQUEST_SOURCEREPOSITORYURI:-}"
+          if [ -z "${source_repo_uri}" ]; then
+            source_repo_uri="https://github.com/$(Build.Repository.Name).git"
+          fi
+          source_repo_uri="${source_repo_uri%/}"
+          case "${source_repo_uri}" in
+            *.git) push_repo_url="${source_repo_uri}" ;;
+            *) push_repo_url="${source_repo_uri}.git" ;;
+          esac
+
+          auth_push_url="${push_repo_url/https:\/\//https://x-access-token:${GITHUB_TOKEN}@}"
+          echo "Push target repository: ${push_repo_url}"
+          echo "Push target branch: $(sourceBranch)"
+
+          git remote set-url origin "${auth_push_url}"
+
+          # Preflight: fail fast with clear diagnostics before creating commit.
+          if ! git push --dry-run origin "HEAD:$(sourceBranch)" > /tmp/git-push-dryrun.log 2>&1; then
+            echo "Push preflight failed. Token is valid for read, but write to target repo/branch is denied."
+            cat /tmp/git-push-dryrun.log
+            echo "Check token scope/SSO and write permission for PR source repository."
+            exit 1
+          fi
+
           git config user.name hmcts-platform-operations
           git config user.email github-platform-operations@hmcts.net
-          git add .
+          git add -A library/templates/v2
+          if git diff --cached --quiet; then
+            echo "No staged template changes to commit; skipping push"
+            exit 0
+          fi
           git commit -m "Bump helm template versions"
 
-          repo_name="$(Build.Repository.Name)"
-          git remote set-url origin "https://x-access-token:${GITHUB_TOKEN}@github.com/${repo_name}.git"
           git push origin "HEAD:$(sourceBranch)"
         displayName: 'Commit and push bumped template versions'
         condition: and(succeeded(), eq(variables['templateVersionUpdated'], 'true'))
         env:
           GITHUB_TOKEN: $(github-api-token)
+          SYSTEM_PULLREQUEST_SOURCEREPOSITORYURI: $(System.PullRequest.SourceRepositoryURI)
 
   - job: Release_Sbox
     condition: >
