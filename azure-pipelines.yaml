@@ -28,8 +28,15 @@ jobs:
       - task: HelmInstaller@1
         displayName: 'Install Helm'
         inputs:
-          helmVersionToInstall: 3.18.0
-      - script: helm plugin install https://github.com/helm-unittest/helm-unittest.git
+          helmVersionToInstall: 4.2.4
+      - script: |
+          DESIRED_VERSION="1.1.2"
+          helm plugin install https://github.com/helm-unittest/helm-unittest --version "$DESIRED_VERSION" --verify=false >/tmp/helm-unittest-install.log 2>&1 || {
+            cat /tmp/helm-unittest-install.log
+            exit 1
+          }
+          INSTALLED_VERSION=$(helm plugin list | awk '$1=="unittest" {print $2}')
+          echo "Installed version ${INSTALLED_VERSION:-unknown} of plugin helm-unittest"
         displayName: 'Install Helm Unit Test Plugin'
       - script: sudo snap install yq
         displayName: 'Install yq'
