@@ -210,7 +210,7 @@ jobs:
           runAsPreJob: false
           ConnectedServiceName: $(kvConnectedServiceName)
           keyVaultName: 'infra-vault-nonprod'
-          secretsFilter: 'github-api-token'
+          secretsFilter: 'github-chart-automation-token'
 
       - script: |
           set -euo pipefail
@@ -266,6 +266,7 @@ jobs:
 
       - script: |
           set -euo pipefail
+          echo "Template bump candidate files: ${CHANGED_FILES:-<none>}"
           script_output="$(python scripts/bump-tpl-versions.py || true)"
           echo "Bump script output: ${script_output:-<empty>}"
 
@@ -305,9 +306,9 @@ jobs:
 
           # Preflight: fail fast with clear diagnostics before creating commit.
           if ! git push --dry-run origin "HEAD:$(sourceBranch)" > /tmp/git-push-dryrun.log 2>&1; then
-            echo "Push preflight failed. Token is valid for read, but write to target repo/branch is denied."
+            echo "Push preflight failed for ${push_repo_url} on branch $(sourceBranch)."
             cat /tmp/git-push-dryrun.log
-            echo "Check token scope/SSO and write permission for PR source repository."
+            echo "Check token scope, org SSO authorization, repository write permission, and branch protection/rulesets."
             exit 1
           fi
 
