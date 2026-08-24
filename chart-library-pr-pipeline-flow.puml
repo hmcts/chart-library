@@ -1,0 +1,33 @@
+@startuml ChartLibraryPRPipelineFlow
+title Chart Library PR Pipeline Flow
+
+start
+
+:PR opened or updated;
+:Run 1 starts (Validate job);
+:Validate consumer compatibility (PR only);
+:Bump template versions (PR only);
+
+if (Template changes detected?) then (Yes)
+	:Commit [auto-bump] to PR source branch;
+	:Run 2 starts from new head commit;
+	:Detect PR context\n(read source branch head message);
+
+	if (Head message contains [auto-bump]?) then (Yes)
+		:Skip consumer compatibility + bump jobs;
+		:PR run completes with audit trail;
+		note right
+			pr.autoCancel = false keeps Run 1 visible.
+			Run 2 appears as separate run.
+		end note
+	else (No)
+		:Validate consumer compatibility (PR only);
+		:Bump template versions (PR only);
+	endif
+else (No)
+	:No bump commit created (Run 1 completes);
+endif
+
+stop
+
+@enduml
