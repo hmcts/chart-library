@@ -4,7 +4,6 @@ trigger:
     include:
       - refs/tags/*
 pr:
-  autoCancel: false
   branches:
     include:
       - '*'
