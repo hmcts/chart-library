@@ -57,6 +57,7 @@ while changes_made:
                         
                         # Append newly changed files to a new list and then bump the versions in those files
                         new_changed_files_list.append(file_path)
+                        changes_made = True
                         bump_versions(new_changed_files_list)
 
                         # Write the updated version number to the files that contain the template
