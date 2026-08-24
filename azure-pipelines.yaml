@@ -4,6 +4,7 @@ trigger:
     include:
       - refs/tags/*
 pr:
+  autoCancel: false
   branches:
     include:
       - '*'
@@ -76,10 +77,45 @@ jobs:
       - script: ./tests/test-templates.sh
         displayName: 'Run unit tests'
 
+  - job: Detect_PR_Context
+    displayName: 'Detect PR context (auto-bump marker)'
+    condition: and(succeeded(), eq(variables['Build.Reason'], 'PullRequest'))
+    dependsOn: Validate
+    pool:
+      vmImage: ${{ variables.agentPool }}
+    steps:
+      - checkout: self
+        clean: true
+      - script: |
+          set -euo pipefail
+
+          source_branch="${SYSTEM_PULLREQUEST_SOURCEBRANCH#refs/heads/}"
+          if [ -z "${source_branch}" ]; then
+            echo "PR source branch not available; defaulting isAutoBumpCommit=false"
+            echo "##vso[task.setvariable variable=isAutoBumpCommit;isOutput=true]false"
+            exit 0
+          fi
+
+          git fetch origin "${source_branch}"
+          source_head_message="$(git log -1 --format=%s "origin/${source_branch}" | tr -d '\r\n')"
+          echo "Source branch head message: ${source_head_message}"
+
+          if echo "${source_head_message}" | grep -q '\[auto-bump\]'; then
+            echo "##vso[task.setvariable variable=isAutoBumpCommit;isOutput=true]true"
+          else
+            echo "##vso[task.setvariable variable=isAutoBumpCommit;isOutput=true]false"
+          fi
+        name: detect
+        displayName: 'Resolve source head commit marker'
+        env:
+          SYSTEM_PULLREQUEST_SOURCEBRANCH: $(System.PullRequest.SourceBranch)
+
   - job: Validate_Consumer_Compatibility
     displayName: 'Validate consumer compatibility (PR only)'
-    condition: and(succeeded(), eq(variables['Build.Reason'], 'PullRequest'), not(contains(variables['Build.SourceVersionMessage'], '[auto-bump]')))
-    dependsOn: Validate
+    condition: and(succeeded(), eq(variables['Build.Reason'], 'PullRequest'), ne(dependencies.Detect_PR_Context.outputs['detect.isAutoBumpCommit'], 'true'))
+    dependsOn:
+      - Validate
+      - Detect_PR_Context
     pool:
       vmImage: ${{ variables.agentPool }}
     steps:
@@ -196,8 +232,10 @@ jobs:
 
   - job: Bump_Template_Versions
     displayName: 'Bump template versions (PR only)'
-    dependsOn: Validate_Consumer_Compatibility
-    condition: and(succeeded(), eq(variables['Build.Reason'], 'PullRequest'), not(contains(variables['Build.SourceVersionMessage'], '[auto-bump]')))
+    dependsOn:
+      - Validate_Consumer_Compatibility
+      - Detect_PR_Context
+    condition: and(succeeded(), eq(variables['Build.Reason'], 'PullRequest'), ne(dependencies.Detect_PR_Context.outputs['detect.isAutoBumpCommit'], 'true'))
     pool:
       vmImage: ${{ variables.agentPool }}
     steps:
