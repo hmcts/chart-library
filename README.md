@@ -7,7 +7,7 @@ This repository is the foundation to most other templated application specific h
 - [chart-function](https://github.com/hmcts/chart-function)
 - [chart-base](https://github.com/hmcts/chart-base)
 - [chart-blobstorage](https://github.com/hmcts/chart-blobstorage)
-- [chart-postrgesql](https://github.com/hmcts/chart-postgresql)
+- [chart-postgresql](https://github.com/hmcts/chart-postgresql)
 - [chart-neuvector](https://github.com/hmcts/chart-neuvector)
 - [chart-servicebus](https://github.com/hmcts/chart-servicebus)
 
@@ -23,6 +23,76 @@ Because this is the foundational level of all our templated helm charts, it's cr
 **Because renovate is used across the estate, as soon as a new chart-xyz version is released, it will be raised as a Pull Request and potentially automerged by renovate to team application repositories**, this is why feature flagging and testing is so important when making changes to this repo.
 
 When you release a new version of chart-library, it's ideal to ensure all consuming application charts are updated to include the change, with new releases also made for each of them. This ensures we are as up to date as possible with central template changes across the board.
+
+### Current PR validation and auto-bump flow (Azure DevOps)
+
+PR validation is driven by `azure-pipelines.yaml` and uses four logical stages:
+
+1. `Validate`
+- Runs local library chart tests from `tests/test-templates.sh`.
+
+2. `Detect_PR_Context` (PR only)
+- Reads the PR source branch head commit message.
+- Sets output variable `isAutoBumpCommit=true|false` based on `[auto-bump]` marker.
+
+3. `Validate_Consumer_Compatibility` (PR only, skipped for auto-bump commits)
+- Packages candidate `library` chart from the PR branch.
+- For each consumer chart, clones repo, injects packaged `library` chart, pins dependency list to `library`, then validates with:
+  - `helm lint`
+  - `helm template | kubeconform` (strict mode, including CRD schema catalog)
+  - `helm unittest` where consumer tests are enabled.
+
+4. `Bump_Template_Versions` (PR only, skipped for auto-bump commits)
+- Detects changed templates under `library/templates/v2`.
+- Builds baseline template definitions from target branch.
+- Runs bump logic to increment referenced helper template versions.
+- Commits and pushes changes back to PR source branch when needed.
+
+`pr.autoCancel` is set to `false`, so when an auto-bump commit is pushed:
+- the original run remains visible for audit,
+- a second PR run starts for the new commit,
+- consumer compatibility and bump jobs are skipped on that second run by the auto-bump marker logic.
+
+#### Consumer compatibility matrix used in PR validation
+
+Current configured consumers:
+- `chart-java` (`java`, unit tests disabled)
+- `chart-nodejs` (`nodejs`, unit tests disabled)
+- `chart-function` (`function`, unit tests enabled, values: `ci-values-servicebus.yaml`)
+- `chart-job` (`job`, unit tests enabled)
+- `chart-blobstorage` (`blobstorage`, unit tests disabled)
+- `chart-postgresql` (`postgresql`, unit tests disabled)
+
+Temporarily disabled in pipeline:
+- `chart-servicebus`
+
+#### Scripts used by the auto-bump stage
+
+- `scripts/prepare-template-bump.py`
+  - Resolves PR source and target branches.
+  - Detects changed `library/templates/v2` files.
+  - Creates baseline definitions from target branch for comparison.
+
+- `scripts/extract-tpl-versions.py`
+  - Extracts all template `define` names from library templates into baseline file.
+
+- `scripts/bump-tpl-versions.py`
+  - Uses changed template files to identify impacted definitions.
+  - Bumps matching versioned template references in `library/templates/v2`.
+
+- `scripts/commit-and-push-template-bump.py`
+  - Validates GitHub credentials from Key Vault-backed variables.
+  - Performs push preflight (`git push --dry-run`).
+  - Commits bumped template files with message `Bump helm template versions [auto-bump]`.
+
+#### Key Vault secrets used by bump stage
+
+- `github-chart-automation-token`
+- `github-chart-automation-username`
+
+#### Diagram
+
+[chart-library-pr-pipeline-flow](chart-library-pr-pipeline-flow.png)
 
 ### How is chart-library used by application charts?
 
