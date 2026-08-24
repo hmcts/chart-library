@@ -1,33 +1,41 @@
 @startuml ChartLibraryPRPipelineFlow
-title Chart Library PR Pipeline Flow
+title Chart Library PR Validation Flow (Azure DevOps)
 
 start
 
 :PR opened or updated;
-:Run 1 starts (Validate job);
-:Validate consumer compatibility (PR only);
-:Bump template versions (PR only);
+:Validate job\n(run local chart tests);
 
-if (Template changes detected?) then (Yes)
-	:Commit [auto-bump] to PR source branch;
-	:Run 2 starts from new head commit;
-	:Detect PR context\n(read source branch head message);
+if (Build.Reason == PullRequest?) then (Yes)
+	:Validate_Consumer_Compatibility job;
+	:Package candidate library chart;
 
-	if (Head message contains [auto-bump]?) then (Yes)
-		:Skip consumer compatibility + bump jobs;
-		:PR run completes with audit trail;
-		note right
-			pr.autoCancel = false keeps Run 1 visible.
-			Run 2 appears as separate run.
-		end note
+	repeat
+		:Clone consumer chart;
+		:Inject candidate library chart;
+		:helm lint;
+		:helm template | kubeconform;
+		:helm unittest (if enabled);
+	repeat while (more consumer charts?) is (Yes)
+	->No;
+
+	if (All consumer checks passed?) then (Yes)
+		:PR checks pass;
 	else (No)
-		:Validate consumer compatibility (PR only);
-		:Bump template versions (PR only);
+		:PR checks fail;
 	endif
 else (No)
-	:No bump commit created (Run 1 completes);
+	:Consumer compatibility skipped\n(not a PR run);
 endif
 
 stop
+
+note right
+	Validation always runs against the
+	PR's own un-bumped templates.
+	Template version bumping is handled
+	separately after merge to master
+	(see chart-library-bump-template-workflow.puml).
+end note
 
 @enduml

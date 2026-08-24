@@ -1,0 +1,30 @@
+@startuml ChartLibraryBumpTemplateWorkflow
+title Chart Library Template Bump Workflow (GitHub Actions)
+
+start
+
+:Push to master\n(paths: library/templates/v2/**);
+
+if (Commit message contains [auto-bump]?) then (Yes)
+	:Skip job\n(prevents bump commit looping);
+	stop
+else (No)
+endif
+
+:Checkout master (fetch-depth 2);
+:Checkout HEAD~1 templates\n(previous state);
+:Run extract-tpl-versions.py\n(build baseline definitions);
+:Restore HEAD templates\n(current state);
+:Get changed files under\nlibrary/templates/v2 (tj-actions/changed-files);
+:Run bump-tpl-versions.py\n(bump referenced helper versions);
+
+if (SCRIPT_OUTPUT == version_updated?) then (Yes)
+	:git add / commit\n"Bump helm template versions [auto-bump]";
+	:git push to master;
+else (No)
+	:No changes to commit;
+endif
+
+stop
+
+@enduml

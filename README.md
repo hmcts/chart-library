@@ -24,56 +24,7 @@ Because this is the foundational level of all our templated helm charts, it's cr
 
 When you release a new version of chart-library, it's ideal to ensure all consuming application charts are updated to include the change, with new releases also made for each of them. This ensures we are as up to date as possible with central template changes across the board.
 
-### Current PR validation (Azure DevOps) and post-merge auto-bump (GitHub Actions)
-
-Validation and template version bumping run in two separate systems so a PR never mutates itself:
-
-1. `Validate` (Azure DevOps, always)
-- Runs local library chart tests from `tests/test-templates.sh`.
-
-2. `Validate_Consumer_Compatibility` (Azure DevOps, PR only)
-- Packages candidate `library` chart from the PR branch.
-- For each consumer chart, clones repo, injects packaged `library` chart, pins dependency list to `library`, then validates with:
-  - `helm lint`
-  - `helm template | kubeconform` (strict mode, including CRD schema catalog)
-  - `helm unittest` where consumer tests are enabled.
-- Always runs against the PR's un-bumped templates, so this job's result never depends on prior bump commits.
-
-3. `Bump tpl version` (GitHub Actions, `.github/workflows/bump-tpl-version.yaml`, push to `master` only)
-- Skips if the triggering push is the bot's own `[auto-bump]` commit.
-- Only triggers for changes under `library/templates/v2`.
-- Extracts baseline template definitions from the previous commit, then bumps referenced helper template versions changed by the merge.
-- Commits and pushes directly to `master` when a bump is needed.
-
-This keeps the Azure DevOps PR pipeline as pure validation with no self-mutating commits or loop-guard logic. The bump only happens once, immediately after a PR merges to `master`, and its own push retriggers the workflow once harmlessly (the `[auto-bump]` marker check causes it to do nothing on that second run).
-
-#### Consumer compatibility matrix used in PR validation
-
-Current configured consumers:
-- `chart-java` (`java`, unit tests disabled)
-- `chart-nodejs` (`nodejs`, unit tests disabled)
-- `chart-function` (`function`, unit tests enabled, values: `ci-values-servicebus.yaml`)
-- `chart-job` (`job`, unit tests enabled)
-- `chart-blobstorage` (`blobstorage`, unit tests disabled)
-- `chart-postgresql` (`postgresql`, unit tests disabled)
-
-Temporarily disabled in pipeline:
-- `chart-servicebus`
-
-#### Scripts used by the auto-bump stage
-
-- `scripts/extract-tpl-versions.py`
-  - Extracts all template `define` names from library templates into baseline file.
-
-- `scripts/bump-tpl-versions.py`
-  - Uses changed template files to identify impacted definitions.
-  - Bumps matching versioned template references in `library/templates/v2`.
-
-The workflow's own `Commit changes` step handles git config, commit (message includes `[auto-bump]`), and push directly to `master` using the built-in `GITHUB_TOKEN`; this requires the GitHub Actions identity to have a branch protection bypass on `master` (not a force-push permission).
-
-#### Diagram
-
-[chart-library-pr-pipeline-flow](chart-library-pr-pipeline-flow.png)
+See [How to test changes](#how-to-test-changes) for validating your changes locally and in PR checks before release.
 
 ### How is chart-library used by application charts?
 
@@ -517,9 +468,42 @@ To read about testing your changes in more depth, we have a [written guide](http
 - Make sure language specific cases are covered in the tests [see](ci-values-lang.yaml)
 - Once you release the chart , include the new template in applicable base charts [see](https://github.com/hmcts/chart-java/pull/115)
 
+### Validating pull requests (Azure DevOps)
+
+PR validation is driven by `azure-pipelines.yaml` and never mutates the PR branch:
+
+1. `Validate` (always)
+- Runs local library chart tests from `tests/test-templates.sh`.
+
+2. `Validate_Consumer_Compatibility` (PR only)
+- Packages candidate `library` chart from the PR branch.
+- For each consumer chart, clones repo, injects packaged `library` chart, pins dependency list to `library`, then validates with:
+  - `helm lint`
+  - `helm template | kubeconform` (strict mode, including CRD schema catalog)
+  - `helm unittest` where consumer tests are enabled.
+
+Consumer compatibility matrix currently configured:
+- `chart-java` (`java`, unit tests disabled)
+- `chart-nodejs` (`nodejs`, unit tests disabled)
+- `chart-function` (`function`, unit tests enabled, values: `ci-values-servicebus.yaml`)
+- `chart-job` (`job`, unit tests enabled)
+- `chart-blobstorage` (`blobstorage`, unit tests disabled)
+- `chart-postgresql` (`postgresql`, unit tests disabled)
+- `chart-servicebus` (`servicebus`, unit tests enabled)
+
+Diagram:
+
+<img src="chart-library-pr-pipeline-flow.png" alt="chart-library-pr-pipeline-flow" width="750"/>
+
 ### Bumping template versions
 
-When you make a change to a template file and push it to GitHub in a pull request, an action will run that will run a python script to automatically bump the version of the template you have edited.
+Template version bumping happens after a PR merges to `master`, not while the PR is open. The GitHub Action `.github/workflows/bump-tpl-version.yaml` triggers on push to `master` (paths limited to `library/templates/v2/**`) and:
+
+- Skips immediately if the triggering commit is its own previous `[auto-bump]` commit, to avoid looping.
+- Extracts baseline template definitions from the previous commit using [`scripts/extract-tpl-versions.py`](./scripts/extract-tpl-versions.py).
+- Detects which files under `library/templates/v2` changed in the merge.
+- Runs [`scripts/bump-tpl-versions.py`](./scripts/bump-tpl-versions.py) to bump the version of any changed template and update references to it elsewhere.
+- Commits (`Bump helm template versions [auto-bump]`) and pushes directly to `master` when a bump is needed.
 
 For example, if you make changes to `affinity.tpl` the version of the template will be updated from:
 
@@ -532,8 +516,6 @@ to:
 ```
 {{- define "hmcts.affinity.v2" }}
 ```
-
-The [script](./scripts/bump-tpl.py) will also search for references to the edited template in other files and update them accordingly.
 
 This is needed because if there is an app with dependencies and those dependencies are both pulling chart-library on different versions, then the one downloaded last is used as helm has no native versioning system for the template files besides the naming. This causes multiple conflicts and it's tough to resolve.
 
@@ -555,8 +537,13 @@ This version should match the version in chart-library. If the version in chart-
 {{- template "hmcts.configmap.v3.tpl" . -}}
 ```
 
+Diagram:
+
+
 **Note**
 
-The nature of this action can mean there are cascading increments. If you push to your branch in GitHub and changes are detected in the template files, the versions will be incremented in other files which will, in turn, have their references updated in other files. You will need to run `git pull` to pull the latest changes from GitHub to your local branch.
+Since the bump only runs after merge to `master`, it will never appear on your own PR branch. If your change requires a template rename, the bump lands as a separate commit on `master` once your PR merges - pull the latest `master` before branching further work.
 
-If changes are made by the action, on the next push, there may be further changes that cause increments. This is unlikely but it is something to be aware of.
+Diagram:
+
+<img src="chart-library-bump-template-workflow.png" alt="chart-library-bump-template-workflow" width="750"/>
