@@ -63,7 +63,7 @@ def main():
         print("No staged template changes to commit; skipping push")
         return
 
-    run(["git", "commit", "-m", "Bump helm template versions"])
+    run(["git", "commit", "-m", "Bump helm template versions [auto-bump]"])
     run(["git", "push", "origin", f"HEAD:{source_branch}"])
 
 

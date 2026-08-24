@@ -78,7 +78,7 @@ jobs:
 
   - job: Validate_Consumer_Compatibility
     displayName: 'Validate consumer compatibility (PR only)'
-    condition: and(succeeded(), eq(variables['Build.Reason'], 'PullRequest'))
+    condition: and(succeeded(), eq(variables['Build.Reason'], 'PullRequest'), not(contains(variables['Build.SourceVersionMessage'], '[auto-bump]')))
     dependsOn: Validate
     pool:
       vmImage: ${{ variables.agentPool }}
@@ -197,7 +197,7 @@ jobs:
   - job: Bump_Template_Versions
     displayName: 'Bump template versions (PR only)'
     dependsOn: Validate_Consumer_Compatibility
-    condition: and(succeeded(), eq(variables['Build.Reason'], 'PullRequest'))
+    condition: and(succeeded(), eq(variables['Build.Reason'], 'PullRequest'), not(contains(variables['Build.SourceVersionMessage'], '[auto-bump]')))
     pool:
       vmImage: ${{ variables.agentPool }}
     steps:
