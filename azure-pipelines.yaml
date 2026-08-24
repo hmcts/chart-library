@@ -214,55 +214,11 @@ jobs:
 
       - script: |
           set -euo pipefail
-
-          source_branch="${SYSTEM_PULLREQUEST_SOURCEBRANCH#refs/heads/}"
-          target_branch="${SYSTEM_PULLREQUEST_TARGETBRANCH#refs/heads/}"
-
-          if [ -z "${source_branch}" ] || [ -z "${target_branch}" ]; then
-            echo "PR source or target branch not available; skipping template bump"
-            echo "##vso[task.setvariable variable=shouldRunTemplateBump]false"
-            exit 0
-          fi
-
-          echo "##vso[task.setvariable variable=sourceBranch]${source_branch}"
-          echo "##vso[task.setvariable variable=targetBranch]${target_branch}"
-          echo "##vso[task.setvariable variable=shouldRunTemplateBump]true"
-
-          git fetch origin "${source_branch}" "${target_branch}"
-          git checkout -B "${source_branch}" "origin/${source_branch}"
-        displayName: 'Resolve and fetch PR branches'
+          python scripts/prepare-template-bump.py
+        displayName: 'Prepare template bump context'
         env:
           SYSTEM_PULLREQUEST_SOURCEBRANCH: $(System.PullRequest.SourceBranch)
           SYSTEM_PULLREQUEST_TARGETBRANCH: $(System.PullRequest.TargetBranch)
-
-      - script: |
-          set -euo pipefail
-
-          changed_files="$(git diff --name-only "origin/$(targetBranch)...HEAD" -- 'library/templates/v2/**' | paste -sd ' ' -)"
-          if [ -z "${changed_files}" ]; then
-            echo "No template changes detected in library/templates/v2; skipping bump"
-            echo "##vso[task.setvariable variable=hasTemplateChanges]false"
-            exit 0
-          fi
-
-          echo "Template files changed: ${changed_files}"
-          echo "##vso[task.setvariable variable=changedTemplateFiles]${changed_files}"
-          echo "##vso[task.setvariable variable=hasTemplateChanges]true"
-
-          rm -f /tmp/master-tpl-versions.txt /tmp/bumped-tpl-versions.txt
-
-          master_workdir=".tmp/master-baseline"
-          rm -rf "${master_workdir}"
-          git worktree add "${master_workdir}" "origin/$(targetBranch)"
-
-          (
-            cd "${master_workdir}"
-            python scripts/extract-tpl-versions.py
-          )
-
-          git worktree remove "${master_workdir}" --force
-        displayName: 'Detect template changes and extract baseline'
-        condition: and(succeeded(), eq(variables['shouldRunTemplateBump'], 'true'))
 
       - script: |
           set -euo pipefail
@@ -282,62 +238,14 @@ jobs:
 
       - script: |
           set -euo pipefail
-
-          if git diff --quiet; then
-            echo "No git diff after bump script; skipping commit and push"
-            exit 0
-          fi
-
-          source_repo_uri="${SYSTEM_PULLREQUEST_SOURCEREPOSITORYURI:-}"
-          if [ -z "${source_repo_uri}" ]; then
-            source_repo_uri="https://github.com/$(Build.Repository.Name).git"
-          fi
-          source_repo_uri="${source_repo_uri%/}"
-          case "${source_repo_uri}" in
-            *.git) push_repo_url="${source_repo_uri}" ;;
-            *) push_repo_url="${source_repo_uri}.git" ;;
-          esac
-
-          github_username="$(printf '%s' "${GITHUB_USERNAME:-}" | tr -d '\r\n')"
-          if [ -z "${github_username}" ]; then
-            echo "GITHUB_USERNAME is not set. Check Key Vault secret github-chart-automation-username."
-            exit 1
-          fi
-          github_token="$(printf '%s' "${GITHUB_TOKEN:-}" | tr -d '\r\n')"
-          if [ -z "${github_token}" ]; then
-            echo "GITHUB_TOKEN is empty. Check Key Vault secret github-chart-automation-token."
-            exit 1
-          fi
-
-          auth_push_url="${push_repo_url/https:\/\//https://${github_username}:${github_token}@}"
-          echo "Push target repository: ${push_repo_url}"
-          echo "Push target branch: $(sourceBranch)"
-
-          git remote set-url origin "${auth_push_url}"
-
-          # Preflight: fail fast with clear diagnostics before creating commit.
-          if ! git push --dry-run origin "HEAD:$(sourceBranch)" > /tmp/git-push-dryrun.log 2>&1; then
-            echo "Push preflight failed for ${push_repo_url} on branch $(sourceBranch)."
-            cat /tmp/git-push-dryrun.log
-            echo "Check token scope, org SSO authorization, repository write permission, and branch protection/rulesets."
-            exit 1
-          fi
-
-          git config user.name hmcts-platform-operations
-          git config user.email github-platform-operations@hmcts.net
-          git add -A library/templates/v2
-          if git diff --cached --quiet; then
-            echo "No staged template changes to commit; skipping push"
-            exit 0
-          fi
-          git commit -m "Bump helm template versions"
-
-          git push origin "HEAD:$(sourceBranch)"
+          python scripts/commit-and-push-template-bump.py
         displayName: 'Commit and push bumped template versions'
         condition: and(succeeded(), eq(variables['templateVersionUpdated'], 'true'))
         env:
           GITHUB_TOKEN: $(github-chart-automation-token)
           GITHUB_USERNAME: $(github-chart-automation-username)
+          BUILD_REPOSITORY_NAME: $(Build.Repository.Name)
+          SOURCE_BRANCH: $(sourceBranch)
           SYSTEM_PULLREQUEST_SOURCEREPOSITORYURI: $(System.PullRequest.SourceRepositoryURI)
 
   - job: Release_Sbox
