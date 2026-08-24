@@ -210,7 +210,7 @@ jobs:
           runAsPreJob: false
           ConnectedServiceName: $(kvConnectedServiceName)
           keyVaultName: 'infra-vault-nonprod'
-          secretsFilter: 'github-chart-automation-token'
+          secretsFilter: 'github-chart-automation-token,github-chart-automation-username'
 
       - script: |
           set -euo pipefail
@@ -298,7 +298,18 @@ jobs:
             *) push_repo_url="${source_repo_uri}.git" ;;
           esac
 
-          auth_push_url="${push_repo_url/https:\/\//https://x-access-token:${GITHUB_TOKEN}@}"
+          github_username="$(printf '%s' "${GITHUB_USERNAME:-}" | tr -d '\r\n')"
+          if [ -z "${github_username}" ]; then
+            echo "GITHUB_USERNAME is not set. Check Key Vault secret github-chart-automation-username."
+            exit 1
+          fi
+          github_token="$(printf '%s' "${GITHUB_TOKEN:-}" | tr -d '\r\n')"
+          if [ -z "${github_token}" ]; then
+            echo "GITHUB_TOKEN is empty. Check Key Vault secret github-chart-automation-token."
+            exit 1
+          fi
+
+          auth_push_url="${push_repo_url/https:\/\//https://${github_username}:${github_token}@}"
           echo "Push target repository: ${push_repo_url}"
           echo "Push target branch: $(sourceBranch)"
 
@@ -325,7 +336,8 @@ jobs:
         displayName: 'Commit and push bumped template versions'
         condition: and(succeeded(), eq(variables['templateVersionUpdated'], 'true'))
         env:
-          GITHUB_TOKEN: $(github-api-token)
+          GITHUB_TOKEN: $(github-chart-automation-token)
+          GITHUB_USERNAME: $(github-chart-automation-username)
           SYSTEM_PULLREQUEST_SOURCEREPOSITORYURI: $(System.PullRequest.SourceRepositoryURI)
 
   - job: Release_Sbox
