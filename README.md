@@ -24,34 +24,28 @@ Because this is the foundational level of all our templated helm charts, it's cr
 
 When you release a new version of chart-library, it's ideal to ensure all consuming application charts are updated to include the change, with new releases also made for each of them. This ensures we are as up to date as possible with central template changes across the board.
 
-### Current PR validation and auto-bump flow (Azure DevOps)
+### Current PR validation (Azure DevOps) and post-merge auto-bump (GitHub Actions)
 
-PR validation is driven by `azure-pipelines.yaml` and uses four logical stages:
+Validation and template version bumping run in two separate systems so a PR never mutates itself:
 
-1. `Validate`
+1. `Validate` (Azure DevOps, always)
 - Runs local library chart tests from `tests/test-templates.sh`.
 
-2. `Detect_PR_Context` (PR only)
-- Reads the PR source branch head commit message.
-- Sets output variable `isAutoBumpCommit=true|false` based on `[auto-bump]` marker.
-
-3. `Validate_Consumer_Compatibility` (PR only, skipped for auto-bump commits)
+2. `Validate_Consumer_Compatibility` (Azure DevOps, PR only)
 - Packages candidate `library` chart from the PR branch.
 - For each consumer chart, clones repo, injects packaged `library` chart, pins dependency list to `library`, then validates with:
   - `helm lint`
   - `helm template | kubeconform` (strict mode, including CRD schema catalog)
   - `helm unittest` where consumer tests are enabled.
+- Always runs against the PR's un-bumped templates, so this job's result never depends on prior bump commits.
 
-4. `Bump_Template_Versions` (PR only, skipped for auto-bump commits)
-- Detects changed templates under `library/templates/v2`.
-- Builds baseline template definitions from target branch.
-- Runs bump logic to increment referenced helper template versions.
-- Commits and pushes changes back to PR source branch when needed.
+3. `Bump tpl version` (GitHub Actions, `.github/workflows/bump-tpl-version.yaml`, push to `master` only)
+- Skips if the triggering push is the bot's own `[auto-bump]` commit.
+- Only triggers for changes under `library/templates/v2`.
+- Extracts baseline template definitions from the previous commit, then bumps referenced helper template versions changed by the merge.
+- Commits and pushes directly to `master` when a bump is needed.
 
-`pr.autoCancel` is set to `false`, so when an auto-bump commit is pushed:
-- the original run remains visible for audit,
-- a second PR run starts for the new commit,
-- consumer compatibility and bump jobs are skipped on that second run by the auto-bump marker logic.
+This keeps the Azure DevOps PR pipeline as pure validation with no self-mutating commits or loop-guard logic. The bump only happens once, immediately after a PR merges to `master`, and its own push retriggers the workflow once harmlessly (the `[auto-bump]` marker check causes it to do nothing on that second run).
 
 #### Consumer compatibility matrix used in PR validation
 
@@ -68,11 +62,6 @@ Temporarily disabled in pipeline:
 
 #### Scripts used by the auto-bump stage
 
-- `scripts/prepare-template-bump.py`
-  - Resolves PR source and target branches.
-  - Detects changed `library/templates/v2` files.
-  - Creates baseline definitions from target branch for comparison.
-
 - `scripts/extract-tpl-versions.py`
   - Extracts all template `define` names from library templates into baseline file.
 
@@ -80,15 +69,7 @@ Temporarily disabled in pipeline:
   - Uses changed template files to identify impacted definitions.
   - Bumps matching versioned template references in `library/templates/v2`.
 
-- `scripts/commit-and-push-template-bump.py`
-  - Validates GitHub credentials from Key Vault-backed variables.
-  - Performs push preflight (`git push --dry-run`).
-  - Commits bumped template files with message `Bump helm template versions [auto-bump]`.
-
-#### Key Vault secrets used by bump stage
-
-- `github-chart-automation-token`
-- `github-chart-automation-username`
+The workflow's own `Commit changes` step handles git config, commit (message includes `[auto-bump]`), and push directly to `master` using the built-in `GITHUB_TOKEN`; this requires the GitHub Actions identity to have a branch protection bypass on `master` (not a force-push permission).
 
 #### Diagram
 
