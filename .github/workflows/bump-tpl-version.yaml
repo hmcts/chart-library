@@ -21,7 +21,7 @@ jobs:
       - name: Checkout master
         uses: actions/checkout@v6
         with:
-          ref: master
+          ref: ${{ github.ref_name }}  # TEMP-TEST: was 'master', revert before merging
           fetch-depth: 0
 
       - name: Resolve baseline ref
@@ -59,11 +59,19 @@ jobs:
         env:
           CHANGED_FILES: ${{ steps.changed-files.outputs.all_changed_files }}
 
-      - name: Commit changes
+      - name: Commit changes (dry run)
+        # TEMP-TEST: replace with real commit/push block below before merging
         if: env.SCRIPT_OUTPUT == 'version_updated'
         run: |
-          git config user.name hmcts-platform-operations
-          git config user.email github-platform-operations@hmcts.net
-          git add .
-          git commit -m "Bump helm template versions [auto-bump]"
-          git push
+          echo "DRY RUN: template versions were bumped, would commit and push:"
+          git status --short
+          echo "---"
+          git diff
+      # - name: Commit changes
+      #   if: env.SCRIPT_OUTPUT == 'version_updated'
+      #   run: |
+      #     git config user.name hmcts-platform-operations
+      #     git config user.email github-platform-operations@hmcts.net
+      #     git add .
+      #     git commit -m "Bump helm template versions [auto-bump]"
+      #     git push
