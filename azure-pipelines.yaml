@@ -8,6 +8,12 @@ pr:
   branches:
     include:
       - '*'
+  paths:
+    include:
+      - library/*
+      - scripts/*
+      - tests/*
+
 resources:
   repositories:
     - repository: cnp-azuredevops-libraries
