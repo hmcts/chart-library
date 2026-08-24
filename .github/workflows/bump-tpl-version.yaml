@@ -1,9 +1,7 @@
 name: Bump tpl version
 
 on:
-  pull_request:
-    paths:
-      - 'library/**'
+  workflow_dispatch:
 
 jobs:
   bump_version:
