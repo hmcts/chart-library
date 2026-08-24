@@ -1,15 +1,7 @@
 name: Bump tpl version
 
 on:
-  push:
-    branches:
-      - master
-    paths:
-      - library/templates/v2/**
   workflow_dispatch:
-
-permissions:
-  contents: write
 
 jobs:
   bump_version:
@@ -28,11 +20,13 @@ jobs:
         id: baseline
         run: |
           before="${{ github.event.before }}"
-          # Use the actual pre-push commit so multi-commit pushes are
-          # diffed correctly; fall back to HEAD~1 for workflow_dispatch
-          # or the very first push to an empty ref.
           if [ -z "${before}" ] || [ "${before}" = "0000000000000000000000000000000000000000" ]; then
-            before="HEAD~1"
+            # No push 'before' available (e.g. workflow_dispatch test run).
+            # Diff from where this branch forked off master, so a manual
+            # test run sees the full set of changes this branch would
+            # bring, same as a real merge push would.
+            git fetch origin master
+            before="$(git merge-base origin/master HEAD)"
           fi
           echo "ref=${before}" >> "$GITHUB_OUTPUT"
 
@@ -50,6 +44,7 @@ jobs:
         id: changed-files
         uses: tj-actions/changed-files@v46
         with:
+          base_sha: ${{ steps.baseline.outputs.ref }}
           files: |
             library/templates/v2/**
 
