@@ -31,7 +31,6 @@ jobs:
       - template: steps/charts/chart-tests.yaml@cnp-azuredevops-libraries
         parameters:
           valuesFile: ${{ parameters.valuesFile }}
-          helmUnittestValuesFile: ${{ parameters.helmUnittestValuesFile }}
           helmUnittestVersion: ${{ parameters.helmUnittestVersion }}
           runSnapshotTests: true
           helmUnittestValuesFiles:
