@@ -24,6 +24,8 @@ jobs:
     pool:
       vmImage: ${{ variables.agentPool }}
     steps:
+      - checkout: self
+        clean: true
       - template: steps/set-build-repo-suffix-env-var.yaml@cnp-azuredevops-libraries
       - task: HelmInstaller@1
         displayName: 'Install Helm'
