@@ -30,8 +30,7 @@ jobs:
           helmVersionToInstall: 4.2.4
       - template: steps/charts/chart-tests.yaml@cnp-azuredevops-libraries
         parameters:
-          valuesFile: ${{ parameters.valuesFile }}
-          helmUnittestVersion: ${{ parameters.helmUnittestVersion }}
+          valuesFile: "ci-values.yaml"
           runSnapshotTests: true
           helmUnittestValuesFiles:
             - "ci-values-minimal.yaml"
