@@ -58,6 +58,8 @@ parameters:
 variables:
   - name: agentPool
     value: ubuntu-latest
+  - name: helmVersion
+    value: 3.18.0
   - name: kubeconformVersion
     value: v0.6.7
   - name: helmUnittestVersion
@@ -72,7 +74,7 @@ jobs:
       - task: HelmInstaller@1
         displayName: 'Install Helm'
         inputs:
-          helmVersionToInstall: 3.18.0
+          helmVersionToInstall: $(helmVersion)
       - script: |
           helm plugin install https://github.com/helm-unittest/helm-unittest.git \
             > /tmp/helm-unittest-install.log 2>&1 || { cat /tmp/helm-unittest-install.log; exit 1; }
@@ -94,7 +96,7 @@ jobs:
       - task: HelmInstaller@1
         displayName: 'Install Helm'
         inputs:
-          helmVersionToInstall: 3.18.0
+          helmVersionToInstall: $(helmVersion)
       - script: |
           set -euo pipefail
 
@@ -126,7 +128,7 @@ jobs:
         - task: HelmInstaller@1
           displayName: 'Install Helm'
           inputs:
-            helmVersionToInstall: 3.18.0
+            helmVersionToInstall: $(helmVersion)
         - download: current
           artifact: library-package
           displayName: 'Download candidate library artifact'
