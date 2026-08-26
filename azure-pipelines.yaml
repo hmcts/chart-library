@@ -19,7 +19,6 @@ variables:
   - name: agentPool
     value: ubuntu-latest
 
-
 jobs:
   - job: Validate
     pool:
