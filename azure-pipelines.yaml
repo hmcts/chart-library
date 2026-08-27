@@ -17,7 +17,7 @@ resources:
   repositories:
     - repository: cnp-azuredevops-libraries
       type: github
-      ref: refs/heads/master
+      ref: refs/heads/kubeconform
       name: hmcts/cnp-azuredevops-libraries
       endpoint: 'hmcts'
 
@@ -124,6 +124,8 @@ jobs:
       steps:
         - checkout: self
           clean: true
+        - checkout: cnp-azuredevops-libraries
+          clean: true
         - task: HelmInstaller@1
           displayName: 'Install Helm'
           inputs:
@@ -134,9 +136,6 @@ jobs:
         - script: |
             set -euo pipefail
 
-            echo "Installing kubeconform"
-            curl -sSL "https://github.com/yannh/kubeconform/releases/download/$(kubeconformVersion)/kubeconform-linux-amd64.tar.gz" | tar xz -C /tmp/
-
             echo "Installing yq"
             sudo snap install yq
 
@@ -144,7 +143,6 @@ jobs:
             helm plugin install https://github.com/helm-unittest/helm-unittest.git --version "$(helmUnittestVersion)" \
               > /tmp/helm-unittest-install.log 2>&1 || { cat /tmp/helm-unittest-install.log; exit 1; }
 
-            /tmp/kubeconform -v
             yq --version
             helm plugin list
           displayName: 'Install validation tooling'
@@ -202,15 +200,32 @@ jobs:
 
             echo "Running helm lint.."
             helm lint "${chart_dir}"
-            echo "Running kubeconform now..."
-            helm template "${chart_dir}" --values "${values_file}" \
-              | /tmp/kubeconform \
-                -strict \
-                -summary \
-                -schema-location default \
-                -schema-location 'https://raw.githubusercontent.com/datreeio/CRDs-catalog/main/{{.Group}}/{{.ResourceKind}}_{{.ResourceAPIVersion}}.json'
+            echo "##vso[task.setvariable variable=consumerValuesFile]${values_file}"
 
-            # Optional consumer-owned unit test suites.
+            popd > /dev/null
+          displayName: 'Validate ${{ consumer.repository }} compatibility'
+
+        - template: steps/charts/kubeconform.yaml@cnp-azuredevops-libraries
+          parameters:
+            workingDirectory: "$(System.DefaultWorkingDirectory)/.tmp/consumers/${{ consumer.repository }}"
+            chartTarget: "${{ consumer.chartPath }}"
+            chartReleaseName: "chart-${{ consumer.repository }}-ci"
+            valuesFile: "$(consumerValuesFile)"
+            kubernetesVersion: "1.35.0"
+            kubeconformVersion: "$(kubeconformVersion)"
+            generateAsoSchemas: true
+            libraryCheckoutPath: "$(System.DefaultWorkingDirectory)/cnp-azuredevops-libraries"
+
+        - script: |
+            set -euo pipefail
+
+            repo="${{ consumer.repository }}"
+            chart_dir="${{ consumer.chartPath }}"
+            run_unit_tests="${{ consumer.runUnitTests }}"
+            values_file="$(consumerValuesFile)"
+
+            pushd ".tmp/consumers/${repo}" > /dev/null
+
             if [ "${run_unit_tests}" = "true" ]; then
               echo "Running helm-unittest..."
               if ls tests/unit-tests/*.yaml > /dev/null 2>&1; then
@@ -226,7 +241,7 @@ jobs:
             fi
 
             popd > /dev/null
-          displayName: 'Validate ${{ consumer.repository }} compatibility'
+          displayName: 'Run ${{ consumer.repository }} unit tests'
 
   - job: Release_Sbox
     condition: >
