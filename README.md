@@ -505,6 +505,8 @@ Template version bumping happens after a PR merges to `master`, not while the PR
 - Runs [`scripts/bump-tpl-versions.py`](./scripts/bump-tpl-versions.py) to bump the version of any changed template and update references to it elsewhere.
 - Commits (`Bump helm template versions [auto-bump]`) and pushes directly to `master` when a bump is needed.
 
+The action also supports manual recovery through `workflow_dispatch`. Leave `baseline_sha` empty to compare the current `master` commit with its first parent. If a later commit has already merged, provide the SHA immediately before the missed template change as `baseline_sha` so the action reprocesses that change.
+
 For example, if you make changes to `affinity.tpl` the version of the template will be updated from:
 
 ```
