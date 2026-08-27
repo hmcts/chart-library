@@ -200,7 +200,7 @@ jobs:
               exit 1
             fi
 
-            echo "Running helm lint..."
+            echo "Running helm lint.."
             helm lint "${chart_dir}"
             echo "Running kubeconform now..."
             helm template "${chart_dir}" --values "${values_file}" \
