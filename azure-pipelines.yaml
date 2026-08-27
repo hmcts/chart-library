@@ -29,30 +29,37 @@ parameters:
         chartPath: java
         runUnitTests: false
         valuesFile: ci-values-minimal.yaml
+        generateAsoSchemas: false
       - repository: chart-nodejs
         chartPath: nodejs
         runUnitTests: false
         valuesFile: ci-values-minimal.yaml
+        generateAsoSchemas: false
       - repository: chart-function
         chartPath: function
         runUnitTests: true
         valuesFile: ci-values-servicebus.yaml
+        generateAsoSchemas: false
       - repository: chart-job
         chartPath: job
         runUnitTests: true
         valuesFile: ci-values-minimal.yaml
+        generateAsoSchemas: false
       - repository: chart-servicebus
         chartPath: servicebus
         runUnitTests: true
         valuesFile: ci-values.yaml
+        generateAsoSchemas: true
       - repository: chart-blobstorage
         chartPath: blobstorage
         runUnitTests: false
         valuesFile: ci-values-minimal.yaml
+        generateAsoSchemas: true
       - repository: chart-postgresql
         chartPath: postgresql
         runUnitTests: false
         valuesFile: ci-values-minimal.yaml
+        generateAsoSchemas: true
 
 variables:
   - name: agentPool
@@ -213,7 +220,7 @@ jobs:
             valuesFile: "$(consumerValuesFile)"
             kubernetesVersion: "1.35.0"
             kubeconformVersion: "$(kubeconformVersion)"
-            generateAsoSchemas: true
+            generateAsoSchemas: ${{ consumer.generateAsoSchemas }}
             libraryCheckoutPath: "$(System.DefaultWorkingDirectory)/cnp-azuredevops-libraries"
 
         - script: |
