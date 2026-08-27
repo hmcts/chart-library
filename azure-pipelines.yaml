@@ -114,7 +114,7 @@ jobs:
 
   - ${{ each consumer in parameters.consumerCharts }}:
     - job: Validate_Consumer_${{ replace(consumer.repository, '-', '_') }}
-      displayName: 'Validate consumer compatibility: ${{ consumer.repository }} (PR only)'
+      displayName: '${{ consumer.repository }} - validation (PR only)'
       condition: and(succeeded(), eq(variables['Build.Reason'], 'PullRequest'))
       dependsOn:
         - Validate
