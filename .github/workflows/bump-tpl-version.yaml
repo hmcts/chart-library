@@ -7,6 +7,11 @@ on:
     paths:
       - library/templates/v2/**
   workflow_dispatch:
+    inputs:
+      baseline_sha:
+        description: "Optional commit to use as baseline when replaying a missed bump"
+        required: false
+        type: string
 
 permissions:
   contents: read
@@ -41,13 +46,14 @@ jobs:
         run: |
           before="${{ github.event.before }}"
           if [ -z "${before}" ] || [ "${before}" = "0000000000000000000000000000000000000000" ]; then
-            # No push 'before' available (e.g. workflow_dispatch test run).
-            # Diff from where this branch forked off master, so a manual
-            # test run sees the full set of changes this branch would
-            # bring, same as a real merge push would.
-            git fetch origin master
-            before="$(git merge-base origin/master HEAD)"
+            before="${{ inputs.baseline_sha }}"
           fi
+          if [ -z "${before}" ]; then
+            # Manual dispatch on master: compare with its first parent so
+            # the latest merge can be replayed after a failed push.
+            before="$(git rev-parse HEAD^)"
+          fi
+          echo "Using baseline ${before}"
           echo "ref=${before}" >> "$GITHUB_OUTPUT"
 
       - name: Checkout previous commit for baseline
