@@ -1,9 +1,12 @@
-{{- define "hmcts.container.v4.tpl" -}}
+{{- define "hmcts.container.v5.tpl" -}}
 {{- $languageValues := deepCopy .Values -}}
 {{- if hasKey .Values "language" -}}
 {{- $languageValues = (deepCopy .Values | merge (pluck .Values.language .Values | first) ) -}}
 {{- end -}}
 {{- $globals := $languageValues.global | default dict -}}
+{{- $devInsightsEnv := and $globals.devMode $languageValues.devApplicationInsightsInstrumentKeyName -}}
+{{- $secretEnv := include "hmcts.secrets.v3" . | trim -}}
+{{- $valueEnv := $languageValues.environment | default dict -}}
 - image: {{ required "An image must be supplied to the chart" $languageValues.image }}
   name: {{ template "hmcts.releasename.v3" . }}
   securityContext:
@@ -16,16 +19,20 @@
   command:
 {{ toYaml $languageValues.command | indent 4 }}
   {{- end}}
+  {{- if or $devInsightsEnv $secretEnv $valueEnv }}
   env:
-    {{- if and $globals.devMode $languageValues.devApplicationInsightsInstrumentKeyName }}
+    {{- if $devInsightsEnv }}
     - name: {{ $languageValues.devApplicationInsightsInstrumentKeyName }}
       value: {{ $languageValues.devApplicationInsightsInstrumentKey | quote }}
     {{- end -}}
-      {{- ( include "hmcts.secrets.v3" .) | indent 4 }}
-      {{- range $key, $val := $languageValues.environment }}
+    {{- if $secretEnv }}
+{{ $secretEnv | nindent 4 }}
+    {{- end }}
+      {{- range $key, $val := $valueEnv }}
     - name: {{ $key }}
       value: {{ tpl ($val | quote) $ }}
       {{- end}}
+  {{- end }}
   {{- if or ($languageValues.configmap) ($languageValues.envFromSecret) }}
   envFrom:
   {{- if $languageValues.configmap }}
@@ -99,8 +106,8 @@
   imagePullPolicy: {{ $languageValues.imagePullPolicy | default "IfNotPresent" }}
 {{- end -}}
 
-{{- define "hmcts.container.v4" -}}
+{{- define "hmcts.container.v5" -}}
 {{- /* clear new line so indentation works correctly */ -}}
 {{- println "" -}}
-{{- include "hmcts.util.merge.v2" (append . "hmcts.container.v4.tpl") | indent 6 -}}
+{{- include "hmcts.util.merge.v2" (append . "hmcts.container.v5.tpl") | indent 6 -}}
 {{- end -}}

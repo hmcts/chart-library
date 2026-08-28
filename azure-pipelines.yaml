@@ -7,6 +7,12 @@ pr:
   branches:
     include:
       - '*'
+  paths:
+    include:
+      - library/*
+      - scripts/*
+      - tests/*
+
 resources:
   repositories:
     - repository: cnp-azuredevops-libraries
@@ -15,33 +21,234 @@ resources:
       name: hmcts/cnp-azuredevops-libraries
       endpoint: 'hmcts'
 
+parameters:
+  - name: consumerCharts
+    type: object
+    default:
+      - repository: chart-java
+        chartPath: java
+        runUnitTests: false
+        valuesFile: ci-values-minimal.yaml
+        generateAsoSchemas: false
+      - repository: chart-nodejs
+        chartPath: nodejs
+        runUnitTests: false
+        valuesFile: ci-values-minimal.yaml
+        generateAsoSchemas: false
+      - repository: chart-function
+        chartPath: function
+        runUnitTests: true
+        valuesFile: ci-values-servicebus.yaml
+        generateAsoSchemas: false
+      - repository: chart-job
+        chartPath: job
+        runUnitTests: true
+        valuesFile: ci-values-minimal.yaml
+        generateAsoSchemas: false
+      - repository: chart-servicebus
+        chartPath: servicebus
+        runUnitTests: true
+        valuesFile: ci-values.yaml
+        generateAsoSchemas: true
+      - repository: chart-blobstorage
+        chartPath: blobstorage
+        runUnitTests: false
+        valuesFile: ci-values-minimal.yaml
+        generateAsoSchemas: true
+      - repository: chart-postgresql
+        chartPath: postgresql
+        runUnitTests: false
+        valuesFile: ci-values-minimal.yaml
+        generateAsoSchemas: true
+
 variables:
   - name: agentPool
     value: ubuntu-latest
+  - name: helmVersion
+    value: 4.2.4
+  - name: kubeconformVersion
+    value: v0.6.7
+  - name: helmUnittestVersion
+    value: v1.1.2
 
 jobs:
   - job: Validate
     pool:
       vmImage: ${{ variables.agentPool }}
     steps:
-      - checkout: self
-        clean: true
-      - checkout: cnp-azuredevops-libraries
-        clean: true
-      - template: steps/set-build-repo-suffix-env-var.yaml@cnp-azuredevops-libraries
       - task: HelmInstaller@1
         displayName: 'Install Helm'
         inputs:
-          helmVersionToInstall: 4.2.4
-      - template: steps/charts/chart-tests.yaml@cnp-azuredevops-libraries
-        parameters:
-          valuesFile: "ci-values.yaml"
-          runSnapshotTests: true
-          helmUnittestValuesFiles:
-            - "ci-values-minimal.yaml"
-            - "ci-values-lang.yaml"
-          runUnitTests: true
-          chartType: "library"
+          helmVersionToInstall: $(helmVersion)
+      - script: |
+          helm plugin install https://github.com/helm-unittest/helm-unittest.git --verify=false \
+            > /tmp/helm-unittest-install.log 2>&1 || { cat /tmp/helm-unittest-install.log; exit 1; }
+        displayName: 'Install Helm Unit Test Plugin'
+      - script: sudo snap install yq
+        displayName: 'Install yq'
+      - script: ./tests/test-templates.sh
+        displayName: 'Run unit tests'
+
+  - job: Package_Library
+    displayName: 'Package candidate library (PR only)'
+    condition: and(succeeded(), eq(variables['Build.Reason'], 'PullRequest'))
+    dependsOn: Validate
+    pool:
+      vmImage: ${{ variables.agentPool }}
+    steps:
+      - checkout: self
+        clean: true
+      - task: HelmInstaller@1
+        displayName: 'Install Helm'
+        inputs:
+          helmVersionToInstall: $(helmVersion)
+      - script: |
+          set -euo pipefail
+
+          echo "Packaging candidate chart-library"
+          mkdir -p .tmp/library-package
+          helm package library/ --destination .tmp/library-package
+          LIBRARY_PACKAGE="$(find .tmp/library-package -maxdepth 1 -type f -name 'library-*.tgz' | head -n 1)"
+          if [ -z "${LIBRARY_PACKAGE}" ]; then
+            echo "No packaged chart-library artifact produced"
+            exit 1
+          fi
+        displayName: 'Package candidate library'
+      - publish: .tmp/library-package
+        artifact: library-package
+        displayName: 'Publish candidate library artifact'
+
+  - ${{ each consumer in parameters.consumerCharts }}:
+    - job: Validate_Consumer_${{ replace(consumer.repository, '-', '_') }}
+      displayName: '${{ consumer.repository }} - validation (PR only)'
+      condition: and(succeeded(), eq(variables['Build.Reason'], 'PullRequest'))
+      dependsOn:
+        - Validate
+        - Package_Library
+      pool:
+        vmImage: ${{ variables.agentPool }}
+      steps:
+        - checkout: self
+          clean: true
+        - checkout: cnp-azuredevops-libraries
+          clean: true
+        - task: HelmInstaller@1
+          displayName: 'Install Helm'
+          inputs:
+            helmVersionToInstall: $(helmVersion)
+        - download: current
+          artifact: library-package
+          displayName: 'Download candidate library artifact'
+        - script: |
+            set -euo pipefail
+
+            echo "Installing yq"
+            sudo snap install yq
+
+            echo "Installing helm-unittest plugin"
+            helm plugin install https://github.com/helm-unittest/helm-unittest.git --version "$(helmUnittestVersion)" --verify=false \
+              > /tmp/helm-unittest-install.log 2>&1 || { cat /tmp/helm-unittest-install.log; exit 1; }
+
+            yq --version
+            helm plugin list
+          displayName: 'Install validation tooling'
+
+        - script: |
+            set -euo pipefail
+
+            mkdir -p .tmp/consumers
+
+            repo="${{ consumer.repository }}"
+            chart_dir="${{ consumer.chartPath }}"
+            workdir=".tmp/consumers/${repo}"
+            run_unit_tests="${{ consumer.runUnitTests }}"
+            values_file="${{ consumer.valuesFile }}"
+            library_package="$(find "$(Pipeline.Workspace)/library-package" -maxdepth 1 -type f -name 'library-*.tgz' | head -n 1)"
+            if [ -z "${library_package}" ]; then
+              echo "No downloaded chart-library artifact found"
+              exit 1
+            fi
+            library_archive_name="$(basename "${library_package}")"
+
+            echo "---"
+            echo "Validating ${repo} (${chart_dir})"
+            echo "Running checkout and dependency preparation..."
+
+            # Clone consumer and place candidate library in chart dependency folder.
+            git clone --depth 1 --branch master "https://github.com/hmcts/${repo}.git" "${workdir}"
+            mkdir -p "${workdir}/${chart_dir}/charts"
+            cp "${library_package}" "${workdir}/${chart_dir}/charts/"
+
+            pushd "${workdir}" > /dev/null
+
+            # Unpack library and pin dependency to local candidate.
+            echo "Injecting candidate chart-library into consumer dependencies..."
+            tar -xzf "${chart_dir}/charts/${library_archive_name}" -C "${chart_dir}/charts"
+
+            echo "Limiting dependencies to chart-library for compatibility run..."
+            yq -i '.dependencies = [(.dependencies[] | select(.name == "library"))]' "${chart_dir}/Chart.yaml"
+            rm -f "${chart_dir}/Chart.lock"
+
+            # Core compatibility checks for all consumers.
+            if [ -z "${values_file}" ] || [ ! -f "${values_file}" ]; then
+              for candidate in "ci-values-minimal.yaml" "ci-values.yaml" "${chart_dir}/ci-values-minimal.yaml" "${chart_dir}/ci-values.yaml"; do
+                if [ -f "${candidate}" ]; then
+                  echo "Values file ${values_file:-<empty>} not found for ${repo}; using ${candidate}"
+                  values_file="${candidate}"
+                  break
+                fi
+              done
+            fi
+            if [ -z "${values_file}" ] || [ ! -f "${values_file}" ]; then
+              echo "No compatible values file found for ${repo}"
+              exit 1
+            fi
+
+            echo "Running helm lint.."
+            helm lint "${chart_dir}"
+            echo "##vso[task.setvariable variable=consumerValuesFile]${values_file}"
+
+            popd > /dev/null
+          displayName: 'Validate ${{ consumer.repository }} compatibility'
+
+        - template: steps/charts/kubeconform.yaml@cnp-azuredevops-libraries
+          parameters:
+            workingDirectory: "$(System.DefaultWorkingDirectory)/.tmp/consumers/${{ consumer.repository }}"
+            chartTarget: "${{ consumer.chartPath }}"
+            chartReleaseName: "chart-${{ consumer.repository }}-ci"
+            valuesFile: "$(consumerValuesFile)"
+            kubernetesVersion: "1.35.0"
+            kubeconformVersion: "$(kubeconformVersion)"
+            generateAsoSchemas: ${{ consumer.generateAsoSchemas }}
+            libraryCheckoutPath: "$(System.DefaultWorkingDirectory)/cnp-azuredevops-libraries"
+
+        - script: |
+            set -euo pipefail
+
+            repo="${{ consumer.repository }}"
+            chart_dir="${{ consumer.chartPath }}"
+            run_unit_tests="${{ consumer.runUnitTests }}"
+            values_file="$(consumerValuesFile)"
+
+            pushd ".tmp/consumers/${repo}" > /dev/null
+
+            if [ "${run_unit_tests}" = "true" ]; then
+              echo "Running helm-unittest..."
+              if ls tests/unit-tests/*.yaml > /dev/null 2>&1; then
+                unit_test_glob="tests/unit-tests/*.yaml"
+              elif ls "${chart_dir}"/tests/unit-tests/*.yaml > /dev/null 2>&1; then
+                unit_test_glob="${chart_dir}/tests/unit-tests/*.yaml"
+              else
+                echo "No helm-unittest suite found for ${repo}"
+                exit 1
+              fi
+
+              helm unittest --values "${values_file}" "${chart_dir}" -f ${unit_test_glob}
+            fi
+
+            popd > /dev/null
+          displayName: 'Run ${{ consumer.repository }} unit tests'
+
   - job: Release_Sbox
     condition: >
       and(

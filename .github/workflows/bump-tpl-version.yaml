@@ -1,47 +1,99 @@
 name: Bump tpl version
 
 on:
-  pull_request:
+  push:
+    branches:
+      - master
     paths:
-      - 'library/**'
+      - library/templates/v2/**
+  workflow_dispatch:
+    inputs:
+      baseline_sha:
+        description: "Optional commit to use as baseline when replaying a missed bump"
+        required: false
+        type: string
+
+permissions:
+  contents: read
 
 jobs:
   bump_version:
+    # Skip when the triggering push is the bot's own bump commit, to avoid looping.
+    if: ${{ !contains(github.event.head_commit.message, '[auto-bump]') }}
     runs-on: ubuntu-latest
     steps:
+
+      - name: Create GitHub App token
+        id: app-token
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ secrets.CHART_AUTOMATION_APP_ID }}
+          private-key: ${{ secrets.CHART_AUTOMATION_APP_PRIV_KEY }}
+          owner: ${{ github.repository_owner }}
+          repositories: chart-library
+          permission-contents: write
 
       - name: Checkout master
         uses: actions/checkout@v6
         with:
           ref: master
-      
+          fetch-depth: 0
+          token: ${{ steps.app-token.outputs.token }}
+          persist-credentials: true
+
+      - name: Resolve baseline ref
+        id: baseline
+        run: |
+          before="${{ github.event.before }}"
+          if [ -z "${before}" ] || [ "${before}" = "0000000000000000000000000000000000000000" ]; then
+            before="${{ inputs.baseline_sha }}"
+          fi
+          if [ -z "${before}" ]; then
+            # Manual dispatch on master: compare with its first parent so
+            # the latest merge can be replayed after a failed push.
+            before="$(git rev-parse HEAD^)"
+          fi
+          echo "Using baseline ${before}"
+          echo "ref=${before}" >> "$GITHUB_OUTPUT"
+
+      - name: Checkout previous commit for baseline
+        run: git checkout ${{ steps.baseline.outputs.ref }} -- library/templates
+
       - name: Run extract-tpl-version script
         run: |
           python scripts/extract-tpl-versions.py
 
-      - name: Checkout branch
-        uses: actions/checkout@v6
-        with:
-          ref: ${{ github.head_ref }}
+      - name: Restore current commit
+        run: git checkout HEAD -- library/templates
 
       - name: Get changed files
         id: changed-files
         uses: tj-actions/changed-files@v46
         with:
+          base_sha: ${{ steps.baseline.outputs.ref }}
           files: |
             library/templates/v2/**
 
       - name: Run bump-tpl-version script
+        id: bump
         run: |
-          echo SCRIPT_OUTPUT=$(python scripts/bump-tpl-versions.py) >> $GITHUB_ENV
+          script_output=$(python scripts/bump-tpl-versions.py)
+          echo "script_output=${script_output}" >> "$GITHUB_OUTPUT"
         env:
           CHANGED_FILES: ${{ steps.changed-files.outputs.all_changed_files }}
 
-      - name: Commit changes
-        if: env.SCRIPT_OUTPUT == 'version_updated'
+      - name: Show generated template changes
+        if: steps.bump.outputs.script_output == 'version_updated'
         run: |
-          git config user.name hmcts-platform-operations
-          git config user.email github-platform-operations@hmcts.net
-          git add .
-          git commit -m "Bump helm template versions"
-          git push
+          git status --short
+          git diff --stat -- library/templates/v2
+          git diff -- library/templates/v2
+
+      - name: Commit changes
+        if: steps.bump.outputs.script_output == 'version_updated'
+        run: |
+          git config user.name "${{ steps.app-token.outputs.app-slug }}[bot]"
+          git config user.email "${{ steps.app-token.outputs.user-id }}+${{ steps.app-token.outputs.app-slug }}[bot]@users.noreply.github.com"
+          git add library/templates/v2
+          git commit -m "Bump helm template versions [auto-bump]"
+          git push origin HEAD:master
