@@ -445,7 +445,7 @@ helm plugin install https://github.com/helm-unittest/helm-unittest.git
 
 - Add the change you want to see in the code and run [the tests](tests/test-templates.sh)
 - The snapshot tests will fail and tell you that there are differences.
-- Make sure language specific cases are covered in the tests [see](ci-values-lang.yaml)
+- Make sure language specific cases are covered in the tests [see](library/ci-values-lang.yaml)
 - If you are happy with these changes run:
   ``helm unittest -v library/ci-values.yaml library -u -q -f'tests/snapshot-tests/*.yaml'``
   the -u flag updates the cache.
@@ -465,7 +465,7 @@ To read about testing your changes in more depth, we have a [written guide](http
 - Modify the [script](tests/test-templates.sh) to add to list of manifests being tested
 - Run the script and verify the generated templates match.
 - Generated manifests can be installed on a cluster if you want to see they are working as expected.
-- Make sure language specific cases are covered in the tests [see](ci-values-lang.yaml)
+- Make sure language specific cases are covered in the tests [see](library/ci-values-lang.yaml)
 - Once you release the chart , include the new template in applicable base charts [see](https://github.com/hmcts/chart-java/pull/115)
 
 ### Validating pull requests (Azure DevOps)
