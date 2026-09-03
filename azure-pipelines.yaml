@@ -65,12 +65,11 @@ variables:
   - name: agentPool
     value: ubuntu-latest
   - name: helmVersion
-    value: 3.18.0
+    value: 4.2.4
   - name: kubeconformVersion
     value: v0.6.7
   - name: helmUnittestVersion
-    value: v0.8.0
-
+    value: v1.1.2
 
 jobs:
   - job: Validate
@@ -82,7 +81,7 @@ jobs:
         inputs:
           helmVersionToInstall: $(helmVersion)
       - script: |
-          helm plugin install https://github.com/helm-unittest/helm-unittest.git \
+          helm plugin install https://github.com/helm-unittest/helm-unittest.git --verify=false \
             > /tmp/helm-unittest-install.log 2>&1 || { cat /tmp/helm-unittest-install.log; exit 1; }
         displayName: 'Install Helm Unit Test Plugin'
       - script: sudo snap install yq
@@ -147,7 +146,7 @@ jobs:
             sudo snap install yq
 
             echo "Installing helm-unittest plugin"
-            helm plugin install https://github.com/helm-unittest/helm-unittest.git --version "$(helmUnittestVersion)" \
+            helm plugin install https://github.com/helm-unittest/helm-unittest.git --version "$(helmUnittestVersion)" --verify=false \
               > /tmp/helm-unittest-install.log 2>&1 || { cat /tmp/helm-unittest-install.log; exit 1; }
 
             yq --version
