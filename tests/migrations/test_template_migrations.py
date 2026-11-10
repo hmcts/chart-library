@@ -53,6 +53,23 @@ class RepositoryFixture:
 
 
 class RepositoryTest(RepositoryFixture, unittest.TestCase):
+    def test_validation_before_first_recorded_bump(self):
+        (self.root / migrations.DECLARATIONS).unlink()
+        self.commit()
+        self.assertEqual(migrations.release_changes(self.root, "HEAD"), [])
+
+    def test_validation_rejects_deleted_committed_history(self):
+        (self.root / migrations.DECLARATIONS).unlink()
+        with self.assertRaisesRegex(migrations.MigrationError, "missing"):
+            migrations.release_changes(self.root, "HEAD")
+
+    def test_validation_without_history_rejects_unmapped_helper_removal(self):
+        (self.root / migrations.DECLARATIONS).unlink()
+        self.commit()
+        self.write_helper("hmcts.a.v2.tpl")
+        with self.assertRaisesRegex(migrations.MigrationError, "Removed helpers lack migrations"):
+            migrations.release_changes(self.root, "HEAD")
+
     def test_first_bump_creates_missing_history(self):
         (self.root / migrations.DECLARATIONS).unlink()
         self.commit()

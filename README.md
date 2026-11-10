@@ -101,6 +101,8 @@ contents-write permission. No new App, token, GitHub environment, release asset,
 or Azure release dependency is required.
 
 The first bump creates the JSON history file if it has never been committed.
+PR validation also accepts this initial state, provided no helpers were removed
+or renamed without mappings.
 If the file already exists in `HEAD`, it must not be deleted or have existing
 records changed. Missing or invalid existing history fails before templates are
 modified.

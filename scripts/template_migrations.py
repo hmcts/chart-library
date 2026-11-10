@@ -88,7 +88,7 @@ def read_declarations(text: str) -> list[dict[str, str]]:
 
 def declarations_at(root: Path, ref: str | None) -> list[dict[str, str]]:
     if ref is None:
-        return read_declarations((root / DECLARATIONS).read_text())
+        return recording_declarations(root)
     found = command("git", "ls-tree", "--name-only", ref, "--", DECLARATIONS, cwd=root).strip()
     return read_declarations(command("git", "show", f"{ref}:{DECLARATIONS}", cwd=root)) if found else []
 
