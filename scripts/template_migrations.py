@@ -93,6 +93,20 @@ def declarations_at(root: Path, ref: str | None) -> list[dict[str, str]]:
     return read_declarations(command("git", "show", f"{ref}:{DECLARATIONS}", cwd=root)) if found else []
 
 
+def recording_declarations(root: Path) -> list[dict[str, str]]:
+    path = root / DECLARATIONS
+    tracked = command("git", "ls-tree", "--name-only", "HEAD", "--", DECLARATIONS, cwd=root).strip()
+    if not path.exists():
+        if tracked:
+            raise MigrationError(f"Recorded history is missing: restore {DECLARATIONS} before bumping")
+        return []
+    entries = read_declarations(path.read_text())
+    previous = declarations_at(root, "HEAD")
+    if entries[:len(previous)] != previous:
+        raise MigrationError("Recorded declarations are append-only; restore existing history before bumping")
+    return entries
+
+
 def release_changes(root: Path, base: str, target_ref: str | None = None) -> list[dict[str, str]]:
     old_entries = declarations_at(root, base)
     entries = declarations_at(root, target_ref)
@@ -138,7 +152,7 @@ def release_changes(root: Path, base: str, target_ref: str | None = None) -> lis
 def record(root: Path, base: str, renames: dict[str, str] | None = None) -> None:
     """Append exact renames produced by the existing post-merge bump."""
     old_files, new_files = files_at(root, base), files_at(root, None)
-    entries = declarations_at(root, None)
+    entries = recording_declarations(root)
     for path, old_text in old_files.items():
         old_names = definitions(old_text)
         new_names = definitions(new_files.get(path, ""))

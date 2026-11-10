@@ -1,5 +1,7 @@
 import os
+import json
 import re
+import subprocess
 import sys
 from pathlib import Path
 
@@ -10,6 +12,7 @@ from template_migrations import (
     definitions,
     files_at,
     record,
+    recording_declarations,
 )
 
 
@@ -23,6 +26,7 @@ def helper_literals(text: str):
 
 
 def bump(root: Path, baseline: str, changed_files: list[str]) -> bool:
+    recording_declarations(root)
     previous = set().union(*(definitions(text) for text in files_at(root, baseline).values()))
     current_files = files_at(root, None)
     selected: set[str] = set()
@@ -62,5 +66,6 @@ if __name__ == "__main__":
         changed = os.environ["CHANGED_FILES"].split()
         if bump(Path.cwd(), baseline, changed):
             print("version_updated")
-    except (KeyError, MigrationError) as error:
-        sys.exit(f"Template bump failed: {error}")
+    except (KeyError, MigrationError, OSError, json.JSONDecodeError, subprocess.CalledProcessError) as error:
+        message = error.stderr if isinstance(error, subprocess.CalledProcessError) else str(error)
+        sys.exit(f"Template bump failed: {message}")

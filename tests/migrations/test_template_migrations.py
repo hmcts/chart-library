@@ -53,6 +53,33 @@ class RepositoryFixture:
 
 
 class RepositoryTest(RepositoryFixture, unittest.TestCase):
+    def test_first_bump_creates_missing_history(self):
+        (self.root / migrations.DECLARATIONS).unlink()
+        self.commit()
+        spec = importlib.util.spec_from_file_location(
+            "bump", Path(migrations.__file__).with_name("bump-tpl-versions.py"))
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        self.assertTrue(module.bump(self.root, "HEAD", ["library/templates/v2/_a.tpl"]))
+        self.assertEqual(migrations.declarations_at(self.root, None), [change()])
+
+    def test_invalid_or_deleted_history_fails_before_template_writes(self):
+        spec = importlib.util.spec_from_file_location(
+            "bump", Path(migrations.__file__).with_name("bump-tpl-versions.py"))
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        helper = self.templates / "_a.tpl"
+        original = helper.read_bytes()
+        history_file = self.root / migrations.DECLARATIONS
+        history_file.write_text("invalid json")
+        with self.assertRaises((json.JSONDecodeError, migrations.MigrationError)):
+            module.bump(self.root, "HEAD", ["library/templates/v2/_a.tpl"])
+        self.assertEqual(helper.read_bytes(), original)
+        history_file.unlink()
+        with self.assertRaisesRegex(migrations.MigrationError, "missing"):
+            module.bump(self.root, "HEAD", ["library/templates/v2/_a.tpl"])
+        self.assertEqual(helper.read_bytes(), original)
+
     def test_release_asset_and_empty_release(self):
         generated = migrations.generate(self.root, "2.3.1", "v2.3.2", "2026-11-09T12:00:00Z")
         self.assertEqual(generated, asset("2.3.1", "2.3.2"))

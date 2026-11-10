@@ -100,6 +100,11 @@ same commit as the template changes. It uses the existing GitHub App and existin
 contents-write permission. No new App, token, GitHub environment, release asset,
 or Azure release dependency is required.
 
+The first bump creates the JSON history file if it has never been committed.
+If the file already exists in `HEAD`, it must not be deleted or have existing
+records changed. Missing or invalid existing history fails before templates are
+modified.
+
 The existing release and chart-publication process is unchanged. Before tagging
 a release, wait for the helper-bump workflow to finish and ensure the tag contains
 its commit. The release tag then identifies both the templates and their history.
