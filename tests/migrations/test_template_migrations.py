@@ -1,18 +1,18 @@
 import importlib.util
+import json
+import re
 import shutil
 import sys
 import tempfile
 import unittest
 from pathlib import Path
 
-import yaml
-
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "scripts"))
 import template_migrations as migrations
 
 
 def change(source="hmcts.a.v1.tpl", target="hmcts.a.v2.tpl"):
-    return {"from": source, "to": target, "type": "helper-rename",
+    return {"from": source, "to": target,
             "sourceFile": "library/templates/v2/_a.tpl"}
 
 
@@ -49,7 +49,7 @@ class RepositoryFixture:
         (self.templates / "_a.tpl").write_text('{{- define "' + name + '" -}}ok{{- end -}}\n')
 
     def write_entries(self, entries):
-        (self.root / migrations.DECLARATIONS).write_text(yaml.safe_dump({"migrations": entries}))
+        (self.root / migrations.DECLARATIONS).write_text(json.dumps({"migrations": entries}))
 
 
 class RepositoryTest(RepositoryFixture, unittest.TestCase):
@@ -134,7 +134,7 @@ class RepositoryTest(RepositoryFixture, unittest.TestCase):
         entries = migrations.declarations_at(self.root, None)
         self.assertIn(change(), entries)
         self.assertIn({"from": "hmcts.b.v2", "to": "hmcts.b.v3",
-                       "type": "helper-rename", "sourceFile": "library/templates/v2/_b.tpl"}, entries)
+                       "sourceFile": "library/templates/v2/_b.tpl"}, entries)
         self.assertEqual(migrations.definitions((self.templates / "_a.tpl").read_text()),
                          {"hmcts.a.v2.tpl", "hmcts.a.v11.tpl"})
 
@@ -271,9 +271,9 @@ class RealChartTest(RepositoryFixture, unittest.TestCase):
         (self.templates / "_a.tpl").unlink()
         shutil.copytree(source, self.root / "library", dirs_exist_ok=True)
         chart_file = self.root / "library/Chart.yaml"
-        chart = yaml.safe_load(chart_file.read_text())
-        chart["type"] = "application"
-        chart_file.write_text(yaml.safe_dump(chart))
+        chart_text, replacements = re.subn(r"(?m)^type: library$", "type: application", chart_file.read_text())
+        self.assertEqual(replacements, 1)
+        chart_file.write_text(chart_text)
         self.write_entries([])
         self.commit()
         self.git("tag", "real-baseline")
@@ -294,14 +294,17 @@ class RealChartTest(RepositoryFixture, unittest.TestCase):
 class PipelineTest(unittest.TestCase):
     def test_release_jobs_are_unchanged_and_need_no_new_credentials(self):
         root = Path(migrations.__file__).resolve().parents[1]
-        pipeline = yaml.safe_load((root / "azure-pipelines.yaml").read_text())
-        jobs = {job["job"]: job for job in pipeline["jobs"] if "job" in job}
+        pipeline = (root / "azure-pipelines.yaml").read_text()
         for name in ("Release", "Release_Sbox"):
-            self.assertEqual(jobs[name]["dependsOn"], "Validate")
-        self.assertNotIn("Release_Metadata", jobs)
-        self.assertNotIn("chartMigrationGithubToken", (root / "azure-pipelines.yaml").read_text())
+            block = re.search(rf"(?ms)^  - job: {name}\n(.*?)(?=^  - job: |\Z)", pipeline)
+            self.assertIsNotNone(block)
+            self.assertIn("    dependsOn: Validate\n", block[1])
+        self.assertNotIn("Release_Metadata", pipeline)
+        self.assertNotIn("chartMigrationGithubToken", pipeline)
+        self.assertNotIn("pip install", pipeline)
         workflow = (root / ".github/workflows/bump-tpl-version.yaml").read_text()
-        self.assertIn("git add library/templates/v2 library/template-migrations.yaml", workflow)
+        self.assertIn("git add library/templates/v2 library/template-migrations.json", workflow)
+        self.assertNotIn("pip install", workflow)
 
 
 if __name__ == "__main__":

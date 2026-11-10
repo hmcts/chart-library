@@ -7,10 +7,7 @@ import subprocess
 from datetime import datetime
 from pathlib import Path
 
-import yaml
-
-
-DECLARATIONS = "library/template-migrations.yaml"
+DECLARATIONS = "library/template-migrations.json"
 STABLE = re.compile(r"v?(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)\Z")
 IDENTIFIER = re.compile(r"hmcts\.[A-Za-z0-9_.-]+\Z")
 # Quoted strings and comments must be consumed before looking for an action's end.
@@ -71,17 +68,15 @@ def files_at(root: Path, ref: str | None) -> dict[str, str]:
 
 
 def read_declarations(text: str) -> list[dict[str, str]]:
-    data = yaml.safe_load(text)
+    data = json.loads(text)
     if not isinstance(data, dict) or set(data) != {"migrations"} or not isinstance(data["migrations"], list):
         raise MigrationError("Declaration file must contain only a migrations list")
     result: list[dict[str, str]] = []
     for entry in data["migrations"]:
-        if not isinstance(entry, dict) or set(entry) != {"from", "to", "type", "sourceFile"}:
+        if not isinstance(entry, dict) or set(entry) != {"from", "to", "sourceFile"}:
             raise MigrationError(f"Invalid migration declaration: {entry!r}")
         if not all(isinstance(value, str) for value in entry.values()):
             raise MigrationError("Migration fields must be strings")
-        if entry["type"] != "helper-rename":
-            raise MigrationError(f"Unsupported migration type: {entry['type']}")
         if not all(IDENTIFIER.fullmatch(entry[key]) for key in ("from", "to")):
             raise MigrationError("Mappings require exact hmcts helper identifiers")
         path = Path(entry["sourceFile"])
@@ -158,10 +153,10 @@ def record(root: Path, base: str, renames: dict[str, str] | None = None) -> None
                 candidates = [name for name in candidates if name == renames.get(source)]
             if len(candidates) != 1:
                 raise MigrationError(f"Cannot record an unambiguous rename for {source}")
-            entry = {"from": source, "to": candidates[0], "type": "helper-rename", "sourceFile": path}
+            entry = {"from": source, "to": candidates[0], "sourceFile": path}
             if entry not in entries:
                 entries.append(entry)
-    (root / DECLARATIONS).write_text(yaml.safe_dump({"migrations": entries}, sort_keys=False))
+    (root / DECLARATIONS).write_text(json.dumps({"migrations": entries}, indent=2) + "\n")
 
 
 def generate(root: Path, base: str, target: str, released_at: str) -> dict:
@@ -197,7 +192,7 @@ def validate_asset(asset: dict) -> None:
         raise MigrationError("Invalid releasedAt timestamp") from error
     if timestamp.tzinfo is None:
         raise MigrationError("releasedAt must include a timezone")
-    entries = read_declarations(yaml.safe_dump({"migrations": asset["changes"]}))
+    entries = read_declarations(json.dumps({"migrations": asset["changes"]}))
     sources = [entry["from"] for entry in entries]
     if len(set(sources)) != len(sources):
         raise MigrationError("Duplicate source mappings in asset")
@@ -331,7 +326,7 @@ def main() -> None:
             selected = resolve(assets, args.base, args.target, args.baseline)
             print(json.dumps({"releases": [asset["chartLibraryVersion"] for asset in selected],
                               "rewrites": rewrite(args.chart, selected)}, indent=2))
-    except (MigrationError, OSError, subprocess.CalledProcessError, yaml.YAMLError, json.JSONDecodeError) as error:
+    except (MigrationError, OSError, subprocess.CalledProcessError, json.JSONDecodeError) as error:
         message = error.stderr if isinstance(error, subprocess.CalledProcessError) else str(error)
         parser.exit(1, f"Migration failed: {message}\n")
 

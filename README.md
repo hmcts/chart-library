@@ -95,7 +95,7 @@ You can read more about this [draft release process](https://hmcts.github.io/ops
 ### Recorded helper migration history
 
 The existing post-merge helper-bump workflow records exact old-to-new helper names
-in [library/template-migrations.yaml](library/template-migrations.yaml), in the
+in [library/template-migrations.json](library/template-migrations.json), in the
 same commit as the template changes. It uses the existing GitHub App and existing
 contents-write permission. No new App, token, GitHub environment, release asset,
 or Azure release dependency is required.
@@ -107,19 +107,23 @@ Consumer PR automation is not wired up in this phase.
 
 #### Declaring helper renames
 
-[library/template-migrations.yaml](library/template-migrations.yaml) is the
+[library/template-migrations.json](library/template-migrations.json) is the
 append-only mapping history. The post-merge
 [helper bump workflow](.github/workflows/bump-tpl-version.yaml) records exact
 renames in the same commit as the helper bump, including propagated changes and
 both `.tpl` and non-`.tpl` helper names. Explicit manual renames must add their
 declarations in the template PR:
 
-```yaml
-migrations:
-  - from: hmcts.deployment.v7.tpl
-    to: hmcts.deployment.v8.tpl
-    type: helper-rename
-    sourceFile: library/templates/v2/_deployment.tpl
+```json
+{
+  "migrations": [
+    {
+      "from": "hmcts.deployment.v7.tpl",
+      "to": "hmcts.deployment.v8.tpl",
+      "sourceFile": "library/templates/v2/_deployment.tpl"
+    }
+  ]
+}
 ```
 
 Keep all released entries unchanged. Consumers read the history at their current
@@ -136,10 +140,11 @@ There are no compatibility aliases in this implementation.
 
 #### Local checks and offline migration tooling
 
-Use Python 3.12 or later:
+Use Python 3.12 or later. Migration tooling and tests use only the Python standard
+library; no dependency installation is required. Helm enables the real-chart
+render-equivalence test.
 
 ```bash
-python -m pip install -r scripts/requirements.txt
 python -m unittest discover -s tests/migrations -v
 python scripts/template_migrations.py validate --base <base-commit-or-tag>
 python scripts/template_migrations.py history --base <current-library-tag> \
