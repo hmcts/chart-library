@@ -12,6 +12,8 @@ pr:
       - library/*
       - scripts/*
       - tests/*
+      - .github/workflows/*
+      - azure-pipelines.yaml
 
 resources:
   repositories:
@@ -76,6 +78,24 @@ jobs:
     pool:
       vmImage: ${{ variables.agentPool }}
     steps:
+      - checkout: self
+        fetchDepth: 0
+        fetchTags: true
+      - task: UsePythonVersion@0
+        inputs:
+          versionSpec: '3.12'
+      - script: |
+          set -euo pipefail
+          python -m pip install -r scripts/requirements.txt
+          python -m unittest discover -s tests/migrations -v
+          if [ "$(Build.Reason)" = "PullRequest" ]; then
+            target="$(System.PullRequest.TargetBranch)"
+            target="${target#refs/heads/}"
+            git fetch origin "$target"
+            baseline="$(git merge-base HEAD FETCH_HEAD)"
+            python scripts/template_migrations.py validate --base "$baseline"
+          fi
+        displayName: 'Test and validate template migration declarations'
       - task: HelmInstaller@1
         displayName: 'Install Helm'
         inputs:

@@ -92,6 +92,80 @@ You can then mark it as the latest release.
 
 You can read more about this [draft release process](https://hmcts.github.io/ops-runbooks/Testing-Changes/drafting-a-release.html) in more depth
 
+### Recorded helper migration history
+
+The existing post-merge helper-bump workflow records exact old-to-new helper names
+in [library/template-migrations.yaml](library/template-migrations.yaml), in the
+same commit as the template changes. It uses the existing GitHub App and existing
+contents-write permission. No new App, token, GitHub environment, release asset,
+or Azure release dependency is required.
+
+The existing release and chart-publication process is unchanged. Before tagging
+a release, wait for the helper-bump workflow to finish and ensure the tag contains
+its commit. The release tag then identifies both the templates and their history.
+Consumer PR automation is not wired up in this phase.
+
+#### Declaring helper renames
+
+[library/template-migrations.yaml](library/template-migrations.yaml) is the
+append-only mapping history. The post-merge
+[helper bump workflow](.github/workflows/bump-tpl-version.yaml) records exact
+renames in the same commit as the helper bump, including propagated changes and
+both `.tpl` and non-`.tpl` helper names. Explicit manual renames must add their
+declarations in the template PR:
+
+```yaml
+migrations:
+  - from: hmcts.deployment.v7.tpl
+    to: hmcts.deployment.v8.tpl
+    type: helper-rename
+    sourceFile: library/templates/v2/_deployment.tpl
+```
+
+Keep all released entries unchanged. Consumers read the history at their current
+and target library release tags, not the latest master. The entries between those
+snapshots include all intervening bumps, even across skipped releases. Chains
+collapse to the final target, for example `v7 -> v8 -> v9` becomes `v7 -> v9`.
+Releases with no helper changes require no special metadata or publication.
+
+Validation rejects modified history, duplicate sources, cycles, missing helper
+targets, and removed helpers without mappings. It checks final target definitions
+and their source files. Argument or behavior changes are not helper renames and
+still need the existing feature-flagging, testing, and major-release discipline.
+There are no compatibility aliases in this implementation.
+
+#### Local checks and offline migration tooling
+
+Use Python 3.12 or later:
+
+```bash
+python -m pip install -r scripts/requirements.txt
+python -m unittest discover -s tests/migrations -v
+python scripts/template_migrations.py validate --base <base-commit-or-tag>
+python scripts/template_migrations.py history --base <current-library-tag> \
+  --target <target-library-tag>
+```
+
+Clone chart-library with its tags. The `history` command reads only the two Git
+snapshots and performs no network writes. To apply the resulting mappings to a
+scratch copy of a consumer chart:
+
+```bash
+python scripts/template_migrations.py history \
+  --base 2.3.1 --target 2.5.0 --chart /tmp/consumer/java
+```
+
+Use actual release tags for the consumer's library dependency versions; these
+numbers are examples. The target must contain recorded history. Changes before
+recording started are not backfilled; missing mappings fail explicitly.
+Rewrites affect only exact literal helper operands of Helm `include` and
+`template` calls under the chart's templates directory. Helm comments and unrelated
+text are preserved. Dynamic helper expressions and helper names passed indirectly
+through variables or lists require manual review; the tool does not guess. Missing
+tags, invalid mappings, and unsupported version ranges fail explicitly. A second
+run produces no diff. To roll back, revert the library
+dependency update and its helper rewrite together.
+
 ## Template Configuration
 
 ### Language
