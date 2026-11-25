@@ -9,7 +9,7 @@ kind: Deployment
 spec:
   revisionHistoryLimit: 0
   {{- if not (($languageValues.autoscaling | default dict).enabled) }}
-  replicas: {{ $languageValues.replicas | default 1 }}
+  replicas: {{ ternary 1 $languageValues.replicas (eq $languageValues.replicas nil) }}
   {{- end }}
   selector:
     matchLabels:
