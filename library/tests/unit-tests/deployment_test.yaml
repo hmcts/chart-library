@@ -16,6 +16,14 @@ tests:
           path: spec.replicas
           value: 4
 
+  - it: should allow scaling the Deployment to zero
+    set:
+      replicas: 0
+    asserts:
+      - equal:
+          path: spec.replicas
+          value: 0
+
   - it: should not render replicas field when autoscaling is enabled
     set:
       autoscaling.enabled: true
@@ -94,3 +102,13 @@ tests:
       - equal:
           path: spec.replicas
           value: 6
+
+  - it: should allow scaling the Deployment to zero using language-specific values
+    set:
+      language: test
+      test:
+        replicas: 0
+    asserts:
+      - equal:
+          path: spec.replicas
+          value: 0
