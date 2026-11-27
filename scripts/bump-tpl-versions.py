@@ -1,69 +1,71 @@
-import re
-import glob
 import os
+import json
+import re
 import subprocess
+import sys
+from pathlib import Path
 
-changed_files = os.environ.get('CHANGED_FILES')
-changed_files_list = changed_files.split()
-new_changed_files_list = []
-changes_made = True
+from template_migrations import (
+    ACTION,
+    TOKEN,
+    MigrationError,
+    definitions,
+    files_at,
+    record,
+    recording_declarations,
+)
 
-# Wipe the output file clean at the start
-with open('/tmp/bumped-tpl-versions.txt', 'w') as output_file:
-    output_file.write('')
 
-def bump_versions(files):
-    # Search for all the define statements in the changed files
-    for file in files:
-        with open(file, 'r') as file:
-            content = file.read()
-            pattern = re.compile(r'define\s+"([^"]+)"')
-            matches = re.findall(pattern, content)
-            for match in matches:
-                
-                # Remove the .tpl suffix if present
-                match = re.sub(r'\.tpl$', '', match)
+def helper_literals(text: str):
+    for action in ACTION.finditer(text):
+        if re.match(r"{{-?\s*/\*", action.group()):
+            continue
+        for token in TOKEN.finditer(action.group()):
+            if token.group().startswith(('"', "`")):
+                yield action.start() + token.start(), action.start() + token.end(), token.group()
 
-                # Write an updated version of the templates to a new file
-                with open('/tmp/master-tpl-versions.txt', 'r') as master_file:
-                    for line in master_file:
-                        line = line.strip()
-                        if line == match:
-                            new_version = match
-                            if new_version not in open('/tmp/bumped-tpl-versions.txt').read():
-                                with open('/tmp/bumped-tpl-versions.txt', 'a') as file:
-                                    file.write(new_version + '\n')
 
-# Increment the version number of the templates in files changed in the initial commit
-bump_versions(changed_files_list)
+def bump(root: Path, baseline: str, changed_files: list[str]) -> bool:
+    recording_declarations(root)
+    previous = set().union(*(definitions(text) for text in files_at(root, baseline).values()))
+    current_files = files_at(root, None)
+    selected: set[str] = set()
+    for path in changed_files:
+        selected.update(definitions(current_files.get(path, "")) & previous)
+    while True:
+        expanded = set(selected)
+        for text in current_files.values():
+            if any(literal[1:-1] in selected for _, _, literal in helper_literals(text)):
+                expanded.update(definitions(text) & previous)
+        if expanded == selected:
+            break
+        selected = expanded
+    mapping = {}
+    for name in selected:
+        updated, count = re.subn(r"\.v(\d+)(?=\.tpl$|$)",
+                                lambda match: f".v{int(match[1]) + 1}", name)
+        if count:
+            mapping[name] = updated
+    for path, text in current_files.items():
+        replacements = []
+        for start, end, literal in helper_literals(text):
+            if literal[1:-1] in mapping:
+                replacements.append((start, end, literal[0] + mapping[literal[1:-1]] + literal[-1]))
+        for start, end, replacement in reversed(replacements):
+            text = text[:start] + replacement + text[end:]
+        if replacements:
+            (root / path).write_text(text)
+    if mapping:
+        record(root, "HEAD", mapping)
+    return bool(mapping)
 
-# Keep looping over files while changes are detected, until all references are updated 
-while changes_made:
-    changes_made = False
-    # Search for each line in /tmp/bumped-tpl-versions.txt in the library/templates/v2 directory
-    with open('/tmp/bumped-tpl-versions.txt', 'r') as bumped_file:
-        for line in bumped_file:
-            line = line.strip()
-            if line:
-                # Use grep to search for the line in the directory
-                result = subprocess.run(['grep', '-rl', line, './library/templates/v2'], capture_output=True, text=True)
-                if result.stdout:
-                    for file_path in result.stdout.splitlines():
-                        # Increment the version number
-                        new_version = re.sub(r'v(\d+)', lambda m: f"v{int(m.group(1)) + 1}", line)
-                        with open(file_path, 'r') as file:
-                            content = file.read()
-                            updated_content = content.replace(line, new_version)
-                        
-                        # Append newly changed files to a new list and then bump the versions in those files
-                        new_changed_files_list.append(file_path)
-                        changes_made = True
-                        bump_versions(new_changed_files_list)
 
-                        # Write the updated version number to the files that contain the template
-                        with open(file_path, 'w') as file:
-                            file.write(updated_content)
-                            os.environ["version_bumped"] = "true"
-
-if os.environ.get("version_bumped") == "true":
-    print(f"version_updated")
+if __name__ == "__main__":
+    try:
+        baseline = os.environ["BASELINE_REF"]
+        changed = os.environ["CHANGED_FILES"].split()
+        if bump(Path.cwd(), baseline, changed):
+            print("version_updated")
+    except (KeyError, MigrationError, OSError, json.JSONDecodeError, subprocess.CalledProcessError) as error:
+        message = error.stderr if isinstance(error, subprocess.CalledProcessError) else str(error)
+        sys.exit(f"Template bump failed: {message}")

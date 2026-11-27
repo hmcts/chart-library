@@ -16,6 +16,10 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: chart-library-template-bumps
+  cancel-in-progress: false
+
 jobs:
   bump_version:
     # Skip when the triggering push is the bot's own bump commit, to avoid looping.
@@ -56,15 +60,9 @@ jobs:
           echo "Using baseline ${before}"
           echo "ref=${before}" >> "$GITHUB_OUTPUT"
 
-      - name: Checkout previous commit for baseline
-        run: git checkout ${{ steps.baseline.outputs.ref }} -- library/templates
-
-      - name: Run extract-tpl-version script
-        run: |
-          python scripts/extract-tpl-versions.py
-
-      - name: Restore current commit
-        run: git checkout HEAD -- library/templates
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
 
       - name: Get changed files
         id: changed-files
@@ -81,6 +79,7 @@ jobs:
           echo "script_output=${script_output}" >> "$GITHUB_OUTPUT"
         env:
           CHANGED_FILES: ${{ steps.changed-files.outputs.all_changed_files }}
+          BASELINE_REF: ${{ steps.baseline.outputs.ref }}
 
       - name: Show generated template changes
         if: steps.bump.outputs.script_output == 'version_updated'
@@ -94,6 +93,6 @@ jobs:
         run: |
           git config user.name "${{ steps.app-token.outputs.app-slug }}[bot]"
           git config user.email "${{ steps.app-token.outputs.user-id }}+${{ steps.app-token.outputs.app-slug }}[bot]@users.noreply.github.com"
-          git add library/templates/v2
+          git add library/templates/v2 library/template-migrations.json
           git commit -m "Bump helm template versions [auto-bump]"
           git push origin HEAD:master
